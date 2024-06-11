@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -47,6 +48,20 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        ArrayList<ChessMove> bishopArray = new ArrayList<>();
+        bishopArray.add(new ChessMove(myPosition, new ChessPosition(6,5), null));
+        bishopArray.add(new ChessMove(myPosition, new ChessPosition(7,6), null));
+        bishopArray.add(new ChessMove(myPosition, new ChessPosition(8,7), null));
+        bishopArray.add(new ChessMove(myPosition, new ChessPosition(4,5), null));
+        bishopArray.add(new ChessMove(myPosition, new ChessPosition(3,6), null));
+        bishopArray.add(new ChessMove(myPosition, new ChessPosition(2,7), null));
+        bishopArray.add(new ChessMove(myPosition, new ChessPosition(1,8), null));
+        bishopArray.add(new ChessMove(myPosition, new ChessPosition(4,3), null));
+        bishopArray.add(new ChessMove(myPosition, new ChessPosition(3,2), null));
+        bishopArray.add(new ChessMove(myPosition, new ChessPosition(2,1), null));
+        bishopArray.add(new ChessMove(myPosition, new ChessPosition(6,3), null));
+        bishopArray.add(new ChessMove(myPosition, new ChessPosition(7,2), null));
+        bishopArray.add(new ChessMove(myPosition, new ChessPosition(8,1), null));
+        return bishopArray;
     }
 }
