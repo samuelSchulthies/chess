@@ -9,23 +9,28 @@ package chess;
 public class ChessMove {
 
 
+    private final ChessPosition startPosition;
+    private final ChessPosition endPosition;
+
+
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition,
                      ChessPiece.PieceType promotionPiece) {
+        this.startPosition = startPosition;
+        this.endPosition = endPosition;
     }
 
     /**
      * @return ChessPosition of starting location
      */
     public ChessPosition getStartPosition() {
-        return null;
+        throw new RuntimeException("Not implemented");
     }
 
     /**
      * @return ChessPosition of ending location
      */
     public ChessPosition getEndPosition() {
-
-        throw new RuntimeException("Not implemented");
+        return endPosition;
     }
 
     /**
@@ -40,6 +45,12 @@ public class ChessMove {
 
     @Override
     public String toString() {
-        return super.toString();
+        StringBuilder stringChessMoves = new StringBuilder();
+        stringChessMoves.append("(");
+        stringChessMoves.append(getEndPosition().getRow());
+        stringChessMoves.append(",");
+        stringChessMoves.append(getEndPosition().getColumn());
+        stringChessMoves.append(")");
+        return stringChessMoves.toString();
     }
 }
