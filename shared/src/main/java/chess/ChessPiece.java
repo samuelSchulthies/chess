@@ -2,6 +2,8 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Objects;
 
 /**
  * Represents a single chess piece
@@ -11,8 +13,17 @@ import java.util.Collection;
  */
 public class ChessPiece {
 
+    private final ChessGame.TeamColor pieceColor;
+    private final PieceType type;
+
+    public int ADD_HELPER;
+
+
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+        this.pieceColor = pieceColor;
+        this.type = type;
     }
+
 
     /**
      * The various different chess piece options
@@ -37,7 +48,7 @@ public class ChessPiece {
      * @return which type of chess piece this piece is
      */
     public PieceType getPieceType() {
-        throw new RuntimeException("Not implemented");
+        return type;
     }
 
     /**
@@ -47,21 +58,100 @@ public class ChessPiece {
      *
      * @return Collection of valid moves
      */
+    HashSet<ChessMove> pieceMovesArray = new HashSet<>();
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        ArrayList<ChessMove> bishopArray = new ArrayList<>();
-        bishopArray.add(new ChessMove(myPosition, new ChessPosition(6,5), null));
-        bishopArray.add(new ChessMove(myPosition, new ChessPosition(7,6), null));
-        bishopArray.add(new ChessMove(myPosition, new ChessPosition(8,7), null));
-        bishopArray.add(new ChessMove(myPosition, new ChessPosition(4,5), null));
-        bishopArray.add(new ChessMove(myPosition, new ChessPosition(3,6), null));
-        bishopArray.add(new ChessMove(myPosition, new ChessPosition(2,7), null));
-        bishopArray.add(new ChessMove(myPosition, new ChessPosition(1,8), null));
-        bishopArray.add(new ChessMove(myPosition, new ChessPosition(4,3), null));
-        bishopArray.add(new ChessMove(myPosition, new ChessPosition(3,2), null));
-        bishopArray.add(new ChessMove(myPosition, new ChessPosition(2,1), null));
-        bishopArray.add(new ChessMove(myPosition, new ChessPosition(6,3), null));
-        bishopArray.add(new ChessMove(myPosition, new ChessPosition(7,2), null));
-        bishopArray.add(new ChessMove(myPosition, new ChessPosition(8,1), null));
-        return bishopArray;
+        //TODO: Algorithm:
+        if(getPieceType() == PieceType.BISHOP){
+            int signRow = 1;
+            int signCol = 1;
+            for (int i = 0; i < 4; ++i){
+                ADD_HELPER = 0;
+
+                // i = 0 is ++ quadrant
+                // i = 1 is -+ quadrant
+                // i = 2 is -- quadrant
+                // i = 3 is +- quadrant
+
+                if (i == 1){
+                   signRow = -1;
+                }
+                if (i == 2){
+                   signRow = -1;
+                   signCol = -1;
+                }
+                if (i == 3){
+                   signRow = 1;
+                   signCol = -1;
+                }
+
+                bishopRecurser(board, myPosition, signRow, signCol);
+
+            }
+        }
+
+        return pieceMovesArray;
+    }
+
+    public void bishopRecurser(ChessBoard board, ChessPosition myPosition, int signRow, int signCol) {
+        ADD_HELPER += 1;
+        int rowToAdd = myPosition.getRow() + (ADD_HELPER * signRow);
+        int colToAdd = myPosition.getColumn() + (ADD_HELPER * signCol);
+        ChessPosition positionChecker = new ChessPosition(rowToAdd, colToAdd);
+        ChessMove newMove = new ChessMove(myPosition, positionChecker, null);
+
+        if ((rowToAdd > 0) && (rowToAdd < 9)
+                && (colToAdd > 0) && (colToAdd < 9)){
+            //Capture
+            if ((board.getPiece(positionChecker) != null)
+                    && (board.getPiece(positionChecker).pieceColor != board.getPiece(myPosition).pieceColor)){
+//                PieceType piece = board.getPiece(positionChecker).getPieceType();
+//                System.out.print(piece);
+                pieceMovesArray.add(newMove);
+            }
+            if (board.getPiece(positionChecker) == null){
+                pieceMovesArray.add(newMove);
+            }
+            if ((rowToAdd > 1) && (rowToAdd < 8)
+                    && (colToAdd > 1) && (colToAdd < 8)){
+                // REMOVED as we can ONLY continue if it's null. If you capture you stop!
+//                if (board.getPiece(positionChecker) != null){
+//                    if (board.getPiece(positionChecker).pieceColor != board.getPiece(myPosition).pieceColor){
+//                        bishopRecurser(board, myPosition, signRow, signCol);
+//                    }
+//                }
+                if (board.getPiece(positionChecker) == null){
+                    bishopRecurser(board, myPosition, signRow, signCol);
+                }
+            }
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessPiece that = (ChessPiece) o;
+        return pieceColor == that.pieceColor && type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pieceColor, type);
     }
 }
+
+
+//        Hard coded test:
+//        bishopArray.add(new ChessMove(myPosition, new ChessPosition(6,3), null));
+//        bishopArray.add(new ChessMove(myPosition, new ChessPosition(2,7), null));
+//        bishopArray.add(new ChessMove(myPosition, new ChessPosition(8,7), null));
+//        bishopArray.add(new ChessMove(myPosition, new ChessPosition(4,5), null));
+//        bishopArray.add(new ChessMove(myPosition, new ChessPosition(7,6), null));
+//        bishopArray.add(new ChessMove(myPosition, new ChessPosition(4,3), null));
+//        bishopArray.add(new ChessMove(myPosition, new ChessPosition(6,5), null));
+//        bishopArray.add(new ChessMove(myPosition, new ChessPosition(7,2), null));
+//        bishopArray.add(new ChessMove(myPosition, new ChessPosition(8,1), null));
+//        bishopArray.add(new ChessMove(myPosition, new ChessPosition(3,2), null));
+//        bishopArray.add(new ChessMove(myPosition, new ChessPosition(3,6), null));
+//        bishopArray.add(new ChessMove(myPosition, new ChessPosition(2,1), null));
+//        bishopArray.add(new ChessMove(myPosition, new ChessPosition(1,8), null));
