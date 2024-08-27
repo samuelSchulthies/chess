@@ -89,6 +89,69 @@ public class ChessPiece {
             }
         }
 
+        if(getPieceType() == PieceType.KING){
+            int signRow = 1;
+            int signCol = 1;
+            for (int i = 0; i < 8; ++i){
+
+                // i = 0 is ++ quadrant
+                // i = 1 is -+ quadrant
+                // i = 2 is -- quadrant
+                // i = 3 is +- quadrant
+
+                // i = 4 is +0 quadrant
+                // i = 5 is 0- quadrant
+                // i = 6 is -0 quadrant
+                // i = 7 is 0+ quadrant
+
+                if (i == 1){
+                    signRow = -1;
+                }
+                if (i == 2){
+                    signRow = -1;
+                    signCol = -1;
+                }
+                if (i == 3){
+                    signRow = 1;
+                    signCol = -1;
+                }
+
+                if (i == 4){
+                    signRow = 1;
+                    signCol = 0;
+                }
+                if (i == 5){
+                    signRow = 0;
+                    signCol = -1;
+                }
+                if (i == 6){
+                    signRow = -1;
+                    signCol = 0;
+                }
+                if (i == 7){
+                    signRow = 0;
+                    signCol = 1;
+                }
+
+                int rowToAdd = myPosition.getRow() + signRow;
+                int colToAdd = myPosition.getColumn() + signCol;
+                ChessPosition positionChecker = new ChessPosition(rowToAdd, colToAdd);
+                ChessMove newMove = new ChessMove(myPosition, positionChecker, null);
+
+                if ((rowToAdd > 0) && (rowToAdd < 9)
+                        && (colToAdd > 0) && (colToAdd < 9)){
+                    if ((board.getPiece(positionChecker) != null)
+                            && (board.getPiece(positionChecker).pieceColor != board.getPiece(myPosition).pieceColor)){
+                        pieceMovesArray.add(newMove);
+                    }
+                    if (board.getPiece(positionChecker) == null){
+                        pieceMovesArray.add(newMove);
+                    }
+                }
+
+            }
+        }
+
         return pieceMovesArray;
     }
 
@@ -104,8 +167,6 @@ public class ChessPiece {
             //Capture
             if ((board.getPiece(positionChecker) != null)
                     && (board.getPiece(positionChecker).pieceColor != board.getPiece(myPosition).pieceColor)){
-//                PieceType piece = board.getPiece(positionChecker).getPieceType();
-//                System.out.print(piece);
                 pieceMovesArray.add(newMove);
             }
             if (board.getPiece(positionChecker) == null){
