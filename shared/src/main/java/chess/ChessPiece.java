@@ -291,6 +291,55 @@ public class ChessPiece {
             }
         }
 
+        if(getPieceType() == PieceType.QUEEN){
+            int signRow = 1;
+            int signCol = 1;
+
+            for (int i = 0; i < 8; ++i) {
+                ADD_HELPER = 0;
+
+                // i = 0 is ++ quadrant
+                // i = 1 is -+ quadrant
+                // i = 2 is -- quadrant
+                // i = 3 is +- quadrant
+
+                // i = 4 is +0 quadrant
+                // i = 5 is 0- quadrant
+                // i = 6 is -0 quadrant
+                // i = 7 is 0+ quadrant
+
+                if (i == 1) {
+                    signRow = -1;
+                }
+                if (i == 2) {
+                    signRow = -1;
+                    signCol = -1;
+                }
+                if (i == 3) {
+                    signRow = 1;
+                    signCol = -1;
+                }
+
+                if (i == 4) {
+                    signRow = 1;
+                    signCol = 0;
+                }
+                if (i == 5) {
+                    signRow = 0;
+                    signCol = -1;
+                }
+                if (i == 6) {
+                    signRow = -1;
+                    signCol = 0;
+                }
+                if (i == 7) {
+                    signRow = 0;
+                    signCol = 1;
+                }
+
+                queenRecurser(board, myPosition, signRow, signCol);
+            }
+        }
 
         return pieceMovesArray;
     }
@@ -312,16 +361,41 @@ public class ChessPiece {
             if (board.getPiece(positionChecker) == null){
                 pieceMovesArray.add(newMove);
             }
-            if ((rowToAdd > 1) && (rowToAdd < 8)
-                    && (colToAdd > 1) && (colToAdd < 8)){
-                // REMOVED as we can ONLY continue if it's null. If you capture you stop!
-//                if (board.getPiece(positionChecker) != null){
-//                    if (board.getPiece(positionChecker).pieceColor != board.getPiece(myPosition).pieceColor){
-//                        bishopRecurser(board, myPosition, signRow, signCol);
-//                    }
-//                }
+            if (((positionChecker.getRow() + (signRow)) > 0)
+                    && ((positionChecker.getRow() + (signRow)) < 9)
+                    && ((positionChecker.getColumn() + (signCol)) > 0)
+                    && ((positionChecker.getColumn() + (signCol)) < 9)){
                 if (board.getPiece(positionChecker) == null){
                     bishopRecurser(board, myPosition, signRow, signCol);
+                }
+            }
+        }
+    }
+
+    public void queenRecurser(ChessBoard board, ChessPosition myPosition, int signRow, int signCol) {
+        ADD_HELPER += 1;
+        int rowToAdd = myPosition.getRow() + (ADD_HELPER * signRow);
+        int colToAdd = myPosition.getColumn() + (ADD_HELPER * signCol);
+        ChessPosition positionChecker = new ChessPosition(rowToAdd, colToAdd);
+        ChessMove newMove = new ChessMove(myPosition, positionChecker, null);
+
+        if ((rowToAdd > 0) && (rowToAdd < 9)
+                && (colToAdd > 0) && (colToAdd < 9)){
+            //Capture
+            if ((board.getPiece(positionChecker) != null)
+                    && (board.getPiece(positionChecker).pieceColor != board.getPiece(myPosition).pieceColor)){
+                pieceMovesArray.add(newMove);
+            }
+            if (board.getPiece(positionChecker) == null){
+                pieceMovesArray.add(newMove);
+            }
+
+            if (((positionChecker.getRow() + (signRow)) > 0)
+                    && ((positionChecker.getRow() + (signRow)) < 9)
+                    && ((positionChecker.getColumn() + (signCol)) > 0)
+                    && ((positionChecker.getColumn() + (signCol)) < 9)){
+                if (board.getPiece(positionChecker) == null){
+                    queenRecurser(board, myPosition, signRow, signCol);
                 }
             }
         }
@@ -400,3 +474,5 @@ public class ChessPiece {
 //                                    pieceMovesArray.add(newMove);
 //                                    newMove = new ChessMove(myPosition, positionChecker, PieceType.ROOK);
 //                                    pieceMovesArray.add(newMove);
+
+
