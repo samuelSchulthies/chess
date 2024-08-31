@@ -13,13 +13,6 @@ import java.util.Map;
  */
 public class ChessBoard {
 
-    final static Map<Character, ChessPiece.PieceType> CHAR_TO_TYPE_MAP = Map.of(
-            'p', ChessPiece.PieceType.PAWN,
-            'n', ChessPiece.PieceType.KNIGHT,
-            'r', ChessPiece.PieceType.ROOK,
-            'q', ChessPiece.PieceType.QUEEN,
-            'k', ChessPiece.PieceType.KING,
-            'b', ChessPiece.PieceType.BISHOP);
     private ChessPiece[][] squares = new ChessPiece[8][8];
 
     public ChessBoard() {
