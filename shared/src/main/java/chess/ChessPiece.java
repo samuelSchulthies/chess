@@ -84,7 +84,7 @@ public class ChessPiece {
                    signCol = -1;
                 }
 
-                bishopRecurser(board, myPosition, signRow, signCol);
+                pieceMovesRecurser(board, myPosition, signRow, signCol);
 
             }
         }
@@ -337,14 +337,42 @@ public class ChessPiece {
                     signCol = 1;
                 }
 
-                queenRecurser(board, myPosition, signRow, signCol);
+                pieceMovesRecurser(board, myPosition, signRow, signCol);
             }
         }
 
+        if(getPieceType() == PieceType.ROOK){
+            int signRow = 1;
+            int signCol = 0;
+
+            for (int i = 0; i < 4; ++i) {
+                ADD_HELPER = 0;
+
+                // i = 4 is +0 quadrant
+                // i = 5 is 0- quadrant
+                // i = 6 is -0 quadrant
+                // i = 7 is 0+ quadrant
+
+                if (i == 1) {
+                    signRow = 0;
+                    signCol = -1;
+                }
+                if (i == 2) {
+                    signRow = -1;
+                    signCol = 0;
+                }
+                if (i == 3) {
+                    signRow = 0;
+                    signCol = 1;
+                }
+
+                pieceMovesRecurser(board, myPosition, signRow, signCol);
+            }
+        }
         return pieceMovesArray;
     }
 
-    public void bishopRecurser(ChessBoard board, ChessPosition myPosition, int signRow, int signCol) {
+    public void pieceMovesRecurser(ChessBoard board, ChessPosition myPosition, int signRow, int signCol) {
         ADD_HELPER += 1;
         int rowToAdd = myPosition.getRow() + (ADD_HELPER * signRow);
         int colToAdd = myPosition.getColumn() + (ADD_HELPER * signCol);
@@ -366,36 +394,7 @@ public class ChessPiece {
                     && ((positionChecker.getColumn() + (signCol)) > 0)
                     && ((positionChecker.getColumn() + (signCol)) < 9)){
                 if (board.getPiece(positionChecker) == null){
-                    bishopRecurser(board, myPosition, signRow, signCol);
-                }
-            }
-        }
-    }
-
-    public void queenRecurser(ChessBoard board, ChessPosition myPosition, int signRow, int signCol) {
-        ADD_HELPER += 1;
-        int rowToAdd = myPosition.getRow() + (ADD_HELPER * signRow);
-        int colToAdd = myPosition.getColumn() + (ADD_HELPER * signCol);
-        ChessPosition positionChecker = new ChessPosition(rowToAdd, colToAdd);
-        ChessMove newMove = new ChessMove(myPosition, positionChecker, null);
-
-        if ((rowToAdd > 0) && (rowToAdd < 9)
-                && (colToAdd > 0) && (colToAdd < 9)){
-            //Capture
-            if ((board.getPiece(positionChecker) != null)
-                    && (board.getPiece(positionChecker).pieceColor != board.getPiece(myPosition).pieceColor)){
-                pieceMovesArray.add(newMove);
-            }
-            if (board.getPiece(positionChecker) == null){
-                pieceMovesArray.add(newMove);
-            }
-
-            if (((positionChecker.getRow() + (signRow)) > 0)
-                    && ((positionChecker.getRow() + (signRow)) < 9)
-                    && ((positionChecker.getColumn() + (signCol)) > 0)
-                    && ((positionChecker.getColumn() + (signCol)) < 9)){
-                if (board.getPiece(positionChecker) == null){
-                    queenRecurser(board, myPosition, signRow, signCol);
+                    pieceMovesRecurser(board, myPosition, signRow, signCol);
                 }
             }
         }
