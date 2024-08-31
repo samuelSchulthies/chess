@@ -210,9 +210,8 @@ public class ChessPiece {
             for (int i = 0; i < 3; ++i){
 
                 // i = 0 is ++ quadrant
-                // i = 1 is +0 quadrant
+                // i = 1 is +0 quadrant and is ++0 quadrant
                 // i = 2 is +- quadrant
-                // i = 3 is ++0 quadrant
 
                 if (i == 1){
                     signAddCol = 0;
@@ -235,13 +234,49 @@ public class ChessPiece {
                     if((i == 0) || (i == 2)) {
                         if ((board.getPiece(positionChecker) != null)
                                 && (board.getPiece(positionChecker).pieceColor != board.getPiece(myPosition).pieceColor)) {
-                            pieceMovesArray.add(newMove);
+                                //Promotion Logic
+                                if (((positionChecker.getRow() == 8) &&
+                                        (board.getPiece(myPosition).pieceColor == ChessGame.TeamColor.WHITE))
+                                        ||
+                                        ((positionChecker.getRow() == 1) &&
+                                                (board.getPiece(myPosition).pieceColor == ChessGame.TeamColor.BLACK))) {
+                                    for (PieceType piece : PieceType.values()) {
+                                        if ((piece != PieceType.KING) && (piece != PieceType.PAWN)) {
+                                            newMove = new ChessMove(myPosition, positionChecker, piece);
+                                            pieceMovesArray.add(newMove);
+                                        }
+                                    }
+                                }
+                                else {
+                                    pieceMovesArray.add(newMove);
+                                }
+                            }
                         }
-                    }
+
                     if(i == 1){
                         if (board.getPiece(positionChecker) == null) {
-                            pieceMovesArray.add(newMove);
-                            if ((myPosition.getRow() == 2) || (myPosition.getRow() == 7)){
+                            //Promotion Logic
+                            if (((positionChecker.getRow() == 8) &&
+                                    (board.getPiece(myPosition).pieceColor == ChessGame.TeamColor.WHITE))
+                                    ||
+                                    ((positionChecker.getRow() == 1) &&
+                                            (board.getPiece(myPosition).pieceColor == ChessGame.TeamColor.BLACK))) {
+                                    for (PieceType piece : PieceType.values()) {
+                                        if ((piece != PieceType.KING) && (piece != PieceType.PAWN)) {
+                                            newMove = new ChessMove(myPosition, positionChecker, piece);
+                                            pieceMovesArray.add(newMove);
+                                        }
+                                    }
+                            }
+                            else {
+                                pieceMovesArray.add(newMove);
+                            }
+                            //Initial Move Logic
+                            if (((newMove.getStartPosition().getRow() == 2) &&
+                                    (board.getPiece(myPosition).pieceColor == ChessGame.TeamColor.WHITE))
+                                    ||
+                                    ((newMove.getStartPosition().getRow() == 7) &&
+                                    (board.getPiece(myPosition).pieceColor == ChessGame.TeamColor.BLACK))){
                                 if ((board.getPiece(positionChecker) == null)){
                                     positionChecker = new ChessPosition(rowToAdd + signAddRow, colToAdd);
                                     if(board.getPiece(positionChecker) == null){
@@ -255,6 +290,7 @@ public class ChessPiece {
                 }
             }
         }
+
 
         return pieceMovesArray;
     }
@@ -353,3 +389,14 @@ public class ChessPiece {
 //        }
 //        }
 //        }
+
+//Manual Promotion Logic
+
+//                                    newMove = new ChessMove(myPosition, positionChecker, PieceType.QUEEN);
+//                                    pieceMovesArray.add(newMove);
+//                                    newMove = new ChessMove(myPosition, positionChecker, PieceType.BISHOP);
+//                                    pieceMovesArray.add(newMove);
+//                                    newMove = new ChessMove(myPosition, positionChecker, PieceType.KNIGHT);
+//                                    pieceMovesArray.add(newMove);
+//                                    newMove = new ChessMove(myPosition, positionChecker, PieceType.ROOK);
+//                                    pieceMovesArray.add(newMove);
