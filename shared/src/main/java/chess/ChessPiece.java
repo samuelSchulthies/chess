@@ -68,7 +68,6 @@ public class ChessPiece {
      */
     HashSet<ChessMove> pieceMovesArray = new HashSet<>();
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        //TODO: Algorithm:
         if(getPieceType() == PieceType.BISHOP){
             int signRow = 1;
             int signCol = 1;
