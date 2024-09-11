@@ -1,6 +1,5 @@
 package chess;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
@@ -155,7 +154,6 @@ public class ChessPiece {
                         pieceMovesArray.add(newMove);
                     }
                 }
-
             }
         }
 
@@ -241,43 +239,13 @@ public class ChessPiece {
                     if((i == 0) || (i == 2)) {
                         if ((board.getPiece(positionChecker) != null)
                                 && (board.getPiece(positionChecker).pieceColor != board.getPiece(myPosition).pieceColor)) {
-                                //Promotion Logic
-                                if (((positionChecker.getRow() == 8) &&
-                                        (board.getPiece(myPosition).pieceColor == ChessGame.TeamColor.WHITE))
-                                        ||
-                                        ((positionChecker.getRow() == 1) &&
-                                                (board.getPiece(myPosition).pieceColor == ChessGame.TeamColor.BLACK))) {
-                                    for (PieceType piece : PieceType.values()) {
-                                        if ((piece != PieceType.KING) && (piece != PieceType.PAWN)) {
-                                            newMove = new ChessMove(myPosition, positionChecker, piece);
-                                            pieceMovesArray.add(newMove);
-                                        }
-                                    }
-                                }
-                                else {
-                                    pieceMovesArray.add(newMove);
-                                }
-                            }
+                            pawnPromotionLogic(board, myPosition, positionChecker, newMove);
                         }
+                    }
 
                     if(i == 1){
                         if (board.getPiece(positionChecker) == null) {
-                            //Promotion Logic
-                            if (((positionChecker.getRow() == 8) &&
-                                    (board.getPiece(myPosition).pieceColor == ChessGame.TeamColor.WHITE))
-                                    ||
-                                    ((positionChecker.getRow() == 1) &&
-                                            (board.getPiece(myPosition).pieceColor == ChessGame.TeamColor.BLACK))) {
-                                    for (PieceType piece : PieceType.values()) {
-                                        if ((piece != PieceType.KING) && (piece != PieceType.PAWN)) {
-                                            newMove = new ChessMove(myPosition, positionChecker, piece);
-                                            pieceMovesArray.add(newMove);
-                                        }
-                                    }
-                            }
-                            else {
-                                pieceMovesArray.add(newMove);
-                            }
+                            pawnPromotionLogic(board, myPosition, positionChecker, newMove);
                             //Initial Move Logic
                             if (((newMove.getStartPosition().getRow() == 2) &&
                                     (board.getPiece(myPosition).pieceColor == ChessGame.TeamColor.WHITE))
@@ -404,6 +372,24 @@ public class ChessPiece {
                     pieceMovesRecurser(board, myPosition, signRow, signCol);
                 }
             }
+        }
+    }
+    public void pawnPromotionLogic(ChessBoard board, ChessPosition myPosition, ChessPosition positionChecker,
+                                   ChessMove newMove){
+        if (((positionChecker.getRow() == 8) &&
+                (board.getPiece(myPosition).pieceColor == ChessGame.TeamColor.WHITE))
+                ||
+                ((positionChecker.getRow() == 1) &&
+                        (board.getPiece(myPosition).pieceColor == ChessGame.TeamColor.BLACK))) {
+            for (PieceType piece : PieceType.values()) {
+                if ((piece != PieceType.KING) && (piece != PieceType.PAWN)) {
+                    newMove = new ChessMove(myPosition, positionChecker, piece);
+                    pieceMovesArray.add(newMove);
+                }
+            }
+        }
+        else {
+            pieceMovesArray.add(newMove);
         }
     }
 

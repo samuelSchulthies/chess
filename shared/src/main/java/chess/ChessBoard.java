@@ -32,6 +32,8 @@ public class ChessBoard {
             'p', ChessPiece.PieceType.PAWN,
             'q', ChessPiece.PieceType.QUEEN,
             'r', ChessPiece.PieceType.ROOK);
+
+
     private ChessPiece[][] squares = new ChessPiece[8][8];
 
     public ChessBoard() {
@@ -57,22 +59,6 @@ public class ChessBoard {
      */
     public ChessPiece getPiece(ChessPosition position) {
         return squares[position.getRow() - 1][position.getColumn() - 1];
-    }
-
-    //TODO: Understand this code from IntelliJ
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        ChessBoard that = (ChessBoard) o;
-
-        return Arrays.deepEquals(squares, that.squares);
-    }
-
-    @Override
-    public int hashCode() {
-        return Arrays.deepHashCode(squares);
     }
 
     @Override
@@ -102,7 +88,6 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-
         int row = 8;
         int column = 1;
         for (char boardChar : defaultBoardLayout.toCharArray()) {
@@ -125,6 +110,22 @@ public class ChessBoard {
                 }
             }
         }
+    }
+
+    //TODO: Understand this code from IntelliJ
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ChessBoard that = (ChessBoard) o;
+
+        return Arrays.deepEquals(squares, that.squares);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.deepHashCode(squares);
     }
 }
 
