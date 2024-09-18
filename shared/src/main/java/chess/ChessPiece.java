@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
@@ -65,7 +66,7 @@ public class ChessPiece {
      *
      * @return Collection of valid moves
      */
-    HashSet<ChessMove> pieceMovesArray = new HashSet<>();
+    ArrayList<ChessMove> pieceMovesArray = new ArrayList<>();
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         if(getPieceType() == PieceType.BISHOP){
             int signRow = 1;
