@@ -2,6 +2,7 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -13,6 +14,7 @@ public class ChessGame {
 
     ChessBoard gameBoard;
     TeamColor teamTurn;
+    ChessPosition kingLocation;
 
     public ChessGame() {
 
@@ -51,6 +53,7 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         if (getBoard().getPiece(startPosition) != null) {
+            //TODO: Add logic that removes moves that put the king in check
             return getBoard().getPiece(startPosition).pieceMoves(gameBoard, startPosition);
         }
         else {
@@ -78,17 +81,37 @@ public class ChessGame {
         int row;
         int col;
 
-        ArrayList<ChessMove> allValidMoves = new ArrayList<>();
-
-        for (row = 0; row < 8; ++row){
-            for (col = 0; col < 8; ++ col){
+        for (row = 1; row < 9; ++row) {
+            for (col = 1; col < 9; ++col) {
                 ChessPosition positionChecker = new ChessPosition(row, col);
-                getBoard().getPiece(positionChecker);
+
+                if (gameBoard.getPiece(positionChecker) != null) {
+                    if ((gameBoard.getPiece(positionChecker).getPieceType() == ChessPiece.PieceType.KING) &&
+                            (gameBoard.getPiece(positionChecker).getTeamColor() == teamColor)) {
+                        kingLocation = new ChessPosition(row, col);
+                    }
+                }
             }
         }
 
-        if (getTeamTurn() == teamColor){
+        for (row = 1; row < 9; ++row) {
+            for (col = 1; col < 9; ++col) {
+                ChessPosition positionChecker = new ChessPosition(row, col);
+                Collection<ChessMove> validMovesCollection = validMoves(positionChecker);
+
+                if (gameBoard.getPiece(positionChecker) != null) {
+                    if (gameBoard.getPiece(positionChecker).getTeamColor() != teamColor) {
+                        for (ChessMove move : validMovesCollection) {
+                            if ((move.getEndPosition().getRow() == kingLocation.getRow()) &&
+                                    (move.getEndPosition().getColumn() == kingLocation.getColumn())) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
         }
+        return false;
     }
 
     /**
@@ -98,6 +121,7 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
+        //TODO: Checkmate logic Next
         throw new RuntimeException("Not implemented");
     }
 
@@ -128,5 +152,23 @@ public class ChessGame {
      */
     public ChessBoard getBoard() {
         return gameBoard;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ChessGame chessGame = (ChessGame) o;
+
+        if (!Objects.equals(gameBoard, chessGame.gameBoard)) return false;
+        return teamTurn == chessGame.teamTurn;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = gameBoard != null ? gameBoard.hashCode() : 0;
+        result = 31 * result + (teamTurn != null ? teamTurn.hashCode() : 0);
+        return result;
     }
 }
