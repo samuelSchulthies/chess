@@ -140,6 +140,7 @@ public class ChessGame {
                 ChessPosition positionChecker = new ChessPosition(row, col);
                 if (gameBoard.getPiece(positionChecker) != null) {
                     if (gameBoard.getPiece(positionChecker).getTeamColor() != teamColor) {
+                        getBoard().getPiece(positionChecker).pieceMoves(gameBoard, positionChecker).clear();
                         Collection<ChessMove> validMovesCollection = getBoard().getPiece(positionChecker).pieceMoves(gameBoard, positionChecker);
                         for (ChessMove move : validMovesCollection) {
                             if ((move.getEndPosition().getRow() == kingLocation.getRow()) &&
@@ -147,6 +148,8 @@ public class ChessGame {
                                 return true;
                             }
                         }
+                        validMovesCollection.clear();
+                        System.out.print("hi");
                     }
                 }
             }
@@ -236,6 +239,7 @@ public class ChessGame {
 
                 if (gameBoard.getPiece(positionChecker) != null) {
                     if (gameBoard.getPiece(positionChecker).getTeamColor() != teamColor) {
+                        getBoard().getPiece(positionChecker).pieceMoves(gameBoard, positionChecker).clear();
                         Collection<ChessMove> validMovesCollection = getBoard().getPiece(positionChecker).pieceMoves(gameBoard, positionChecker);
                         for (ChessMove move : validMovesCollection) {
                             for (ChessMove kingMove : validKingMovesCollection) {
