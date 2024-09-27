@@ -13,6 +13,8 @@ public class ChessGame {
     static private ChessBoard gameBoard;
     static TeamColor teamTurn;
     static ChessPosition kingLocation;
+
+    private ChessPiece pieceStorage;
     Boolean exception = false;
 
     public ChessGame() {
@@ -57,6 +59,7 @@ public class ChessGame {
 
             for (ChessMove possibleMove : possibleMoves){
                 exception = false;
+                pieceStorage = gameBoard.getPiece(possibleMove.getStartPosition());
                 try {
                     makeMove(possibleMove);
                     if (!exception) {
@@ -86,6 +89,9 @@ public class ChessGame {
     public void makeMove(ChessMove move) throws InvalidMoveException {
         setTeamTurn(gameBoard.getPiece(move.getStartPosition()).getTeamColor());
 
+        if (gameBoard.getPiece(move.getEndPosition()) != null) {
+            pieceStorage = gameBoard.getPiece(move.getEndPosition());
+        }
         gameBoard.addPiece(move.getEndPosition(), gameBoard.getPiece(move.getStartPosition()));
         gameBoard.removePiece(move.getStartPosition());
 
@@ -101,7 +107,7 @@ public class ChessGame {
     }
 
     public void undoMove(ChessMove move){
-        gameBoard.addPiece(move.getStartPosition(), gameBoard.getPiece(move.getEndPosition()));
+        gameBoard.addPiece(move.getStartPosition(), pieceStorage);
         gameBoard.removePiece(move.getEndPosition());
     }
 
