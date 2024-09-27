@@ -56,6 +56,7 @@ public class ChessGame {
         if (getBoard().getPiece(startPosition) != null) {
             Collection<ChessMove> possibleMoves = getBoard().getPiece(startPosition).pieceMoves(gameBoard, startPosition);
             Collection<ChessMove> validMoves = new ArrayList<>();
+            setTeamTurn(gameBoard.getPiece(startPosition).getTeamColor());
 
             for (ChessMove possibleMove : possibleMoves){
                 exception = false;
@@ -67,7 +68,7 @@ public class ChessGame {
                     }
                 }
                 catch (InvalidMoveException e) {
-                    System.out.print("Not including invalid move");
+                    System.out.print("The move " + possibleMove + " was illegal and not included\n");
                 }
                 finally {
                     undoMove(possibleMove);
@@ -87,10 +88,11 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        setTeamTurn(gameBoard.getPiece(move.getStartPosition()).getTeamColor());
-
         if (gameBoard.getPiece(move.getEndPosition()) != null) {
             pieceStorage = gameBoard.getPiece(move.getEndPosition());
+        }
+        else {
+            pieceStorage = null;
         }
         gameBoard.addPiece(move.getEndPosition(), gameBoard.getPiece(move.getStartPosition()));
         gameBoard.removePiece(move.getStartPosition());
@@ -98,17 +100,19 @@ public class ChessGame {
         if(isInCheck(getTeamTurn())){
             exception = true;
             if(isInCheckmate(getTeamTurn())){
+//                undoMove(possibleMove);
                 throw new InvalidMoveException("The move " + move + " puts the king in checkmate");
             }
             else {
+//                undoMove(possibleMove);
                 throw new InvalidMoveException("The move " + move + " puts the king in check");
             }
         }
     }
 
     public void undoMove(ChessMove move){
-        gameBoard.addPiece(move.getStartPosition(), pieceStorage);
-        gameBoard.removePiece(move.getEndPosition());
+        gameBoard.addPiece(move.getStartPosition(), gameBoard.getPiece(move.getEndPosition()));
+        gameBoard.addPiece(move.getEndPosition(), pieceStorage);
     }
 
 
@@ -148,8 +152,6 @@ public class ChessGame {
                                 return true;
                             }
                         }
-                        validMovesCollection.clear();
-                        System.out.print("hi");
                     }
                 }
             }
