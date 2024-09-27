@@ -99,14 +99,14 @@ public class ChessGame {
 
         if(isInCheck(getTeamTurn())){
             exception = true;
-            if(isInCheckmate(getTeamTurn())){
-//                undoMove(possibleMove);
-                throw new InvalidMoveException("The move " + move + " puts the king in checkmate");
-            }
-            else {
+//            if(isInCheckmate(getTeamTurn())){
+////                undoMove(possibleMove);
+//                throw new InvalidMoveException("The move " + move + " puts the king in checkmate");
+//            }
+//            else {
 //                undoMove(possibleMove);
                 throw new InvalidMoveException("The move " + move + " puts the king in check");
-            }
+//            }
         }
     }
 
@@ -180,6 +180,7 @@ public class ChessGame {
                 if (gameBoard.getPiece(positionChecker) != null) {
                     if ((gameBoard.getPiece(positionChecker).getPieceType() == ChessPiece.PieceType.KING) &&
                             (gameBoard.getPiece(positionChecker).getTeamColor() == teamColor)) {
+                        getBoard().getPiece(positionChecker).pieceMoves(gameBoard, positionChecker).clear();
                         validKingMovesCollection = getBoard().getPiece(positionChecker).pieceMoves(gameBoard, positionChecker);
                     }
                 }
@@ -229,15 +230,6 @@ public class ChessGame {
         for (row = 1; row < 9; ++row) {
             for (col = 1; col < 9; ++col) {
                 ChessPosition positionChecker = new ChessPosition(row, col);
-
-                //TODO: Need logic that retrieves all squares controlled by a piece, not just valid moves
-                //TODO: Maybe retrieve valid moves again based on squares a piece controls
-                //TODO: if king moves and a new valid move comes up (pawn), then add that move to attacks against the king
-                //TODO: Make every move from valid moves and check if that move has put the king into check or checkmate
-                //TODO: All we need to do is call valid moves on every valid move from a piece and then run
-                // check/checkmate to see if our king has been put in danger. If it returns true we discard those moves
-                //TODO: Move the king to each of its valid moves and then check at each of those moves if it has a new
-                // attack (likely from pawn). Add that to list of possible attacks against the king.
 
                 if (gameBoard.getPiece(positionChecker) != null) {
                     if (gameBoard.getPiece(positionChecker).getTeamColor() != teamColor) {
