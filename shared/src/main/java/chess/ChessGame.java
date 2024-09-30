@@ -15,6 +15,10 @@ public class ChessGame {
     static ChessPosition kingLocation;
 
     private ChessPiece pieceStorage;
+
+    private ChessPosition startPositionStorage;
+
+    Collection<ChessMove> possibleMoves = new ArrayList<>();
     Boolean exception = false;
 
     public ChessGame() {
@@ -54,7 +58,7 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         if (getBoard().getPiece(startPosition) != null) {
-            Collection<ChessMove> possibleMoves = getBoard().getPiece(startPosition).pieceMoves(gameBoard, startPosition);
+            Collection<ChessMove> possibleMoves = new ArrayList<>(getBoard().getPiece(startPosition).pieceMoves(gameBoard, startPosition));
             Collection<ChessMove> validMoves = new ArrayList<>();
             setTeamTurn(gameBoard.getPiece(startPosition).getTeamColor());
 
@@ -94,19 +98,20 @@ public class ChessGame {
         else {
             pieceStorage = null;
         }
+
         gameBoard.addPiece(move.getEndPosition(), gameBoard.getPiece(move.getStartPosition()));
         gameBoard.removePiece(move.getStartPosition());
 
         if(isInCheck(getTeamTurn())){
             exception = true;
-//            if(isInCheckmate(getTeamTurn())){
-////                undoMove(possibleMove);
-//                throw new InvalidMoveException("The move " + move + " puts the king in checkmate");
-//            }
-//            else {
-//                undoMove(possibleMove);
+            if(isInCheckmate(getTeamTurn())){
+//                undoMove(move);
+                throw new InvalidMoveException("The move " + move + " puts the king in checkmate");
+            }
+            else {
+//                undoMove(move);
                 throw new InvalidMoveException("The move " + move + " puts the king in check");
-//            }
+            }
         }
     }
 
