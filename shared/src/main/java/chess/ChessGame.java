@@ -13,16 +13,12 @@ public class ChessGame {
     static private ChessBoard gameBoard;
     static TeamColor teamTurn;
     static ChessPosition kingLocation;
-
     private ChessPiece pieceStorage;
 
-    private ChessPosition startPositionStorage;
-
-    Collection<ChessMove> possibleMoves = new ArrayList<>();
     Boolean exception = false;
 
     public ChessGame() {
-
+        gameBoard = new ChessBoard();
     }
 
     /**
@@ -60,7 +56,6 @@ public class ChessGame {
         if (getBoard().getPiece(startPosition) != null) {
             Collection<ChessMove> possibleMoves = new ArrayList<>(getBoard().getPiece(startPosition).pieceMoves(gameBoard, startPosition));
             Collection<ChessMove> validMoves = new ArrayList<>();
-            setTeamTurn(gameBoard.getPiece(startPosition).getTeamColor());
 
             for (ChessMove possibleMove : possibleMoves){
                 exception = false;
@@ -92,32 +87,51 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        if (gameBoard.getPiece(move.getEndPosition()) != null) {
-            pieceStorage = gameBoard.getPiece(move.getEndPosition());
-        }
-        else {
-            pieceStorage = null;
-        }
+        if (getBoard().getPiece(move.getStartPosition()) != null){
+            setTeamTurn(gameBoard.getPiece(move.getStartPosition()).getTeamColor());
 
-        gameBoard.addPiece(move.getEndPosition(), gameBoard.getPiece(move.getStartPosition()));
-        gameBoard.removePiece(move.getStartPosition());
-
-        if(isInCheck(getTeamTurn())){
-            exception = true;
-            if(isInCheckmate(getTeamTurn())){
-//                undoMove(move);
-                throw new InvalidMoveException("The move " + move + " puts the king in checkmate");
+            if (gameBoard.getPiece(move.getEndPosition()) != null) {
+                pieceStorage = gameBoard.getPiece(move.getEndPosition());
             }
             else {
-//                undoMove(move);
-                throw new InvalidMoveException("The move " + move + " puts the king in check");
+                pieceStorage = null;
             }
+            if(!isInMoveSet(move)){
+                throw new InvalidMoveException("The move " + move + " is not in this piece's valid moves");
+            }
+            gameBoard.addPiece(move.getEndPosition(), gameBoard.getPiece(move.getStartPosition()));
+            gameBoard.removePiece(move.getStartPosition());
+
+            if (isInCheck(getTeamTurn())) {
+                exception = true;
+                if (isInCheckmate(getTeamTurn())) {
+    //                undoMove(move);
+                    throw new InvalidMoveException("The move " + move + " puts the king in checkmate");
+                } else {
+    //                undoMove(move);
+                    throw new InvalidMoveException("The move " + move + " puts the king in check");
+                }
+            }
+        }
+        else {
+            throw new InvalidMoveException("The move " + move + "does not have a chess piece");
         }
     }
 
     public void undoMove(ChessMove move){
         gameBoard.addPiece(move.getStartPosition(), gameBoard.getPiece(move.getEndPosition()));
         gameBoard.addPiece(move.getEndPosition(), pieceStorage);
+    }
+
+    public boolean isInMoveSet(ChessMove moveToCheck){
+        Collection<ChessMove> moveSet = new ArrayList<>(getBoard().getPiece(moveToCheck.getStartPosition()).pieceMoves(gameBoard, moveToCheck.getStartPosition()));
+        for (ChessMove validMove : moveSet) {
+            if ((validMove.getEndPosition().getRow() == moveToCheck.getEndPosition().getRow()) &&
+                    (validMove.getEndPosition().getColumn() == moveToCheck.getEndPosition().getColumn())) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
