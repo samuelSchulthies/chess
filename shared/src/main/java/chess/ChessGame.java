@@ -291,24 +291,22 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-//
-//        //TODO: Stalemate is when the current team has no valid moves
-//
-//        int row;
-//        int col;
-//        for (row = 1; row < 9; ++row) {
-//            for (col = 1; col < 9; ++col) {
-//                ChessPosition positionChecker = new ChessPosition(row, col);
-//
-//                if (gameBoard.getPiece(positionChecker) != null) {
-//                    if ((gameBoard.getPiece(positionChecker).getTeamColor() == teamColor)) {
-//                        if (getBoard().getPiece(positionChecker).pieceMoves(gameBoard, positionChecker).size() != 0){
-//                            return false;
-//                        }
-//                    }
-//                }
-//            }
-//        }
+
+        int row;
+        int col;
+        for (row = 1; row < 9; ++row) {
+            for (col = 1; col < 9; ++col) {
+                ChessPosition positionChecker = new ChessPosition(row, col);
+
+                if (gameBoard.getPiece(positionChecker) != null) {
+                    if ((gameBoard.getPiece(positionChecker).getTeamColor() == teamColor)) {
+                        if (validMoves(positionChecker).size() != 0){
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
         return true;
     }
 
