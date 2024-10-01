@@ -11,6 +11,8 @@ import java.util.*;
 public class ChessGame {
 
     static private ChessBoard gameBoard;
+    static int moveIndicator;
+    static ChessBoard defaultBoard = new ChessBoard().getDefaultBoard();
     static TeamColor teamTurn;
     static ChessPosition kingLocation;
     private ChessPiece pieceStorage;
@@ -18,7 +20,9 @@ public class ChessGame {
     Boolean exception = false;
 
     public ChessGame() {
-        gameBoard = new ChessBoard();
+        setBoard(defaultBoard);
+        setTeamTurn(TeamColor.WHITE);
+        moveIndicator = 0;
     }
 
     /**
@@ -56,6 +60,7 @@ public class ChessGame {
         if (getBoard().getPiece(startPosition) != null) {
             Collection<ChessMove> possibleMoves = new ArrayList<>(getBoard().getPiece(startPosition).pieceMoves(gameBoard, startPosition));
             Collection<ChessMove> validMoves = new ArrayList<>();
+            setTeamTurn(gameBoard.getPiece(startPosition).getTeamColor());
 
             for (ChessMove possibleMove : possibleMoves){
                 exception = false;
@@ -88,7 +93,11 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         if (getBoard().getPiece(move.getStartPosition()) != null){
-            setTeamTurn(gameBoard.getPiece(move.getStartPosition()).getTeamColor());
+
+            if(gameBoard.getPiece(move.getStartPosition()).getTeamColor() != getTeamTurn()){
+                throw new InvalidMoveException("It is not " + gameBoard.getPiece(move.getStartPosition())
+                        .getTeamColor() + "'s turn");
+            }
 
             if (gameBoard.getPiece(move.getEndPosition()) != null) {
                 pieceStorage = gameBoard.getPiece(move.getEndPosition());
@@ -96,6 +105,7 @@ public class ChessGame {
             else {
                 pieceStorage = null;
             }
+
             if(!isInMoveSet(move)){
                 throw new InvalidMoveException("The move " + move + " is not in this piece's valid moves");
             }
@@ -105,6 +115,12 @@ public class ChessGame {
                 ChessPiece promotionUpdate = new ChessPiece(getBoard().getPiece(move.getStartPosition())
                         .getTeamColor(), move.getPromotionPiece());
                 gameBoard.addPiece(move.getEndPosition(), promotionUpdate);
+                if(getTeamTurn() == TeamColor.BLACK){
+                    setTeamTurn(TeamColor.WHITE);
+                }
+                if(getTeamTurn() == TeamColor.WHITE){
+                    setTeamTurn(TeamColor.BLACK);
+                }
             }
             else {
                 gameBoard.addPiece(move.getEndPosition(), gameBoard.getPiece(move.getStartPosition()));
@@ -205,7 +221,6 @@ public class ChessGame {
         Collection<ChessMove> validKingMovesCollection = new ArrayList<>();
         HashSet<ChessPosition> validKingSet = new HashSet<>();
 
-
         for (row = 1; row < 9; ++row) {
             for (col = 1; col < 9; ++col) {
                 ChessPosition positionChecker = new ChessPosition(row, col);
@@ -280,7 +295,12 @@ public class ChessGame {
                 }
             }
         }
-        return validKingSet.size() == kingMovesSize;
+        if ((validKingSet.size() != 0) && (kingMovesSize != 0)) {
+            return validKingSet.size() == kingMovesSize;
+        }
+        else {
+            return false;
+        }
     }
 
     /**

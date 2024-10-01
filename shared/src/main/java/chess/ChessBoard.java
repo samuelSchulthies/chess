@@ -34,11 +34,16 @@ public class ChessBoard {
             'q', ChessPiece.PieceType.QUEEN,
             'r', ChessPiece.PieceType.ROOK);
 
-
     private ChessPiece[][] squares = new ChessPiece[8][8];
 
     public ChessBoard() {
 
+    }
+
+    public ChessBoard getDefaultBoard(){
+        ChessBoard board = new ChessBoard();
+        board.resetBoard();
+        return board;
     }
 
     /**
