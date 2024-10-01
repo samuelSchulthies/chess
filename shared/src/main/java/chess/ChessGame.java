@@ -153,6 +153,7 @@ public class ChessGame {
     public boolean isInCheck(TeamColor teamColor) {
         int row;
         int col;
+        kingLocation = null;
 
         for (row = 1; row < 9; ++row) {
             for (col = 1; col < 9; ++col) {
@@ -163,11 +164,12 @@ public class ChessGame {
                             (gameBoard.getPiece(positionChecker).getTeamColor() == teamColor)) {
                         kingLocation = new ChessPosition(row, col);
                     }
-                    else {
-                        return false;
-                    }
                 }
             }
+        }
+
+        if(kingLocation == null){
+            return false;
         }
 
         for (row = 1; row < 9; ++row) {
