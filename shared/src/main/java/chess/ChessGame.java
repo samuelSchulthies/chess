@@ -154,6 +154,9 @@ public class ChessGame {
                             (gameBoard.getPiece(positionChecker).getTeamColor() == teamColor)) {
                         kingLocation = new ChessPosition(row, col);
                     }
+                    else {
+                        return false;
+                    }
                 }
             }
         }
