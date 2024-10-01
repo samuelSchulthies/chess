@@ -99,7 +99,16 @@ public class ChessGame {
             if(!isInMoveSet(move)){
                 throw new InvalidMoveException("The move " + move + " is not in this piece's valid moves");
             }
-            gameBoard.addPiece(move.getEndPosition(), gameBoard.getPiece(move.getStartPosition()));
+
+            if((move.getPromotionPiece() != null) &&
+                    (getBoard().getPiece(move.getStartPosition()).getPieceType() == ChessPiece.PieceType.PAWN)){
+                ChessPiece promotionUpdate = new ChessPiece(getBoard().getPiece(move.getStartPosition())
+                        .getTeamColor(), move.getPromotionPiece());
+                gameBoard.addPiece(move.getEndPosition(), promotionUpdate);
+            }
+            else {
+                gameBoard.addPiece(move.getEndPosition(), gameBoard.getPiece(move.getStartPosition()));
+            }
             gameBoard.removePiece(move.getStartPosition());
 
             if (isInCheck(getTeamTurn())) {
