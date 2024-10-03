@@ -157,7 +157,7 @@ public class ChessGame {
             if (getTeamTurn() == TeamColor.BLACK) {
                 setTeamTurn(TeamColor.WHITE);
             }
-            if (getTeamTurn() == TeamColor.WHITE) {
+            else {
                 setTeamTurn(TeamColor.BLACK);
             }
         }
@@ -285,6 +285,9 @@ public class ChessGame {
         int kingMovesSize = validKingMovesCollection.size();
 
         if(kingMovesSize == 0) {
+            if(!isInCheck(teamColor)){
+                return false;
+            }
             for (row = 1; row < 9; ++row) {
                 for (col = 1; col < 9; ++col) {
                     ChessPosition positionChecker = new ChessPosition(row, col);
@@ -441,6 +444,11 @@ public class ChessGame {
      */
     public boolean isInStalemate(TeamColor teamColor) {
 
+        //TODO: stalemate returns a false positive because, while there are valid moves left, it disregards all of
+        // those moves because the king is already in check
+        if (isInCheckmate(teamColor)){
+            return false;
+        }
         int row;
         int col;
         for (row = 1; row < 9; ++row) {
@@ -456,6 +464,7 @@ public class ChessGame {
                 }
             }
         }
+
         return true;
     }
 
