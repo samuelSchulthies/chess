@@ -106,7 +106,11 @@ public class ChessBoard {
                     column = 1;
                     row--;
                 }
-                case ' ' -> column++;
+                case ' ' -> {
+                    var nullPosition = new ChessPosition(row, column);
+                    removePiece(nullPosition);
+                    column++;
+                }
                 case '|' -> {
                 }
                 default -> {

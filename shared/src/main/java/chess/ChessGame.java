@@ -10,9 +10,9 @@ import java.util.*;
  */
 public class ChessGame {
 
-    static private ChessBoard gameBoard;
+    static private ChessBoard gameBoard = new ChessBoard();
     static int moveIndicator;
-    static ChessBoard defaultBoard = new ChessBoard().getDefaultBoard();
+    static ChessBoard defaultBoard = new ChessBoard();
     static TeamColor teamTurn;
 //    static ChessPosition kingLocation;
     private ChessPiece pieceStorage;
@@ -21,7 +21,7 @@ public class ChessGame {
     Boolean exception = false;
 
     public ChessGame() {
-        setBoard(defaultBoard);
+        gameBoard.resetBoard();
         setTeamTurn(TeamColor.WHITE);
         moveIndicator = 0;
     }
