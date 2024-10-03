@@ -207,7 +207,6 @@ public class ChessGame {
         int col;
 
         Collection<ChessMove> validKingMovesCollection = validKingMoves(teamColor);
-        HashSet<ChessPosition> validKingSet = new HashSet<>();
 
         int kingMovesSize = validKingMovesCollection.size();
 
