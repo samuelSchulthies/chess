@@ -11,19 +11,14 @@ import java.util.*;
 public class ChessGame {
 
     static private ChessBoard gameBoard = new ChessBoard();
-    static int moveIndicator;
-    static ChessBoard defaultBoard = new ChessBoard();
     static TeamColor teamTurn;
-//    static ChessPosition kingLocation;
     private ChessPiece pieceStorage;
-
     Boolean validMovesFlag = false;
     Boolean exception = false;
 
     public ChessGame() {
         gameBoard.resetBoard();
         setTeamTurn(TeamColor.WHITE);
-        moveIndicator = 0;
     }
 
     /**
@@ -94,14 +89,6 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-//        if (!validMovesFlag) {
-//            if (moveIndicator % 2 == 0) {
-//                setTeamTurn(TeamColor.WHITE);
-//            } else {
-//                setTeamTurn(TeamColor.BLACK);
-//            }
-//            moveIndicator++;
-//        }
 
         if (getBoard().getPiece(move.getStartPosition()) != null){
 
@@ -140,14 +127,7 @@ public class ChessGame {
 
             if (isInCheck(getTeamTurn())) {
                 exception = true;
-//                if (isInCheckmate(getTeamTurn())) {
-//    //                undoMove(move);
-//                    throw new InvalidMoveException("The move " + move + " puts the king in checkmate");
-//                }
-//                else {
-    //                undoMove(move);
-                    throw new InvalidMoveException("The move " + move + " puts the king in check");
-//                }
+                throw new InvalidMoveException("The move " + move + " puts the king in check");
             }
         }
         else {
@@ -189,22 +169,8 @@ public class ChessGame {
     public boolean isInCheck(TeamColor teamColor) {
         int row;
         int col;
-//        kingLocation = null;
 
         ChessPosition kingLocation = getKingLocation(teamColor);
-
-//        for (row = 1; row < 9; ++row) {
-//            for (col = 1; col < 9; ++col) {
-//                ChessPosition positionChecker = new ChessPosition(row, col);
-//
-//                if (gameBoard.getPiece(positionChecker) != null) {
-//                    if ((gameBoard.getPiece(positionChecker).getPieceType() == ChessPiece.PieceType.KING) &&
-//                            (gameBoard.getPiece(positionChecker).getTeamColor() == teamColor)) {
-//                        kingLocation = new ChessPosition(row, col);
-//                    }
-//                }
-//            }
-//        }
 
         if(kingLocation == null){
             return false;
@@ -239,48 +205,9 @@ public class ChessGame {
     public boolean isInCheckmate(TeamColor teamColor) {
         int row;
         int col;
-//        kingLocation = null;
 
         Collection<ChessMove> validKingMovesCollection = validKingMoves(teamColor);
         HashSet<ChessPosition> validKingSet = new HashSet<>();
-
-        //Checks for pawn controlled squares
-        for (ChessMove kingMove : validKingMovesCollection) {
-            int signRow = 1;
-            int signCol = 1;
-            for (int i = 0; i < 4; ++i) {
-
-                // i = 0 is ++ quadrant
-                // i = 1 is -+ quadrant
-                // i = 2 is -- quadrant
-                // i = 3 is +- quadrant
-
-                if (i == 1) {
-                    signRow = -1;
-                }
-                if (i == 2) {
-                    signRow = -1;
-                    signCol = -1;
-                }
-                if (i == 3) {
-                    signRow = 1;
-                    signCol = -1;
-                }
-
-                int rowToAdd = kingMove.getEndPosition().getRow() + (signRow);
-                int colToAdd = kingMove.getEndPosition().getColumn() + (signCol);
-                ChessPosition pawnPositionChecker = new ChessPosition(rowToAdd, colToAdd);
-
-                if ((rowToAdd > 0) && (rowToAdd < 9)
-                        && (colToAdd > 0) && (colToAdd < 9)) {
-                    if ((gameBoard.getPiece(pawnPositionChecker) != null)
-                            && (gameBoard.getPiece(pawnPositionChecker).getPieceType() == ChessPiece.PieceType.PAWN)) {
-                        ChessMove pawnControlled = new ChessMove(pawnPositionChecker, kingMove.getEndPosition(), null);
-                        validKingSet.add(pawnControlled.getEndPosition());
-                    }
-                }
-            }
-        }
 
         int kingMovesSize = validKingMovesCollection.size();
 
@@ -297,12 +224,9 @@ public class ChessGame {
                         getBoard().getPiece(positionChecker).pieceMoves(gameBoard, positionChecker).clear();
                         Collection<ChessMove> validMovesCollection = new ArrayList<>(getBoard().getPiece(positionChecker).pieceMoves(gameBoard, positionChecker));
                         for (ChessMove move : validMovesCollection) {
-//                            gameBoard.addPiece(move.getEndPosition(), gameBoard.getPiece(move.getStartPosition()));
-//                            gameBoard.removePiece(move.getStartPosition());
 
                             try {
                                 makeMove(move);
-                                moveIndicator--;
                                 System.out.print(pieceStorage);
                             }
                             catch (InvalidMoveException e) {
@@ -312,92 +236,15 @@ public class ChessGame {
                             getBoard().getPiece(getKingLocation(teamColor)).pieceMoves(gameBoard, getKingLocation(teamColor)).clear();
                             if(!isInCheck(teamColor)){
                                 undoMove(move);
-//                                moveIndicator--;
                                 return false;
                             }
                             undoMove(move);
-//                            moveIndicator--;
                         }
                     }
-
-
-//                    if (gameBoard.getPiece(positionChecker) != null) {
-//                        if (gameBoard.getPiece(positionChecker).getTeamColor() != teamColor) {
-//                            getBoard().getPiece(positionChecker).pieceMoves(gameBoard, positionChecker).clear();
-//                            Collection<ChessMove> validMovesCollection = getBoard().getPiece(positionChecker).pieceMoves(gameBoard, positionChecker);
-//                            for (ChessMove move : validMovesCollection) {
-//                                for (ChessMove kingMove : validKingMovesCollection) {
-//                                    if ((move.getEndPosition().getRow() == kingMove.getEndPosition().getRow()) &&
-//                                            (move.getEndPosition().getColumn() == kingMove.getEndPosition().getColumn())) {
-//                                        validKingSet.add(move.getEndPosition());
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
                 }
             }
         }
         return kingMovesSize == 0;
-
-        //Move the king to each of its moves and check all the moves on the board
-//        for (ChessMove kingMove : validKingMovesCollection) {
-//            gameBoard.addPiece(kingMove.getEndPosition(), gameBoard.getPiece(kingMove.getStartPosition()));
-//            gameBoard.removePiece(kingMove.getStartPosition());
-//            for (row = 1; row < 9; ++row) {
-//                for (col = 1; col < 9; ++col) {
-//                    ChessPosition positionChecker = new ChessPosition(row, col);
-//                    if (gameBoard.getPiece(positionChecker) != null) {
-//                        if (gameBoard.getPiece(positionChecker).getTeamColor() != teamColor) {
-//                            getBoard().getPiece(positionChecker).pieceMoves(gameBoard, positionChecker).clear();
-//                            Collection<ChessMove> validMovesCollection = getBoard().getPiece(positionChecker).pieceMoves(gameBoard, positionChecker);
-////                            Collection<ChessMove> validMovesCollection = validMoves(positionChecker);
-//                            for (ChessMove move : validMovesCollection) {
-//                                if ((move.getEndPosition().getRow() == kingMove.getEndPosition().getRow()) &&
-//                                        (move.getEndPosition().getColumn() == kingMove.getEndPosition().getColumn())) {
-//                                    validKingSet.add(move.getEndPosition());
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//            undoMove(kingMove);
-//        }
-//
-//        //Move each piece on the board and check the king's moves for new openings
-//        for (row = 1; row < 9; ++row) {
-//            for (col = 1; col < 9; ++col) {
-//                ChessPosition positionChecker = new ChessPosition(row, col);
-//                if (gameBoard.getPiece(positionChecker) != null) {
-//                    if ((gameBoard.getPiece(positionChecker).getTeamColor() == teamColor) &&
-//                            (gameBoard.getPiece(positionChecker).getPieceType() != ChessPiece.PieceType.KING)) {
-//                        getBoard().getPiece(positionChecker).pieceMoves(gameBoard, positionChecker).clear();
-//                        Collection<ChessMove> validMovesCollection = new ArrayList<>(getBoard().getPiece(positionChecker).pieceMoves(gameBoard, positionChecker));
-//                        for (ChessMove move : validMovesCollection) {
-//                            gameBoard.addPiece(move.getEndPosition(), gameBoard.getPiece(move.getStartPosition()));
-//                            gameBoard.removePiece(move.getStartPosition());
-//                            validKingMoves(teamColor);
-////                            validKingSet.add(move.getEndPosition());
-//                            for (ChessMove kingMove : validKingMovesCollection) {
-//                                if ((move.getEndPosition().getRow() == kingMove.getEndPosition().getRow()) &&
-//                                        (move.getEndPosition().getColumn() == kingMove.getEndPosition().getColumn())){
-//                                    validKingSet.add(move.getEndPosition());
-//                                }
-//                            }
-//                            undoMove(move);
-//                        }
-//                    }
-//                }
-//            }
-//        }
-
-//        if ((validKingSet.size() != 0) && (kingMovesSize != 0)) {
-//            return validKingSet.size() == kingMovesSize;
-//        }
-//        else {
-//            return false;
-//        }
     }
 
     public Collection<ChessMove> validKingMoves(TeamColor teamColor){
@@ -484,18 +331,5 @@ public class ChessGame {
      */
     public ChessBoard getBoard() {
         return gameBoard;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ChessGame chessGame = (ChessGame) o;
-        return Objects.equals(gameBoard, chessGame.gameBoard) && teamTurn == chessGame.teamTurn;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(gameBoard, teamTurn);
     }
 }
