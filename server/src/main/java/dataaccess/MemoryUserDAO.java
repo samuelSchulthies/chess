@@ -4,11 +4,19 @@ import model.UserData;
 import requestresult.RegisterRequest;
 import requestresult.RegisterResult;
 
+import java.util.Collection;
+
 public class MemoryUserDAO implements UserDAO {
 
+    Collection<UserData> userDataCollection;
+
+    public MemoryUserDAO(){
+
+    }
+
     @Override
-    public RegisterResult createUser(RegisterRequest r) {
-        throw new RuntimeException("createUser not implemented");
+    public void createUser(UserData u) {
+        userDataCollection.add(u);
     }
 
     @Override
@@ -16,8 +24,12 @@ public class MemoryUserDAO implements UserDAO {
         throw new RuntimeException("getUser not implemented");
     }
 
+    public int getUserDataCollectionSize(){
+        return userDataCollection.size();
+    }
+
     @Override
     public void clear() {
-        throw new RuntimeException("clear not implemented");
+        userDataCollection.clear();
     }
 }

@@ -5,9 +5,11 @@ import requestresult.RegisterRequest;
 import requestresult.RegisterResult;
 
 public interface UserDAO {
-    RegisterResult createUser(RegisterRequest r) throws DataAccessException;
+    void createUser(UserData u) throws DataAccessException;
 
     UserData getUser(String username) throws DataAccessException;
+
+    int getUserDataCollectionSize();
 
     void clear();
 }
