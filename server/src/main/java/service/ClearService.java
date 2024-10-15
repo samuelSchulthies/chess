@@ -4,6 +4,6 @@ import requestresult.ClearResult;
 
 public class ClearService {
     ClearResult clear(){
-        throw new RuntimeException("clear not implemented");
+        throw new RuntimeException("clearResult not implemented");
     }
 }

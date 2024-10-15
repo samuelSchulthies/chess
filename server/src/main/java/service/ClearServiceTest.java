@@ -7,6 +7,6 @@ public class ClearServiceTest {
     @Test
     @DisplayName("Clear Result")
     public void clear(){
-        throw new RuntimeException("clear test not implemented");
+        throw new RuntimeException("clearResult test not implemented");
     }
 }
