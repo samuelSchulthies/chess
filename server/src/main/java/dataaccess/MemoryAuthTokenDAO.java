@@ -2,12 +2,13 @@ package dataaccess;
 
 import model.AuthData;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
 
 public class MemoryAuthTokenDAO implements AuthTokenDAO {
 
-    private Collection<AuthData> authDataCollection;
+    private ArrayList<AuthData> authDataCollection = new ArrayList<>();
 
     @Override
     public String createAuth(String username) throws DataAccessException {

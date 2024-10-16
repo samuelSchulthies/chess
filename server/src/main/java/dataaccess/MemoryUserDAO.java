@@ -4,11 +4,13 @@ import model.UserData;
 import requestresult.RegisterRequest;
 import requestresult.RegisterResult;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 public class MemoryUserDAO implements UserDAO {
 
-    Collection<UserData> userDataCollection;
+    ArrayList<UserData> userDataCollection = new ArrayList<>();
 
     public MemoryUserDAO(){
 
@@ -21,7 +23,12 @@ public class MemoryUserDAO implements UserDAO {
 
     @Override
     public UserData getUser(String username) {
-        throw new RuntimeException("getUser not implemented");
+        for (UserData data : userDataCollection) {
+            if (Objects.equals(data.username(), username)){
+                return data;
+            }
+        }
+        return null;
     }
 
     public int getUserDataCollectionSize(){

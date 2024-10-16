@@ -58,6 +58,14 @@ public class UserService {
         return userDAO.getUserDataCollectionSize();
     }
 
+    UserDAO getUserDAO(){
+        return userDAO;
+    }
+
+    AuthTokenDAO getAuthTokenDAO(){
+        return authTokenDAO;
+    }
+
     int authTokenSize(){
         return userDAO.getUserDataCollectionSize();
     }

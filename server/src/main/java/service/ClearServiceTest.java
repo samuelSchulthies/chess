@@ -11,7 +11,7 @@ import requestresult.RegisterRequest;
 
 public class ClearServiceTest {
     static final UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthTokenDAO());
-    static final ClearService clearService = new ClearService();
+    static final ClearService clearService = new ClearService(userService);
     @Test
     @DisplayName("Clear User Test")
     public void clearUserTest() throws DataAccessException {

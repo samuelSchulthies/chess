@@ -1,16 +1,21 @@
 package service;
 
+import dataaccess.AuthTokenDAO;
 import dataaccess.MemoryAuthTokenDAO;
 import dataaccess.MemoryUserDAO;
+import dataaccess.UserDAO;
 import requestresult.ClearResult;
 
 public class ClearService {
-    ClearResult clear(){
-        MemoryUserDAO memUserDAO = new MemoryUserDAO();
-        MemoryAuthTokenDAO memAuthTokenDAO = new MemoryAuthTokenDAO();
+    private final UserService userService;
+    public ClearService(UserService userService){
+        this.userService = userService;
+    }
 
-        memUserDAO.clear();
-        memAuthTokenDAO.clear();
+
+    ClearResult clear(){
+        userService.getUserDAO().clear();
+        userService.getAuthTokenDAO().clear();
         return new ClearResult();
     }
 }
