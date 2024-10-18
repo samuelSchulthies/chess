@@ -10,7 +10,7 @@ import java.util.Objects;
 
 public class MemoryUserDAO implements UserDAO {
 
-    ArrayList<UserData> userDataCollection = new ArrayList<>();
+    final private ArrayList<UserData> userDataCollection = new ArrayList<>();
 
     public MemoryUserDAO(){
 

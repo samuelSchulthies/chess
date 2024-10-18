@@ -1,7 +1,6 @@
 package service;
 import dataaccess.AuthTokenDAO;
 import dataaccess.DataAccessException;
-import dataaccess.MemoryUserDAO;
 import dataaccess.UserDAO;
 import model.UserData;
 import requestresult.*;
@@ -58,6 +57,10 @@ public class UserService {
         return userDAO.getUserDataCollectionSize();
     }
 
+    int authTokenSize(){
+        return authTokenDAO.getAuthDataCollectionSize();
+    }
+
     UserDAO getUserDAO(){
         return userDAO;
     }
@@ -66,7 +69,4 @@ public class UserService {
         return authTokenDAO;
     }
 
-    int authTokenSize(){
-        return userDAO.getUserDataCollectionSize();
-    }
 }

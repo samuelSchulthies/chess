@@ -1,14 +1,28 @@
 package service;
 
+import dataaccess.DataAccessException;
+import dataaccess.MemoryAuthTokenDAO;
+import dataaccess.MemoryUserDAO;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import requestresult.RegisterRequest;
+import requestresult.RegisterResult;
 
 public class UserServiceTest {
 
     @Test
     @DisplayName("Positive Register Result")
-    public void positiveRegister(){
-        throw new RuntimeException("positive register test not implemented");
+    public void positiveRegister() throws DataAccessException {
+        UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthTokenDAO());
+
+        RegisterRequest newUser = new RegisterRequest("sally","123","sallyisawesome@gmail.com");
+        RegisterResult registeredUser = userService.register(newUser);
+
+        Assertions.assertEquals(newUser.username(),
+                userService.getUserDAO().getUser(registeredUser.username()).username(),
+                "Registered user was not found in the database");
+
     }
 
     @Test

@@ -1,9 +1,6 @@
 package dataaccess;
 
 import model.GameData;
-import model.UserData;
-import requestresult.CreateRequest;
-import requestresult.CreateResult;
 import requestresult.ListRequest;
 import requestresult.ListResult;
 
@@ -11,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class MemoryGameDAO implements GameDAO {
-    ArrayList<GameData> gameDataCollection = new ArrayList<>();
+    final private ArrayList<GameData> gameDataCollection = new ArrayList<>();
     @Override
     public void createGame(GameData game) throws DataAccessException {
         gameDataCollection.add(game);
