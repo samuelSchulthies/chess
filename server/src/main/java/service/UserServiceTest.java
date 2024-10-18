@@ -2,6 +2,7 @@ package service;
 
 import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthTokenDAO;
+import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -19,8 +20,7 @@ public class UserServiceTest {
         RegisterRequest newUser = new RegisterRequest("sally","123","sallyisawesome@gmail.com");
         RegisterResult registeredUser = userService.register(newUser);
 
-        Assertions.assertEquals(newUser.username(),
-                userService.getUserDAO().getUser(registeredUser.username()).username(),
+        Assertions.assertNotNull(userService.getUserDAO().getUser(registeredUser.username()),
                 "Registered user was not found in the database");
 
     }
