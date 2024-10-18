@@ -8,14 +8,16 @@ import requestresult.ClearResult;
 
 public class ClearService {
     private final UserService userService;
-    public ClearService(UserService userService){
+    private final GameService gameService;
+    public ClearService(UserService userService, GameService gameService){
         this.userService = userService;
+        this.gameService = gameService;
     }
-
 
     ClearResult clear(){
         userService.getUserDAO().clear();
         userService.getAuthTokenDAO().clear();
+        gameService.getGameDAO().clear();
         return new ClearResult();
     }
 }
