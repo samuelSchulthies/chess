@@ -25,11 +25,11 @@ public class GameService {
     }
     CreateResult create(CreateRequest r) throws DataAccessException {
         if (authTokenDAO.getAuth(r.authToken()) != null) {
-            if (r.gameName() != null) {
+            if ((r.gameName() != null) && (!r.gameName().equals(""))) {
                 GameData game = new GameData(gameID, "whiteUsername", "blackUsername", r.gameName(), new ChessGame());
                 gameID++;
                 gameDAO.createGame(game);
-                return new CreateResult(gameID);
+                return new CreateResult(game.gameID());
             }
             else {
                 throw new DataAccessException("game name cannot be empty");

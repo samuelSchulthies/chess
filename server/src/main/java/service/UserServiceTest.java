@@ -2,7 +2,6 @@ package service;
 
 import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthTokenDAO;
-import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
