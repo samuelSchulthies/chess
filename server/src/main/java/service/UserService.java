@@ -51,8 +51,14 @@ public class UserService {
         }
     }
 
-    LogoutResult logout(LogoutRequest r){
-        throw new RuntimeException("logout not implemented");
+    LogoutResult logout(LogoutRequest r) throws DataAccessException{
+        if (authTokenDAO.getAuth(r.authToken()) != null) {
+            authTokenDAO.deleteAuth(r.authToken());
+            return new LogoutResult();
+        }
+        else {
+            throw new DataAccessException("invalid authtoken");
+        }
     }
 
     int userDataSize(){

@@ -29,6 +29,10 @@ public class MemoryAuthTokenDAO implements AuthTokenDAO {
         return null;
     }
 
+    public void deleteAuth(String authToken){
+        authDataCollection.removeIf(data -> Objects.equals(data.authToken(), authToken));
+    }
+
     public int getAuthDataCollectionSize(){
         return authDataCollection.size();
     }

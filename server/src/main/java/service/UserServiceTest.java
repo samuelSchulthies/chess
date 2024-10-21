@@ -7,13 +7,12 @@ import dataaccess.MemoryUserDAO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import requestresult.RegisterRequest;
-import requestresult.RegisterResult;
+import requestresult.*;
 
 public class UserServiceTest {
 
     @Test
-    @DisplayName("Positive Register Result")
+    @DisplayName("Proper Register Result")
     public void positiveRegister() throws DataAccessException {
         UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthTokenDAO());
 
@@ -26,7 +25,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("Negative Register Result")
+    @DisplayName("Improper Register Result")
     public void negativeRegister() throws DataAccessException {
         UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthTokenDAO());
 
@@ -34,49 +33,87 @@ public class UserServiceTest {
         userService.register(newUser);
 
         RegisterRequest newUserNameAlreadyTaken = new RegisterRequest("sally","321","sallyisnotawesome@gmail.com");
-
-        try {
-            userService.register(newUserNameAlreadyTaken);
-        }
-        catch (DataAccessException e){
-            Assertions.assertEquals("dataaccess.DataAccessException: username already taken", e.toString(),
-                    "Username already taken exception did not return");
-        }
+        Assertions.assertThrows(DataAccessException.class, () -> userService.register(newUserNameAlreadyTaken));
 
         RegisterRequest newUserNameNull = new RegisterRequest("",null,"sallyisnotawesome@gmail.com");
+        Assertions.assertThrows(DataAccessException.class, () -> userService.register(newUserNameNull));
+
+    }
+
+    @Test
+    @DisplayName("Proper Login Result")
+    public void positiveLogin() throws DataAccessException {
+        UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthTokenDAO());
+
+        RegisterRequest newUser = new RegisterRequest("sally","123","sallyisawesome@gmail.com");
+        RegisterResult registeredUser = userService.register(newUser);
+
+        LogoutRequest logOutUser = new LogoutRequest(registeredUser.authToken());
+        userService.logout(logOutUser);
+
+        LoginRequest loginUser = new LoginRequest("sally", "123");
+        LoginResult loggedInUser = userService.login(loginUser);
+        String authTokenStorage = loggedInUser.authToken();
+
+        Assertions.assertNotNull(userService.getAuthTokenDAO().getAuth(authTokenStorage),
+                "User logged in but authToken is not found");
+    }
+
+    @Test
+    @DisplayName("Improper Login Result")
+    public void negativeLogin() throws DataAccessException {
+        UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthTokenDAO());
+
+        RegisterRequest newUser = new RegisterRequest("sally","123","sallyisawesome@gmail.com");
+        RegisterResult registeredUser = userService.register(newUser);
+
+        LogoutRequest logOutUser = new LogoutRequest(registeredUser.authToken());
+        userService.logout(logOutUser);
+
+        LoginRequest loginUserBadUsername = new LoginRequest("saly", "123");
+        Assertions.assertThrows(DataAccessException.class, () -> userService.login(loginUserBadUsername));
+
+        LoginRequest loginUserBadPassword = new LoginRequest("sally", "1234");
+        Assertions.assertThrows(DataAccessException.class, () -> userService.login(loginUserBadPassword));
+
+    }
+
+    @Test
+    @DisplayName("Proper Logout Result")
+    public void positiveLogout() throws DataAccessException {
+        UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthTokenDAO());
+
+        RegisterRequest newUser = new RegisterRequest("sally","123","sallyisawesome@gmail.com");
+        RegisterResult registeredUser = userService.register(newUser);
+
+        LogoutRequest logOutUser = new LogoutRequest(registeredUser.authToken());
+        String authTokenStorage = registeredUser.authToken();
+        userService.logout(logOutUser);
+
+        Assertions.assertNull(userService.getAuthTokenDAO().getAuth(authTokenStorage),
+                "AuthToken was not removed");
+
+    }
+
+    @Test
+    @DisplayName("Improper Logout Result")
+    public void negativeLogout() throws DataAccessException {
+        UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthTokenDAO());
+
+        RegisterRequest newUser = new RegisterRequest("sally","123","sallyisawesome@gmail.com");
+        RegisterResult registeredUser = userService.register(newUser);
+
+        LogoutRequest logOutUser = new LogoutRequest(registeredUser.authToken());
+
+        userService.logout(logOutUser);
 
         try {
-            userService.register(newUserNameNull);
+            userService.logout(logOutUser);
         }
         catch (DataAccessException e){
-            Assertions.assertEquals("dataaccess.DataAccessException: one of the register fields is empty", e.toString(),
-                    "Username null exception did not return");
+            Assertions.assertEquals("dataaccess.DataAccessException: invalid authtoken", e.toString(),
+                    "Invalid authtoken exception did not return");
         }
 
-
-    }
-
-    @Test
-    @DisplayName("Positive Login Result")
-    public void positiveLogin(){
-        throw new RuntimeException("positive login test not implemented");
-    }
-
-    @Test
-    @DisplayName("Negative Login Result")
-    public void negativeLogin(){
-        throw new RuntimeException("negative login test not implemented");
-    }
-
-    @Test
-    @DisplayName("Positive Logout Result")
-    public void positiveLogout(){
-        throw new RuntimeException("positive logout test not implemented");
-    }
-
-    @Test
-    @DisplayName("Negative Logout Result")
-    public void negativeLogout(){
-        throw new RuntimeException("negative logout test not implemented");
     }
 }
