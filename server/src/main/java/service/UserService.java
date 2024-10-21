@@ -18,7 +18,9 @@ public class UserService {
 
     RegisterResult register(RegisterRequest r) throws DataAccessException {
 
-        if ((r.username() != null) && (r.password() != null) && (r.email() != null)) {
+        if (((r.username() != null) && ((!Objects.equals(r.username(), "")))) &&
+                ((r.password() != null) && ((!Objects.equals(r.password(), "")))) &&
+                        (((r.email() != null) && ((!Objects.equals(r.email(), "")))))) {
             if (userDAO.getUser(r.username()) == null) {
                 UserData user = new UserData(r.username(), r.password(), r.email());
                 userDAO.createUser(user);

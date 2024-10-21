@@ -27,8 +27,33 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("Negative Register Result")
-    public void negativeRegister(){
-        throw new RuntimeException("negative register test not implemented");
+    public void negativeRegister() throws DataAccessException {
+        UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthTokenDAO());
+
+        RegisterRequest newUser = new RegisterRequest("sally","123","sallyisawesome@gmail.com");
+        userService.register(newUser);
+
+        RegisterRequest newUserNameAlreadyTaken = new RegisterRequest("sally","321","sallyisnotawesome@gmail.com");
+
+        try {
+            userService.register(newUserNameAlreadyTaken);
+        }
+        catch (DataAccessException e){
+            Assertions.assertEquals("dataaccess.DataAccessException: username already taken", e.toString(),
+                    "Username already taken exception did not return");
+        }
+
+        RegisterRequest newUserNameNull = new RegisterRequest("",null,"sallyisnotawesome@gmail.com");
+
+        try {
+            userService.register(newUserNameNull);
+        }
+        catch (DataAccessException e){
+            Assertions.assertEquals("dataaccess.DataAccessException: one of the register fields is empty", e.toString(),
+                    "Username null exception did not return");
+        }
+
+
     }
 
     @Test
