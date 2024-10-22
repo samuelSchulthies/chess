@@ -4,10 +4,13 @@ import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthTokenDAO;
 import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
+import model.GameData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import requestresult.*;
+
+import java.util.ArrayList;
 
 public class GameServiceTest {
 
@@ -120,7 +123,31 @@ public class GameServiceTest {
     @Test
     @DisplayName("Positive List Result")
     public void positiveList() throws DataAccessException {
-        throw new RuntimeException("postive list test not implemented");
+        UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthTokenDAO());
+        GameService gameService = new GameService(new MemoryGameDAO(), userService.getAuthTokenDAO(), userService.getUserDAO());
+
+        RegisterRequest newUser = new RegisterRequest("sally","123","sallyisawesome@gmail.com");
+        RegisterResult registeredUser = userService.register(newUser);
+
+        ArrayList<GameData> expectedGameList = new ArrayList<>();
+
+        CreateRequest newGame = new CreateRequest("Sally's game 1", registeredUser.authToken());
+        CreateResult createdGame = gameService.create(newGame);
+        expectedGameList.add(gameService.getGameDAO().getGame(createdGame.gameID()));
+
+        CreateRequest newGame2 = new CreateRequest("Sally's game 2", registeredUser.authToken());
+        CreateResult createdGame2 = gameService.create(newGame2);
+        expectedGameList.add(gameService.getGameDAO().getGame(createdGame2.gameID()));
+
+        CreateRequest newGame3 = new CreateRequest("Sally's game 3", registeredUser.authToken());
+        CreateResult createdGame3 = gameService.create(newGame3);
+        expectedGameList.add(gameService.getGameDAO().getGame(createdGame3.gameID()));
+
+        ListRequest newGameList = new ListRequest(registeredUser.authToken());
+        ListResult actualGameList = gameService.list(newGameList);
+
+        Assertions.assertEquals(expectedGameList, actualGameList.games(), "Returned game list does not match expected");
+
     }
 
     @Test
