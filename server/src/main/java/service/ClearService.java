@@ -14,7 +14,7 @@ public class ClearService {
         this.gameService = gameService;
     }
 
-    ClearResult clear(){
+    public ClearResult clear(){
         userService.getUserDAO().clear();
         userService.getAuthTokenDAO().clear();
         gameService.getGameDAO().clear();

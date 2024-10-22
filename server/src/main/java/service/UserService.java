@@ -16,7 +16,7 @@ public class UserService {
         this.authTokenDAO = authtokenDAO;
     }
 
-    RegisterResult register(RegisterRequest r) throws DataAccessException {
+    public RegisterResult register(RegisterRequest r) throws DataAccessException {
 
         if (((r.username() != null) && ((!Objects.equals(r.username(), "")))) &&
                 ((r.password() != null) && ((!Objects.equals(r.password(), "")))) &&
@@ -37,7 +37,7 @@ public class UserService {
         }
     }
 
-    LoginResult login(LoginRequest r) throws DataAccessException{
+    public LoginResult login(LoginRequest r) throws DataAccessException{
         if(userDAO.getUser((r.username())) == null){
             throw new DataAccessException("username does not exist");
         }
@@ -51,7 +51,7 @@ public class UserService {
         }
     }
 
-    LogoutResult logout(LogoutRequest r) throws DataAccessException{
+    public LogoutResult logout(LogoutRequest r) throws DataAccessException{
         if (authTokenDAO.getAuth(r.authToken()) != null) {
             authTokenDAO.deleteAuth(r.authToken());
             return new LogoutResult();
@@ -69,11 +69,11 @@ public class UserService {
         return authTokenDAO.getAuthDataCollectionSize();
     }
 
-    UserDAO getUserDAO(){
+    public UserDAO getUserDAO(){
         return userDAO;
     }
 
-    AuthTokenDAO getAuthTokenDAO(){
+    public AuthTokenDAO getAuthTokenDAO(){
         return authTokenDAO;
     }
 
