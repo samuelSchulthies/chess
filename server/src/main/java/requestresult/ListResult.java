@@ -1,3 +1,7 @@
 package requestresult;
 
-public record ListResult(int gameID, String whiteUsername, String blackUsername, String gameName){}
+import model.GameData;
+
+import java.util.ArrayList;
+
+public record ListResult(ArrayList<GameData> listAllGames){}

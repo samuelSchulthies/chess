@@ -1,5 +1,6 @@
 package dataaccess;
 
+import chess.ChessGame;
 import model.GameData;
 import requestresult.ListRequest;
 import requestresult.ListResult;
@@ -12,6 +13,10 @@ public class MemoryGameDAO implements GameDAO {
     @Override
     public void createGame(GameData game) throws DataAccessException {
         gameDataCollection.add(game);
+    }
+
+    public void removeGame(int gameID) throws DataAccessException{
+        gameDataCollection.remove(getGame(gameID));
     }
 
     @Override
@@ -30,12 +35,17 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
-    public void updateGame(int gameID) throws DataAccessException {
-
+    public void updateGame(int gameID, GameData game) throws DataAccessException {
+        removeGame(gameID);
+        createGame(game);
     }
 
     public int getGameDataCollectionSize(){
         return gameDataCollection.size();
+    }
+
+    public ArrayList<GameData> getGameDataCollection(){
+        return gameDataCollection;
     }
 
     public void clear(){

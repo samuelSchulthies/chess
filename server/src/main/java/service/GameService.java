@@ -9,6 +9,7 @@ import model.GameData;
 import model.UserData;
 import requestresult.*;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class GameService {
@@ -26,7 +27,7 @@ public class GameService {
     CreateResult create(CreateRequest r) throws DataAccessException {
         if (authTokenDAO.getAuth(r.authToken()) != null) {
             if ((r.gameName() != null) && (!r.gameName().equals(""))) {
-                GameData game = new GameData(gameID, "whiteUsername", "blackUsername", r.gameName(), new ChessGame());
+                GameData game = new GameData(gameID, "", "", r.gameName(), new ChessGame());
                 gameID++;
                 gameDAO.createGame(game);
                 return new CreateResult(game.gameID());
@@ -39,11 +40,53 @@ public class GameService {
             throw new DataAccessException("invalid authtoken");
         }
     }
-    JoinResult join(JoinRequest r){
-        throw new RuntimeException("join not implemented");
+    JoinResult join(JoinRequest r) throws DataAccessException {
+        if (authTokenDAO.getAuth(r.authToken()) != null){
+            if (gameDAO.getGame(r.gameID()) != null){
+                GameData game = gameDAO.getGame(r.gameID());
+                if (!Objects.equals(game.whiteUsername(), "")
+                        && !Objects.equals(game.blackUsername(), "")){
+                    throw new DataAccessException("game is full");
+                }
+                if (Objects.equals(r.playerColor(), "BLACK")
+                        && (Objects.equals(game.blackUsername(), ""))){
+                    GameData updatedGame = new GameData(game.gameID(), game.whiteUsername(),
+                            authTokenDAO.getAuth(r.authToken()).username(), game.gameName(), game.game());
+                    gameDAO.updateGame(game.gameID(), updatedGame);
+                }
+                else if (Objects.equals(r.playerColor(), "BLACK")) {
+                    throw new DataAccessException("black is taken");
+                }
+
+                if (Objects.equals(r.playerColor(), "WHITE")
+                        && (Objects.equals(game.whiteUsername(), ""))){
+                    GameData updatedGame = new GameData(game.gameID(), authTokenDAO.getAuth(r.authToken()).username(),
+                            game.blackUsername(), game.gameName(), game.game());
+                    gameDAO.updateGame(game.gameID(), updatedGame);
+                }
+                else if (Objects.equals(r.playerColor(), "WHITE")){
+                    throw new DataAccessException("white is taken");
+                }
+
+                return new JoinResult();
+
+            }
+            else {
+                throw new DataAccessException("invalid gameID");
+            }
+        }
+        else {
+            throw new DataAccessException("invalid authtoken");
+        }
+
     }
-    ListResult list(ListRequest r){
-        throw new RuntimeException("list not implemented");
+    ListResult list(ListRequest r) throws DataAccessException {
+        if (authTokenDAO.getAuth(r.authToken()) != null){
+            return new ListResult(gameDAO.getGameDataCollection());
+        }
+        else {
+            throw new DataAccessException("invalid authtoken");
+        }
     }
 
     int gameDataSize(){
