@@ -146,13 +146,35 @@ public class GameServiceTest {
         ListRequest newGameList = new ListRequest(registeredUser.authToken());
         ListResult actualGameList = gameService.list(newGameList);
 
-        Assertions.assertEquals(expectedGameList, actualGameList.games(), "Returned game list does not match expected");
+        Assertions.assertEquals(expectedGameList, actualGameList.games(),
+                "Returned game list does not match expected");
 
     }
 
     @Test
     @DisplayName("Negative List Result")
     public void negativeList() throws DataAccessException {
-        throw new RuntimeException("negative list test not implemented");
+        UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthTokenDAO());
+        GameService gameService = new GameService(new MemoryGameDAO(), userService.getAuthTokenDAO(), userService.getUserDAO());
+
+        RegisterRequest newUser = new RegisterRequest("sally","123","sallyisawesome@gmail.com");
+        RegisterResult registeredUser = userService.register(newUser);
+
+        CreateRequest newGame = new CreateRequest("Sally's game 1", registeredUser.authToken());
+        gameService.create(newGame);
+
+        CreateRequest newGame2 = new CreateRequest("Sally's game 2", registeredUser.authToken());
+        gameService.create(newGame2);
+
+        CreateRequest newGame3 = new CreateRequest("Sally's game 3", registeredUser.authToken());
+        gameService.create(newGame3);
+
+        LogoutRequest logoutUser = new LogoutRequest(registeredUser.authToken());
+        userService.logout(logoutUser);
+
+        ListRequest newGameList2 = new ListRequest(registeredUser.authToken());
+        Assertions.assertThrows(DataAccessException.class, () -> gameService.list(newGameList2),
+                "User with no auth listedGames");
+
     }
 }
