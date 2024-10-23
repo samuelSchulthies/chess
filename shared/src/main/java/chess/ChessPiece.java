@@ -13,7 +13,7 @@ import java.util.Objects;
  */
 public class ChessPiece {
 
-    private final ChessGame.TeamColor pieceColor;
+    final ChessGame.TeamColor pieceColor;
     private final PieceType type;
 
     public int addHelper;
@@ -68,32 +68,10 @@ public class ChessPiece {
      */
     ArrayList<ChessMove> pieceMovesArray = new ArrayList<>();
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+
         if(getPieceType() == PieceType.BISHOP){
-            int signRow = 1;
-            int signCol = 1;
-            for (int i = 0; i < 4; ++i){
-                addHelper = 0;
-
-                // i = 0 is ++ quadrant
-                // i = 1 is -+ quadrant
-                // i = 2 is -- quadrant
-                // i = 3 is +- quadrant
-
-                if (i == 1){
-                   signRow = -1;
-                }
-                if (i == 2){
-                   signRow = -1;
-                   signCol = -1;
-                }
-                if (i == 3){
-                   signRow = 1;
-                   signCol = -1;
-                }
-
-                pieceMovesRecurser(board, myPosition, signRow, signCol);
-
-            }
+            BishopMovesCalculator bishopMoves = new BishopMovesCalculator(board, myPosition, pieceMovesArray);
+            bishopMoves.bishopMovesCalculator();
         }
 
         if(getPieceType() == PieceType.KING){
