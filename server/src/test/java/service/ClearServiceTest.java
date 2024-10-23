@@ -13,29 +13,29 @@ import requestresult.RegisterRequest;
 import requestresult.RegisterResult;
 
 public class ClearServiceTest {
-    static final UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthTokenDAO());
-    static final GameService gameService = new GameService(new MemoryGameDAO(), userService.getAuthTokenDAO(), userService.getUserDAO());
-    static final ClearService clearService = new ClearService(userService, gameService);
+    static final UserService USER_SERVICE = new UserService(new MemoryUserDAO(), new MemoryAuthTokenDAO());
+    static final GameService GAME_SERVICE = new GameService(new MemoryGameDAO(), USER_SERVICE.getAuthTokenDAO(), USER_SERVICE.getUserDAO());
+    static final ClearService CLEAR_SERVICE = new ClearService(USER_SERVICE, GAME_SERVICE);
     @Test
     @DisplayName("Clear Test")
     public void clearTest() throws DataAccessException {
         RegisterRequest newUser = new RegisterRequest("sally","123","sallyisawesome@gmail.com");
-        RegisterResult registeredUser = userService.register(newUser);
+        RegisterResult registeredUser = USER_SERVICE.register(newUser);
 
         RegisterRequest newUser2 = new RegisterRequest("beth","321","bethisawesome@gmail.com");
-        RegisterResult registeredUser2 = userService.register(newUser2);
+        RegisterResult registeredUser2 = USER_SERVICE.register(newUser2);
 
         CreateRequest newGame = new CreateRequest("testGame");
         CreateRequest newGame2 = new CreateRequest("testGame");
 
-        gameService.create(newGame, registeredUser.authToken());
-        gameService.create(newGame2, registeredUser2.authToken());
+        GAME_SERVICE.create(newGame, registeredUser.authToken());
+        GAME_SERVICE.create(newGame2, registeredUser2.authToken());
 
-        clearService.clear();
+        CLEAR_SERVICE.clear();
 
-        Assertions.assertEquals(0, userService.userDataSize());
-        Assertions.assertEquals(0, userService.authTokenSize());
-        Assertions.assertEquals(0, gameService.gameDataSize());
+        Assertions.assertEquals(0, USER_SERVICE.userDataSize());
+        Assertions.assertEquals(0, USER_SERVICE.authTokenSize());
+        Assertions.assertEquals(0, GAME_SERVICE.gameDataSize());
 
     }
 }

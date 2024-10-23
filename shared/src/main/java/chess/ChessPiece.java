@@ -16,7 +16,7 @@ public class ChessPiece {
     private final ChessGame.TeamColor pieceColor;
     private final PieceType type;
 
-    public int ADD_HELPER;
+    public int addHelper;
 
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
@@ -72,7 +72,7 @@ public class ChessPiece {
             int signRow = 1;
             int signCol = 1;
             for (int i = 0; i < 4; ++i){
-                ADD_HELPER = 0;
+                addHelper = 0;
 
                 // i = 0 is ++ quadrant
                 // i = 1 is -+ quadrant
@@ -272,7 +272,7 @@ public class ChessPiece {
             int signCol = 1;
 
             for (int i = 0; i < 8; ++i) {
-                ADD_HELPER = 0;
+                addHelper = 0;
 
                 // i = 0 is ++ quadrant
                 // i = 1 is -+ quadrant
@@ -322,7 +322,7 @@ public class ChessPiece {
             int signCol = 0;
 
             for (int i = 0; i < 4; ++i) {
-                ADD_HELPER = 0;
+                addHelper = 0;
 
                 // i = 4 is +0 quadrant
                 // i = 5 is 0- quadrant
@@ -349,9 +349,9 @@ public class ChessPiece {
     }
 
     public void pieceMovesRecurser(ChessBoard board, ChessPosition myPosition, int signRow, int signCol) {
-        ADD_HELPER += 1;
-        int rowToAdd = myPosition.getRow() + (ADD_HELPER * signRow);
-        int colToAdd = myPosition.getColumn() + (ADD_HELPER * signCol);
+        addHelper += 1;
+        int rowToAdd = myPosition.getRow() + (addHelper * signRow);
+        int colToAdd = myPosition.getColumn() + (addHelper * signCol);
         ChessPosition positionChecker = new ChessPosition(rowToAdd, colToAdd);
         ChessMove newMove = new ChessMove(myPosition, positionChecker, null);
 
