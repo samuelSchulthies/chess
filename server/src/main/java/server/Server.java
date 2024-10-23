@@ -13,18 +13,18 @@ import spark.*;
 
 public class Server {
 
-    static final UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthTokenDAO());
-    static final GameService gameService = new GameService(new MemoryGameDAO(), userService.getAuthTokenDAO(), userService.getUserDAO());
-    static final ClearService clearService = new ClearService(userService, gameService);
+    static final UserService USER_SERVICE = new UserService(new MemoryUserDAO(), new MemoryAuthTokenDAO());
+    static final GameService GAME_SERVICE = new GameService(new MemoryGameDAO(), USER_SERVICE.getAuthTokenDAO(), USER_SERVICE.getUserDAO());
+    static final ClearService CLEAR_SERVICE = new ClearService(USER_SERVICE, GAME_SERVICE);
 
-    static final ExceptionHandler exceptionHandler = new ExceptionHandler();
-    static final ClearHandler clearHandler = new ClearHandler(clearService);
-    static final CreateHandler createHandler = new CreateHandler(gameService);
-    static final JoinHandler joinHandler = new JoinHandler(gameService);
-    static final ListHandler listHandler = new ListHandler(gameService);
-    static final LoginHandler loginHandler = new LoginHandler(userService);
-    static final LogoutHandler logoutHandler = new LogoutHandler(userService);
-    static final RegisterHandler registerHandler = new RegisterHandler(userService);
+    static final ExceptionHandler EXCEPTION_HANDLER = new ExceptionHandler();
+    static final ClearHandler CLEAR_HANDLER = new ClearHandler(CLEAR_SERVICE);
+    static final CreateHandler CREATE_HANDLER = new CreateHandler(GAME_SERVICE);
+    static final JoinHandler JOIN_HANDLER = new JoinHandler(GAME_SERVICE);
+    static final ListHandler LIST_HANDLER = new ListHandler(GAME_SERVICE);
+    static final LoginHandler LOGIN_HANDLER = new LoginHandler(USER_SERVICE);
+    static final LogoutHandler LOGOUT_HANDLER = new LogoutHandler(USER_SERVICE);
+    static final RegisterHandler REGISTER_HANDLER = new RegisterHandler(USER_SERVICE);
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -32,14 +32,14 @@ public class Server {
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
-        Spark.delete("/db", clearHandler::clear);
-        Spark.post("/game", createHandler::create);
-        Spark.put("/game", joinHandler::join);
-        Spark.get("/game", listHandler::list);
-        Spark.post("/session", loginHandler::login);
-        Spark.delete("/session", logoutHandler::logout);
-        Spark.post("/user", registerHandler::register);
-        Spark.exception(DataAccessException.class, exceptionHandler::exception);
+        Spark.delete("/db", CLEAR_HANDLER::clear);
+        Spark.post("/game", CREATE_HANDLER::create);
+        Spark.put("/game", JOIN_HANDLER::join);
+        Spark.get("/game", LIST_HANDLER::list);
+        Spark.post("/session", LOGIN_HANDLER::login);
+        Spark.delete("/session", LOGOUT_HANDLER::logout);
+        Spark.post("/user", REGISTER_HANDLER::register);
+        Spark.exception(DataAccessException.class, EXCEPTION_HANDLER::exception);
 
         Spark.awaitInitialization();
         return Spark.port();
