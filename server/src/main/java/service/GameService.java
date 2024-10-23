@@ -17,7 +17,7 @@ public class GameService {
     private final GameDAO gameDAO;
     private final AuthTokenDAO authTokenDAO;
     private final UserDAO userDAO;
-    private int gameID = 0;
+    private int gameID = 1;
 
     public GameService(GameDAO gameDAO, AuthTokenDAO authTokenDAO, UserDAO userDAO){
         this.gameDAO = gameDAO;
