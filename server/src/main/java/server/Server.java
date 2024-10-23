@@ -45,10 +45,6 @@ public class Server {
         return Spark.port();
     }
 
-    private Object test(Request req, Response rep){
-        return null;
-    }
-
     public void stop() {
         Spark.stop();
         Spark.awaitStop();

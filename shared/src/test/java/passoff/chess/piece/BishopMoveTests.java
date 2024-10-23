@@ -11,33 +11,6 @@ import static passoff.chess.TestUtilities.validateMoves;
 
 public class BishopMoveTests {
 
-//    @Test
-//    public void bishopEquals() {
-//        var piece1 = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
-//        var piece2 = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
-//        var piece3 = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
-//        Assertions.assertEquals(piece2, piece1);
-//        Assertions.assertEquals(piece2.hashCode(), piece1.hashCode());
-//        Assertions.assertNotEquals(piece2, piece3);
-//        Assertions.assertNotEquals(piece2.hashCode(), piece3.hashCode());
-//
-//        var p1 = new ChessPosition(1, 3);
-//        var p2 = new ChessPosition(1, 3);
-//        var p3 = new ChessPosition(2, 3);
-//        Assertions.assertEquals(p2, p1);
-//        Assertions.assertEquals(p2.hashCode(), p1.hashCode());
-//        Assertions.assertNotEquals(p2, p3);
-//        Assertions.assertNotEquals(p2.hashCode(), p3.hashCode());
-//
-//        var m1 = new ChessMove(p1, p2, null);
-//        var m2 = new ChessMove(p1, p2, null);
-//        var m3 = new ChessMove(p1, p2, ChessPiece.PieceType.ROOK);
-//        Assertions.assertEquals(m2, m1);
-//        Assertions.assertEquals(m2.hashCode(), m1.hashCode());
-//        Assertions.assertNotEquals(m2, m3);
-//        Assertions.assertNotEquals(m2.hashCode(), m3.hashCode());
-//    }
-
     @Test
     public void bishopMoveUntilEdge() {
         validateMoves("""

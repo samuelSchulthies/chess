@@ -40,12 +40,6 @@ public class ChessBoard {
 
     }
 
-    public ChessBoard getDefaultBoard(){
-        ChessBoard board = new ChessBoard();
-        board.resetBoard();
-        return board;
-    }
-
     /**
      * Adds a chess piece to the chessboard
      *

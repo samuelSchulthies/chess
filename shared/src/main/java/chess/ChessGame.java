@@ -113,12 +113,6 @@ public class ChessGame {
                 ChessPiece promotionUpdate = new ChessPiece(getBoard().getPiece(move.getStartPosition())
                         .getTeamColor(), move.getPromotionPiece());
                 gameBoard.addPiece(move.getEndPosition(), promotionUpdate);
-//                if(getTeamTurn() == TeamColor.BLACK){
-//                    setTeamTurn(TeamColor.WHITE);
-//                }
-//                if(getTeamTurn() == TeamColor.WHITE){
-//                    setTeamTurn(TeamColor.BLACK);
-//                }
             }
             else {
                 gameBoard.addPiece(move.getEndPosition(), gameBoard.getPiece(move.getStartPosition()));
