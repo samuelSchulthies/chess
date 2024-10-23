@@ -29,17 +29,17 @@ public class UserService {
                 return new RegisterResult(newLogin.username(), authToken);
             }
             else {
-                throw new DataAccessException("username already taken");
+                throw new DataAccessException("username already taken", 403);
             }
         }
         else {
-            throw new DataAccessException("one of the register fields is empty");
+            throw new DataAccessException("one of the register fields is empty", 400);
         }
     }
 
     public LoginResult login(LoginRequest r) throws DataAccessException{
         if(userDAO.getUser((r.username())) == null){
-            throw new DataAccessException("username does not exist");
+            throw new DataAccessException("username does not exist", 401);
         }
         UserData userAuthentication = userDAO.getUser(r.username());
         if(Objects.equals(userAuthentication.password(), r.password())){
@@ -47,17 +47,17 @@ public class UserService {
             return new LoginResult(r.username(), authToken);
         }
         else {
-            throw new DataAccessException("passwords do not match");
+            throw new DataAccessException("passwords do not match", 401);
         }
     }
 
-    public LogoutResult logout(LogoutRequest r, String authToken) throws DataAccessException{
+    public LogoutResult logout(String authToken) throws DataAccessException{
         if (authTokenDAO.getAuth(authToken) != null) {
             authTokenDAO.deleteAuth(authToken);
             return new LogoutResult();
         }
         else {
-            throw new DataAccessException("invalid authtoken");
+            throw new DataAccessException("invalid authtoken", 401);
         }
     }
 

@@ -43,7 +43,7 @@ public class GameServiceTest {
         Assertions.assertThrows(DataAccessException.class, () -> gameService.create(newGameEmptyName, registeredUser.authToken()));
 
         LogoutRequest logoutUser = new LogoutRequest();
-        userService.logout(logoutUser, registeredUser.authToken());
+        userService.logout(registeredUser.authToken());
 
         CreateRequest newGameNoAuth = new CreateRequest("Sally's game");
         Assertions.assertThrows(DataAccessException.class, () -> gameService.create(newGameNoAuth, registeredUser.authToken()));
@@ -169,7 +169,7 @@ public class GameServiceTest {
         gameService.create(newGame3, registeredUser.authToken());
 
         LogoutRequest logoutUser = new LogoutRequest();
-        userService.logout(logoutUser, registeredUser.authToken());
+        userService.logout(registeredUser.authToken());
 
         Assertions.assertThrows(DataAccessException.class,
                 () -> gameService.list(registeredUser.authToken()),

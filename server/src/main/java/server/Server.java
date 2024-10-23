@@ -5,6 +5,7 @@ import dataaccess.MemoryAuthTokenDAO;
 import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
 import handler.*;
+import handler.ExceptionHandler;
 import service.ClearService;
 import service.GameService;
 import service.UserService;
@@ -16,10 +17,13 @@ public class Server {
     static final GameService gameService = new GameService(new MemoryGameDAO(), userService.getAuthTokenDAO(), userService.getUserDAO());
     static final ClearService clearService = new ClearService(userService, gameService);
 
+    static final ExceptionHandler exceptionHandler = new ExceptionHandler();
     static final ClearHandler clearHandler = new ClearHandler(clearService);
     static final CreateHandler createHandler = new CreateHandler(gameService);
     static final JoinHandler joinHandler = new JoinHandler(gameService);
     static final ListHandler listHandler = new ListHandler(gameService);
+    static final LoginHandler loginHandler = new LoginHandler(userService);
+    static final LogoutHandler logoutHandler = new LogoutHandler(userService);
     static final RegisterHandler registerHandler = new RegisterHandler(userService);
 
     public int run(int desiredPort) {
@@ -29,12 +33,13 @@ public class Server {
 
         // Register your endpoints and handle exceptions here.
         Spark.delete("/db", clearHandler::clear);
-        Spark.post("/user", registerHandler::register);
         Spark.post("/game", createHandler::create);
         Spark.put("/game", joinHandler::join);
         Spark.get("/game", listHandler::list);
-
-//        Spark.exception(DataAccessException.class, this::exceptionHandler);
+        Spark.post("/session", loginHandler::login);
+        Spark.delete("/session", logoutHandler::logout);
+        Spark.post("/user", registerHandler::register);
+        Spark.exception(DataAccessException.class, exceptionHandler::exception);
 
         Spark.awaitInitialization();
         return Spark.port();
@@ -42,10 +47,6 @@ public class Server {
 
     private Object test(Request req, Response rep){
         return null;
-    }
-
-    private void exceptionHandler(DataAccessException ex, Request req, Response res){
-
     }
 
     public void stop() {
