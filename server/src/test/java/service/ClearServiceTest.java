@@ -25,11 +25,11 @@ public class ClearServiceTest {
         RegisterRequest newUser2 = new RegisterRequest("beth","321","bethisawesome@gmail.com");
         RegisterResult registeredUser2 = userService.register(newUser2);
 
-        CreateRequest newGame = new CreateRequest("testGame", registeredUser.authToken());
-        CreateRequest newGame2 = new CreateRequest("testGame", registeredUser2.authToken());
+        CreateRequest newGame = new CreateRequest("testGame");
+        CreateRequest newGame2 = new CreateRequest("testGame");
 
-        gameService.create(newGame);
-        gameService.create(newGame2);
+        gameService.create(newGame, registeredUser.authToken());
+        gameService.create(newGame2, registeredUser2.authToken());
 
         clearService.clear();
 

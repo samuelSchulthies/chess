@@ -24,8 +24,9 @@ public class CreateHandler {
     }
 
     public Object create(Request req, Response res) throws DataAccessException {
-        CreateRequest game = new Gson().fromJson(req.body(), CreateRequest.class);
-        CreateResult createResult = gameService.create(game);
-        return new Gson().toJson(createResult);
+//        CreateRequest game = new Gson().fromJson(req.body(), CreateRequest.class);
+//        CreateResult createResult = gameService.create(game);
+//        return new Gson().toJson(createResult);
+        return null;
     }
 }

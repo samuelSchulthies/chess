@@ -24,8 +24,8 @@ public class GameService {
         this.authTokenDAO = authTokenDAO;
         this.userDAO = userDAO;
     }
-    public CreateResult create(CreateRequest r) throws DataAccessException {
-        if (authTokenDAO.getAuth(r.authToken()) != null) {
+    public CreateResult create(CreateRequest r, String authToken) throws DataAccessException {
+        if (authTokenDAO.getAuth(authToken) != null) {
             if ((r.gameName() != null) && (!r.gameName().equals(""))) {
                 GameData game = new GameData(gameID, "", "", r.gameName(), new ChessGame());
                 gameID++;
@@ -40,8 +40,8 @@ public class GameService {
             throw new DataAccessException("invalid authtoken");
         }
     }
-    public JoinResult join(JoinRequest r) throws DataAccessException {
-        if (authTokenDAO.getAuth(r.authToken()) != null){
+    public JoinResult join(JoinRequest r, String authToken) throws DataAccessException {
+        if (authTokenDAO.getAuth(authToken) != null){
             if (gameDAO.getGame(r.gameID()) != null){
                 GameData game = gameDAO.getGame(r.gameID());
                 if (!Objects.equals(game.whiteUsername(), "")
@@ -51,7 +51,7 @@ public class GameService {
                 if (Objects.equals(r.playerColor(), "BLACK")
                         && (Objects.equals(game.blackUsername(), ""))){
                     GameData updatedGame = new GameData(game.gameID(), game.whiteUsername(),
-                            authTokenDAO.getAuth(r.authToken()).username(), game.gameName(), game.game());
+                            authTokenDAO.getAuth(authToken).username(), game.gameName(), game.game());
                     gameDAO.updateGame(game.gameID(), updatedGame);
                 }
                 else if (Objects.equals(r.playerColor(), "BLACK")) {
@@ -60,7 +60,7 @@ public class GameService {
 
                 if (Objects.equals(r.playerColor(), "WHITE")
                         && (Objects.equals(game.whiteUsername(), ""))){
-                    GameData updatedGame = new GameData(game.gameID(), authTokenDAO.getAuth(r.authToken()).username(),
+                    GameData updatedGame = new GameData(game.gameID(), authTokenDAO.getAuth(authToken).username(),
                             game.blackUsername(), game.gameName(), game.game());
                     gameDAO.updateGame(game.gameID(), updatedGame);
                 }
@@ -80,8 +80,8 @@ public class GameService {
         }
 
     }
-    public ListResult list(ListRequest r) throws DataAccessException {
-        if (authTokenDAO.getAuth(r.authToken()) != null){
+    public ListResult list(ListRequest r, String authToken) throws DataAccessException {
+        if (authTokenDAO.getAuth(authToken) != null){
             return new ListResult(gameDAO.getGameDataCollection());
         }
         else {

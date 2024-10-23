@@ -51,9 +51,9 @@ public class UserService {
         }
     }
 
-    public LogoutResult logout(LogoutRequest r) throws DataAccessException{
-        if (authTokenDAO.getAuth(r.authToken()) != null) {
-            authTokenDAO.deleteAuth(r.authToken());
+    public LogoutResult logout(LogoutRequest r, String authToken) throws DataAccessException{
+        if (authTokenDAO.getAuth(authToken) != null) {
+            authTokenDAO.deleteAuth(authToken);
             return new LogoutResult();
         }
         else {

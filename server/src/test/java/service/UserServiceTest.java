@@ -47,8 +47,8 @@ public class UserServiceTest {
         RegisterRequest newUser = new RegisterRequest("sally","123","sallyisawesome@gmail.com");
         RegisterResult registeredUser = userService.register(newUser);
 
-        LogoutRequest logOutUser = new LogoutRequest(registeredUser.authToken());
-        userService.logout(logOutUser);
+        LogoutRequest logOutUser = new LogoutRequest();
+        userService.logout(logOutUser, registeredUser.authToken());
 
         LoginRequest loginUser = new LoginRequest("sally", "123");
         LoginResult loggedInUser = userService.login(loginUser);
@@ -66,8 +66,8 @@ public class UserServiceTest {
         RegisterRequest newUser = new RegisterRequest("sally","123","sallyisawesome@gmail.com");
         RegisterResult registeredUser = userService.register(newUser);
 
-        LogoutRequest logOutUser = new LogoutRequest(registeredUser.authToken());
-        userService.logout(logOutUser);
+        LogoutRequest logOutUser = new LogoutRequest();
+        userService.logout(logOutUser, registeredUser.authToken());
 
         LoginRequest loginUserBadUsername = new LoginRequest("saly", "123");
         Assertions.assertThrows(DataAccessException.class, () -> userService.login(loginUserBadUsername));
@@ -85,9 +85,9 @@ public class UserServiceTest {
         RegisterRequest newUser = new RegisterRequest("sally","123","sallyisawesome@gmail.com");
         RegisterResult registeredUser = userService.register(newUser);
 
-        LogoutRequest logOutUser = new LogoutRequest(registeredUser.authToken());
+        LogoutRequest logOutUser = new LogoutRequest();
         String authTokenStorage = registeredUser.authToken();
-        userService.logout(logOutUser);
+        userService.logout(logOutUser, registeredUser.authToken());
 
         Assertions.assertNull(userService.getAuthTokenDAO().getAuth(authTokenStorage),
                 "AuthToken was not removed");
@@ -102,12 +102,12 @@ public class UserServiceTest {
         RegisterRequest newUser = new RegisterRequest("sally","123","sallyisawesome@gmail.com");
         RegisterResult registeredUser = userService.register(newUser);
 
-        LogoutRequest logOutUser = new LogoutRequest(registeredUser.authToken());
+        LogoutRequest logOutUser = new LogoutRequest();
 
-        userService.logout(logOutUser);
+        userService.logout(logOutUser, registeredUser.authToken());
 
         try {
-            userService.logout(logOutUser);
+            userService.logout(logOutUser, registeredUser.authToken());
         }
         catch (DataAccessException e){
             Assertions.assertEquals("dataaccess.DataAccessException: invalid authtoken", e.toString(),
