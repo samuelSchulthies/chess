@@ -143,8 +143,7 @@ public class GameServiceTest {
         CreateResult createdGame3 = gameService.create(newGame3, registeredUser.authToken());
         expectedGameList.add(gameService.getGameDAO().getGame(createdGame3.gameID()));
 
-        ListRequest newGameList = new ListRequest();
-        ListResult actualGameList = gameService.list(newGameList, registeredUser.authToken());
+        ListResult actualGameList = gameService.list(registeredUser.authToken());
 
         Assertions.assertEquals(expectedGameList, actualGameList.games(),
                 "Returned game list does not match expected");
@@ -172,9 +171,8 @@ public class GameServiceTest {
         LogoutRequest logoutUser = new LogoutRequest();
         userService.logout(logoutUser, registeredUser.authToken());
 
-        ListRequest newGameList2 = new ListRequest();
         Assertions.assertThrows(DataAccessException.class,
-                () -> gameService.list(newGameList2, registeredUser.authToken()),
+                () -> gameService.list(registeredUser.authToken()),
                 "User with no auth listedGames");
 
     }

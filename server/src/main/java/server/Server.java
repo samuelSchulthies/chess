@@ -4,9 +4,7 @@ import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthTokenDAO;
 import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
-import handler.ClearHandler;
-import handler.CreateHandler;
-import handler.RegisterHandler;
+import handler.*;
 import service.ClearService;
 import service.GameService;
 import service.UserService;
@@ -19,8 +17,10 @@ public class Server {
     static final ClearService clearService = new ClearService(userService, gameService);
 
     static final ClearHandler clearHandler = new ClearHandler(clearService);
+    static final CreateHandler createHandler = new CreateHandler(gameService);
+    static final JoinHandler joinHandler = new JoinHandler(gameService);
+    static final ListHandler listHandler = new ListHandler(gameService);
     static final RegisterHandler registerHandler = new RegisterHandler(userService);
-    static final CreateHandler createHandler = new CreateHandler(gameService, userService);
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -31,6 +31,8 @@ public class Server {
         Spark.delete("/db", clearHandler::clear);
         Spark.post("/user", registerHandler::register);
         Spark.post("/game", createHandler::create);
+        Spark.put("/game", joinHandler::join);
+        Spark.get("/game", listHandler::list);
 
 //        Spark.exception(DataAccessException.class, this::exceptionHandler);
 
