@@ -149,7 +149,8 @@ public class ChessGame {
     }
 
     public boolean isInMoveSet(ChessMove moveToCheck){
-        Collection<ChessMove> moveSet = new ArrayList<>(getBoard().getPiece(moveToCheck.getStartPosition()).pieceMoves(gameBoard, moveToCheck.getStartPosition()));
+        Collection<ChessMove> moveSet = new ArrayList<>(getBoard().getPiece(moveToCheck.getStartPosition())
+                .pieceMoves(gameBoard, moveToCheck.getStartPosition()));
         for (ChessMove validMove : moveSet) {
             if ((validMove.getEndPosition().getRow() == moveToCheck.getEndPosition().getRow()) &&
                     (validMove.getEndPosition().getColumn() == moveToCheck.getEndPosition().getColumn())) {
@@ -221,7 +222,8 @@ public class ChessGame {
                     if ((gameBoard.getPiece(positionChecker) != null) &&
                             (gameBoard.getPiece(positionChecker).getTeamColor() == teamColor)) {
                         getBoard().getPiece(positionChecker).pieceMoves(gameBoard, positionChecker).clear();
-                        Collection<ChessMove> validMovesCollection = new ArrayList<>(getBoard().getPiece(positionChecker).pieceMoves(gameBoard, positionChecker));
+                        Collection<ChessMove> validMovesCollection =
+                                new ArrayList<>(getBoard().getPiece(positionChecker).pieceMoves(gameBoard, positionChecker));
                         for (ChessMove move : validMovesCollection) {
 
                             try {
@@ -289,9 +291,6 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-
-        //TODO: stalemate returns a false positive because, while there are valid moves left, it disregards all of
-        // those moves because the king is already in check
         if (isInCheckmate(teamColor)){
             return false;
         }
