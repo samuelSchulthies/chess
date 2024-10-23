@@ -19,9 +19,8 @@ public class RegisterHandler {
     }
 
     public Object register(Request req, Response res) throws DataAccessException {
-        UserData user = new Gson().fromJson(req.body(), UserData.class);
-        RegisterRequest registerRequest = new RegisterRequest(user.username(), user.password(), user.email());
-        RegisterResult registerResult = userService.register(registerRequest);
+        RegisterRequest user = new Gson().fromJson(req.body(), RegisterRequest.class);
+        RegisterResult registerResult = userService.register(user);
         res.status(200);
         return new Gson().toJson(registerResult);
     }

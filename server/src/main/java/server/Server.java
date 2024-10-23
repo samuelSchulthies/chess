@@ -5,6 +5,7 @@ import dataaccess.MemoryAuthTokenDAO;
 import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
 import handler.ClearHandler;
+import handler.CreateHandler;
 import handler.RegisterHandler;
 import service.ClearService;
 import service.GameService;
@@ -19,6 +20,7 @@ public class Server {
 
     static final ClearHandler clearHandler = new ClearHandler(clearService);
     static final RegisterHandler registerHandler = new RegisterHandler(userService);
+    static final CreateHandler createHandler = new CreateHandler(gameService, userService);
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -28,8 +30,10 @@ public class Server {
         // Register your endpoints and handle exceptions here.
         Spark.delete("/db", clearHandler::clear);
         Spark.post("/user", registerHandler::register);
-        Spark.post("/session", loginHandler::login);
-        Spark.exception(DataAccessException.class, this::exceptionHandler);
+        Spark.post("/game", createHandler::create);
+
+//        Spark.exception(DataAccessException.class, this::exceptionHandler);
+
         Spark.awaitInitialization();
         return Spark.port();
     }

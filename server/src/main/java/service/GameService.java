@@ -24,7 +24,7 @@ public class GameService {
         this.authTokenDAO = authTokenDAO;
         this.userDAO = userDAO;
     }
-    CreateResult create(CreateRequest r) throws DataAccessException {
+    public CreateResult create(CreateRequest r) throws DataAccessException {
         if (authTokenDAO.getAuth(r.authToken()) != null) {
             if ((r.gameName() != null) && (!r.gameName().equals(""))) {
                 GameData game = new GameData(gameID, "", "", r.gameName(), new ChessGame());
@@ -40,7 +40,7 @@ public class GameService {
             throw new DataAccessException("invalid authtoken");
         }
     }
-    JoinResult join(JoinRequest r) throws DataAccessException {
+    public JoinResult join(JoinRequest r) throws DataAccessException {
         if (authTokenDAO.getAuth(r.authToken()) != null){
             if (gameDAO.getGame(r.gameID()) != null){
                 GameData game = gameDAO.getGame(r.gameID());
@@ -80,7 +80,7 @@ public class GameService {
         }
 
     }
-    ListResult list(ListRequest r) throws DataAccessException {
+    public ListResult list(ListRequest r) throws DataAccessException {
         if (authTokenDAO.getAuth(r.authToken()) != null){
             return new ListResult(gameDAO.getGameDataCollection());
         }
