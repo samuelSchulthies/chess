@@ -52,16 +52,9 @@ public class KnightMovesCalculator {
                 ChessPosition positionChecker = new ChessPosition(rowToAdd, colToAdd);
                 ChessMove newMove = new ChessMove(myPosition, positionChecker, null);
 
-                if ((rowToAdd > 0) && (rowToAdd < 9)
-                        && (colToAdd > 0) && (colToAdd < 9)) {
-                    if ((board.getPiece(positionChecker) != null)
-                            && (board.getPiece(positionChecker).pieceColor != board.getPiece(myPosition).pieceColor)) {
-                        pieceMovesArray.add(newMove);
-                    }
-                    if (board.getPiece(positionChecker) == null) {
-                        pieceMovesArray.add(newMove);
-                    }
-                }
+                PieceAddNoRecursion pieceAdd = new PieceAddNoRecursion(board, myPosition, pieceMovesArray, newMove,
+                        positionChecker, rowToAdd, colToAdd);
+                pieceAdd.pieceAddNoRecursion();
             }
         }
     }
