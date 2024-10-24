@@ -174,15 +174,14 @@ public class ChessGame {
         for (row = 1; row < 9; ++row) {
             for (col = 1; col < 9; ++col) {
                 ChessPosition positionChecker = new ChessPosition(row, col);
-                if (gameBoard.getPiece(positionChecker) != null) {
-                    if (gameBoard.getPiece(positionChecker).getTeamColor() != teamColor) {
-                        getBoard().getPiece(positionChecker).pieceMoves(gameBoard, positionChecker).clear();
-                        Collection<ChessMove> validMovesCollection = getBoard().getPiece(positionChecker).pieceMoves(gameBoard, positionChecker);
-                        for (ChessMove move : validMovesCollection) {
-                            if ((move.getEndPosition().getRow() == kingLocation.getRow()) &&
-                                    (move.getEndPosition().getColumn() == kingLocation.getColumn())) {
-                                return true;
-                            }
+                if (gameBoard.getPiece(positionChecker) != null &&
+                        (gameBoard.getPiece(positionChecker).getTeamColor() != teamColor)) {
+                    getBoard().getPiece(positionChecker).pieceMoves(gameBoard, positionChecker).clear();
+                    Collection<ChessMove> validMovesCollection = getBoard().getPiece(positionChecker).pieceMoves(gameBoard, positionChecker);
+                    for (ChessMove move : validMovesCollection) {
+                        if ((move.getEndPosition().getRow() == kingLocation.getRow()) &&
+                                (move.getEndPosition().getColumn() == kingLocation.getColumn())) {
+                            return true;
                         }
                     }
                 }
@@ -295,10 +294,9 @@ public class ChessGame {
                 ChessPosition positionChecker = new ChessPosition(row, col);
 
                 if (gameBoard.getPiece(positionChecker) != null) {
-                    if ((gameBoard.getPiece(positionChecker).getTeamColor() == teamColor)) {
-                        if (validMoves(positionChecker).size() != 0){
-                            return false;
-                        }
+                    if (((gameBoard.getPiece(positionChecker).getTeamColor() == teamColor)) &&
+                            (validMoves(positionChecker).size() != 0)) {
+                        return false;
                     }
                 }
             }
