@@ -174,15 +174,16 @@ public class ChessGame {
         for (row = 1; row < 9; ++row) {
             for (col = 1; col < 9; ++col) {
                 ChessPosition positionChecker = new ChessPosition(row, col);
-                if (gameBoard.getPiece(positionChecker) != null &&
-                        (gameBoard.getPiece(positionChecker).getTeamColor() != teamColor)) {
-                    getBoard().getPiece(positionChecker).pieceMoves(gameBoard, positionChecker).clear();
-                    Collection<ChessMove> validMovesCollection = getBoard().getPiece(positionChecker).pieceMoves(gameBoard, positionChecker);
-                    for (ChessMove move : validMovesCollection) {
-                        if ((move.getEndPosition().getRow() == kingLocation.getRow()) &&
-                                (move.getEndPosition().getColumn() == kingLocation.getColumn())) {
-                            return true;
-                        }
+                if (gameBoard.getPiece(positionChecker) == null ||
+                        (gameBoard.getPiece(positionChecker).getTeamColor() == teamColor)) {
+                    continue;
+                }
+                getBoard().getPiece(positionChecker).pieceMoves(gameBoard, positionChecker).clear();
+                Collection<ChessMove> validMovesCollection = getBoard().getPiece(positionChecker).pieceMoves(gameBoard, positionChecker);
+                for (ChessMove move : validMovesCollection) {
+                    if ((move.getEndPosition().getRow() == kingLocation.getRow()) &&
+                            (move.getEndPosition().getColumn() == kingLocation.getColumn())) {
+                        return true;
                     }
                 }
             }
@@ -211,33 +212,36 @@ public class ChessGame {
             for (col = 1; col < 9; ++col) {
                 ChessPosition positionChecker = new ChessPosition(row, col);
 
-                if ((gameBoard.getPiece(positionChecker) != null) &&
-                        (gameBoard.getPiece(positionChecker).getTeamColor() == teamColor)) {
-                    getBoard().getPiece(positionChecker).pieceMoves(gameBoard, positionChecker).clear();
-                    Collection<ChessMove> validMovesCollection =
-                            new ArrayList<>(getBoard().getPiece(positionChecker).pieceMoves(gameBoard, positionChecker));
-                    for (ChessMove move : validMovesCollection) {
+                if ((gameBoard.getPiece(positionChecker) == null) ||
+                        (gameBoard.getPiece(positionChecker).getTeamColor() != teamColor)) {
+                    continue;
+                }
+                getBoard().getPiece(positionChecker).pieceMoves(gameBoard, positionChecker).clear();
+                Collection<ChessMove> validMovesCollection =
+                        new ArrayList<>(getBoard().getPiece(positionChecker).pieceMoves(gameBoard, positionChecker));
+                for (ChessMove move : validMovesCollection) {
 
-                        try {
-                            makeMove(move);
-                            System.out.print(pieceStorage);
-                        }
-                        catch (InvalidMoveException e) {
-                            System.out.print("The move " + move + " is illegal\n");
-                        }
-
-                        getBoard().getPiece(getKingLocation(teamColor)).pieceMoves(gameBoard, getKingLocation(teamColor)).clear();
-                        if(!isInCheck(teamColor)){
-                            undoMove(move);
-                            return false;
-                        }
-                        undoMove(move);
+                    try {
+                        makeMove(move);
+                        System.out.print(pieceStorage);
                     }
+                    catch (InvalidMoveException e) {
+                        System.out.print("The move " + move + " is illegal\n");
+                    }
+
+                    getBoard().getPiece(getKingLocation(teamColor)).pieceMoves(gameBoard, getKingLocation(teamColor)).clear();
+                    if(!isInCheck(teamColor)){
+                        undoMove(move);
+                        return false;
+                    }
+                    undoMove(move);
                 }
             }
         }
         return kingMovesSize == 0;
     }
+
+
 
     public Collection<ChessMove> validKingMoves(TeamColor teamColor){
         Collection<ChessMove> validKingMovesCollection = new ArrayList<>();
