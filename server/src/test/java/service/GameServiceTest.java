@@ -18,7 +18,7 @@ public class GameServiceTest {
     @DisplayName("Positive Create Result")
     public void positiveCreate() throws DataAccessException {
         UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthTokenDAO());
-        GameService gameService = new GameService(new MemoryGameDAO(), userService.getAuthTokenDAO(), userService.getUserDAO());
+        GameService gameService = new GameService(new MemoryGameDAO(), userService.getAuthTokenDAO());
 
         RegisterRequest newUser = new RegisterRequest("sally","123","sallyisawesome@gmail.com");
         RegisterResult registeredUser = userService.register(newUser);
@@ -34,7 +34,7 @@ public class GameServiceTest {
     @DisplayName("Negative Create Result")
     public void negativeCreate() throws DataAccessException {
         UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthTokenDAO());
-        GameService gameService = new GameService(new MemoryGameDAO(), userService.getAuthTokenDAO(), userService.getUserDAO());
+        GameService gameService = new GameService(new MemoryGameDAO(), userService.getAuthTokenDAO());
 
         RegisterRequest newUser = new RegisterRequest("sally","123","sallyisawesome@gmail.com");
         RegisterResult registeredUser = userService.register(newUser);
@@ -54,7 +54,7 @@ public class GameServiceTest {
     @DisplayName("Positive Join Result")
     public void positiveJoin() throws DataAccessException {
         UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthTokenDAO());
-        GameService gameService = new GameService(new MemoryGameDAO(), userService.getAuthTokenDAO(), userService.getUserDAO());
+        GameService gameService = new GameService(new MemoryGameDAO(), userService.getAuthTokenDAO());
 
         RegisterRequest newUser = new RegisterRequest("sally","123","sallyisawesome@gmail.com");
         RegisterResult registeredUser = userService.register(newUser);
@@ -82,7 +82,7 @@ public class GameServiceTest {
     @DisplayName("Negative Join Result")
     public void negativeJoin() throws DataAccessException {
         UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthTokenDAO());
-        GameService gameService = new GameService(new MemoryGameDAO(), userService.getAuthTokenDAO(), userService.getUserDAO());
+        GameService gameService = new GameService(new MemoryGameDAO(), userService.getAuthTokenDAO());
 
         RegisterRequest newUser = new RegisterRequest("sally","123","sallyisawesome@gmail.com");
         RegisterResult registeredUser = userService.register(newUser);
@@ -124,7 +124,7 @@ public class GameServiceTest {
     @DisplayName("Positive List Result")
     public void positiveList() throws DataAccessException {
         UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthTokenDAO());
-        GameService gameService = new GameService(new MemoryGameDAO(), userService.getAuthTokenDAO(), userService.getUserDAO());
+        GameService gameService = new GameService(new MemoryGameDAO(), userService.getAuthTokenDAO());
 
         RegisterRequest newUser = new RegisterRequest("sally","123","sallyisawesome@gmail.com");
         RegisterResult registeredUser = userService.register(newUser);
@@ -154,7 +154,7 @@ public class GameServiceTest {
     @DisplayName("Negative List Result")
     public void negativeList() throws DataAccessException {
         UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthTokenDAO());
-        GameService gameService = new GameService(new MemoryGameDAO(), userService.getAuthTokenDAO(), userService.getUserDAO());
+        GameService gameService = new GameService(new MemoryGameDAO(), userService.getAuthTokenDAO());
 
         RegisterRequest newUser = new RegisterRequest("sally","123","sallyisawesome@gmail.com");
         RegisterResult registeredUser = userService.register(newUser);

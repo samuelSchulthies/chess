@@ -14,7 +14,7 @@ import spark.*;
 public class Server {
 
     static final UserService USER_SERVICE = new UserService(new MemoryUserDAO(), new MemoryAuthTokenDAO());
-    static final GameService GAME_SERVICE = new GameService(new MemoryGameDAO(), USER_SERVICE.getAuthTokenDAO(), USER_SERVICE.getUserDAO());
+    static final GameService GAME_SERVICE = new GameService(new MemoryGameDAO(), USER_SERVICE.getAuthTokenDAO());
     static final ClearService CLEAR_SERVICE = new ClearService(USER_SERVICE, GAME_SERVICE);
 
     static final ExceptionHandler EXCEPTION_HANDLER = new ExceptionHandler();
