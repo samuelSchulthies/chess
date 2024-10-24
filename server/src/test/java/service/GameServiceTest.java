@@ -115,7 +115,7 @@ public class GameServiceTest {
         Assertions.assertThrows(DataAccessException.class, () -> gameService.join(newPlayer6, registeredUser2.authToken()),
                 "Player joined white when white was taken");
 
-        JoinRequest newPlayer7 = new JoinRequest("BLACK", 2);
+        JoinRequest newPlayer7 = new JoinRequest("BLACK", 3);
         Assertions.assertThrows(DataAccessException.class, () -> gameService.join(newPlayer7, registeredUser2.authToken()),
                 "Player joined non-existent game");
     }
