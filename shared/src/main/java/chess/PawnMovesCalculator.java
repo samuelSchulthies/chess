@@ -48,24 +48,9 @@ public class PawnMovesCalculator {
                     }
                 }
 
-                if(i == 1){
-                    if (board.getPiece(positionChecker) == null) {
-                        pawnPromotionLogic(board, myPosition, positionChecker, newMove);
-                        //Initial Move Logic
-                        if (((newMove.getStartPosition().getRow() == 2) &&
-                                (board.getPiece(myPosition).pieceColor == ChessGame.TeamColor.WHITE))
-                                ||
-                                ((newMove.getStartPosition().getRow() == 7) &&
-                                        (board.getPiece(myPosition).pieceColor == ChessGame.TeamColor.BLACK))){
-                            if ((board.getPiece(positionChecker) == null)){
-                                positionChecker = new ChessPosition(rowToAdd + signAddRow, colToAdd);
-                                if(board.getPiece(positionChecker) == null){
-                                    newMove = new ChessMove(myPosition, positionChecker, null);
-                                    pieceMovesArray.add(newMove);
-                                }
-                            }
-                        }
-                    }
+                if ((i == 1) && (board.getPiece(positionChecker) == null)) {
+                    pawnPromotionLogic(board, myPosition, positionChecker, newMove);
+                    pawnInitialMoveLogic(board, myPosition, positionChecker, newMove, rowToAdd, signAddRow, colToAdd);
                 }
             }
         }
@@ -87,6 +72,23 @@ public class PawnMovesCalculator {
         }
         else {
             pieceMovesArray.add(newMove);
+        }
+    }
+
+    public void pawnInitialMoveLogic(ChessBoard board, ChessPosition myPosition, ChessPosition positionChecker,
+                                   ChessMove newMove, int rowToAdd, int signAddRow, int colToAdd){
+        if (((newMove.getStartPosition().getRow() == 2) &&
+                (board.getPiece(myPosition).pieceColor == ChessGame.TeamColor.WHITE))
+                ||
+                ((newMove.getStartPosition().getRow() == 7) &&
+                        (board.getPiece(myPosition).pieceColor == ChessGame.TeamColor.BLACK))){
+            if ((board.getPiece(positionChecker) == null)){
+                positionChecker = new ChessPosition(rowToAdd + signAddRow, colToAdd);
+                if(board.getPiece(positionChecker) == null){
+                    newMove = new ChessMove(myPosition, positionChecker, null);
+                    pieceMovesArray.add(newMove);
+                }
+            }
         }
     }
 
