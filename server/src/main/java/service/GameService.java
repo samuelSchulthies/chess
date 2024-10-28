@@ -21,10 +21,10 @@ public class GameService {
     }
     public CreateResult create(CreateRequest r, String authToken) throws DataAccessException {
         if (authTokenDAO.getAuth(authToken) == null) {
-            throw new DataAccessException("invalid authtoken", 401);
+            throw new DataAccessException("invalid authtoken");
         }
         if ((r.gameName() == null) || (r.gameName().equals(""))) {
-            throw new DataAccessException("game name cannot be empty", 404);
+            throw new DataAccessException("game name cannot be empty");
         }
         GameData game = new GameData(gameID, null, null, r.gameName(), new ChessGame());
         gameID++;
@@ -33,18 +33,18 @@ public class GameService {
     }
     public JoinResult join(JoinRequest r, String authToken) throws DataAccessException {
         if (authTokenDAO.getAuth(authToken) == null) {
-            throw new DataAccessException("invalid authtoken", 401);
+            throw new DataAccessException("invalid authtoken");
         }
         if (gameDAO.getGame(r.gameID()) == null) {
-            throw new DataAccessException("invalid gameID", 400);
+            throw new DataAccessException("invalid gameID");
         }
         GameData game = gameDAO.getGame(r.gameID());
         if (r.playerColor() == null) {
-            throw new DataAccessException("team color cannot be empty", 400);
+            throw new DataAccessException("team color cannot be empty");
         }
         if (!Objects.equals(game.whiteUsername(), null)
                 && !Objects.equals(game.blackUsername(), null)){
-            throw new DataAccessException("game is full", 403);
+            throw new DataAccessException("game is full");
         }
         if (Objects.equals(r.playerColor(), "BLACK")
                 && (Objects.equals(game.blackUsername(), null))){
@@ -53,7 +53,7 @@ public class GameService {
             gameDAO.updateGame(game.gameID(), updatedGame);
         }
         else if (Objects.equals(r.playerColor(), "BLACK")) {
-            throw new DataAccessException("black is taken", 403);
+            throw new DataAccessException("black is taken");
         }
         if (Objects.equals(r.playerColor(), "WHITE")
                 && (Objects.equals(game.whiteUsername(), null))){
@@ -62,7 +62,7 @@ public class GameService {
             gameDAO.updateGame(game.gameID(), updatedGame);
         }
         else if (Objects.equals(r.playerColor(), "WHITE")){
-            throw new DataAccessException("white is taken", 403);
+            throw new DataAccessException("white is taken");
         }
 
         return new JoinResult();
@@ -75,7 +75,7 @@ public class GameService {
             return new ListResult(gameDAO.getGameDataCollection());
         }
         else {
-            throw new DataAccessException("invalid authtoken", 401);
+            throw new DataAccessException("invalid authtoken");
         }
     }
 
