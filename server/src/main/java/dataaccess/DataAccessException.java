@@ -10,6 +10,10 @@ public class DataAccessException extends Exception{
     private int statusCode;
     public DataAccessException(String message) {
         super(message);
+        if ((Objects.equals(message, "invalid gameID")) || (Objects.equals(message, "team color cannot be empty")) ||
+                (Objects.equals(message, "one of the register fields is empty"))){
+            setStatusCode(400);
+        }
         if ((Objects.equals(message, "invalid authtoken")) || (Objects.equals(message, "username does not exist")) ||
                 (Objects.equals(message, "passwords do not match"))){
             setStatusCode(401);
@@ -20,10 +24,6 @@ public class DataAccessException extends Exception{
         }
         if (Objects.equals(message, "game name cannot be empty")){
             setStatusCode(404);
-        }
-        if ((Objects.equals(message, "invalid gameID")) || (Objects.equals(message, "team color cannot be empty")) ||
-                (Objects.equals(message, "one of the register fields is empty"))){
-            setStatusCode(400);
         }
 
     }
