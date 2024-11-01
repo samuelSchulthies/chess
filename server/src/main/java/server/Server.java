@@ -10,14 +10,9 @@ import spark.*;
 
 public class Server {
 
-    static final UserService USER_SERVICE = new UserService(new MemoryUserDAO(), new MemoryAuthTokenDAO());
-    static final GameService GAME_SERVICE = new GameService(new MemoryGameDAO(), USER_SERVICE.getAuthTokenDAO());
+    static final UserService USER_SERVICE = new UserService(new MySQLUserDAO(), new MySQLAuthTokenDAO());
+    static final GameService GAME_SERVICE = new GameService(new MySQLGameDAO(), USER_SERVICE.getAuthTokenDAO());
     static final ClearService CLEAR_SERVICE = new ClearService(USER_SERVICE, GAME_SERVICE);
-
-    static final UserService USER_SERVICE_SQL = new UserService(new MySQLUserDAO(), new MySQLAuthTokenDAO());
-    static final GameService GAME_SERVICE_SQL = new GameService(new MySQLGameDAO(), USER_SERVICE.getAuthTokenDAO());
-    static final ClearService CLEAR_SERVICE_SQL = new ClearService(USER_SERVICE, GAME_SERVICE);
-
 
     static final ClearHandler CLEAR_HANDLER = new ClearHandler(CLEAR_SERVICE);
     static final CreateHandler CREATE_HANDLER = new CreateHandler(GAME_SERVICE);
@@ -28,16 +23,13 @@ public class Server {
     static final RegisterHandler REGISTER_HANDLER = new RegisterHandler(USER_SERVICE);
     static final ExceptionHandler EXCEPTION_HANDLER = new ExceptionHandler();
 
-    static final MemoryDataAccess dataAccess = new MemoryDataAccess();
-
-
     public int run(int desiredPort) {
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
-        Spark.delete("/db", MemoryDataAccess.CLEAR_HANDLER::clear);
+        Spark.delete("/db", CLEAR_HANDLER::clear);
         Spark.post("/game", CREATE_HANDLER::create);
         Spark.put("/game", JOIN_HANDLER::join);
         Spark.get("/game", LIST_HANDLER::list);
