@@ -6,16 +6,9 @@ import service.GameService;
 import service.UserService;
 
 public class HandlerUtility {
-
-    private final UserService USER_SERVICE;
-    private git cofinal GameService GAME_SERVICE;
-    private final ClearService CLEAR_SERVICE;
-
-    public HandlerUtility(UserService USER_SERVICE, GameService GAME_SERVICE, ClearService CLEAR_SERVICE) {
-        this.USER_SERVICE = USER_SERVICE;
-        this.GAME_SERVICE = GAME_SERVICE;
-        this.CLEAR_SERVICE = CLEAR_SERVICE;
-    }
+    static final UserService USER_SERVICE = new UserService(new MemoryUserDAO(), new MemoryAuthTokenDAO());
+    static final GameService GAME_SERVICE = new GameService(new MemoryGameDAO(), USER_SERVICE.getAuthTokenDAO());
+    static final ClearService CLEAR_SERVICE = new ClearService(USER_SERVICE, GAME_SERVICE);
 
     public static final ClearHandler CLEAR_HANDLER = new ClearHandler(CLEAR_SERVICE);
     public static final CreateHandler CREATE_HANDLER = new CreateHandler(GAME_SERVICE);
