@@ -6,8 +6,8 @@ import service.GameService;
 import service.UserService;
 
 public class HandlerUtility {
-    static final UserService USER_SERVICE = new UserService(new MemoryUserDAO(), new MemoryAuthTokenDAO());
-    static final GameService GAME_SERVICE = new GameService(new MemoryGameDAO(), USER_SERVICE.getAuthTokenDAO());
+    static final UserService USER_SERVICE = new UserService(new MySQLUserDAO(), new MySQLAuthTokenDAO());
+    static final GameService GAME_SERVICE = new GameService(new MySQLGameDAO(), USER_SERVICE.getAuthTokenDAO());
     static final ClearService CLEAR_SERVICE = new ClearService(USER_SERVICE, GAME_SERVICE);
 
     public static final ClearHandler CLEAR_HANDLER = new ClearHandler(CLEAR_SERVICE);
