@@ -5,10 +5,23 @@ import service.ClearService;
 import service.GameService;
 import service.UserService;
 
+import java.util.logging.Handler;
+
 public class HandlerUtility {
-    static final UserService USER_SERVICE = new UserService(new MySQLUserDAO(), new MySQLAuthTokenDAO());
-    static final GameService GAME_SERVICE = new GameService(new MySQLGameDAO(), USER_SERVICE.getAuthTokenDAO());
-    static final ClearService CLEAR_SERVICE = new ClearService(USER_SERVICE, GAME_SERVICE);
+
+    static final UserService USER_SERVICE;
+    static final GameService GAME_SERVICE;
+    static final ClearService CLEAR_SERVICE;
+
+    static {
+        try {
+            USER_SERVICE = new UserService(new MySQLUserDAO(), new MySQLAuthTokenDAO());
+            GAME_SERVICE = new GameService(new MySQLGameDAO(), USER_SERVICE.getAuthTokenDAO());
+            CLEAR_SERVICE = new ClearService(USER_SERVICE, GAME_SERVICE);
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Failed to initialize services", e);
+        }
+    }
 
     public static final ClearHandler CLEAR_HANDLER = new ClearHandler(CLEAR_SERVICE);
     public static final CreateHandler CREATE_HANDLER = new CreateHandler(GAME_SERVICE);

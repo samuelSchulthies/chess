@@ -1,11 +1,6 @@
 package server;
 
 import dataaccess.*;
-import handler.*;
-import handler.ExceptionHandler;
-import service.ClearService;
-import service.GameService;
-import service.UserService;
 import spark.*;
 
 public class Server {
