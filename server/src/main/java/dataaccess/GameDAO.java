@@ -20,10 +20,9 @@ public interface GameDAO {
 
     void updateGame(int gameID, GameData game) throws DataAccessException;
 
-    int getGameDataCollectionSize();
+    void clear() throws DataAccessException;
 
     ArrayList<GameData> getGameDataCollection();
 
-    void clear();
-
+    int getGameDataCollectionSize();
 }

@@ -4,6 +4,7 @@ import model.GameData;
 import requestresult.ListRequest;
 import requestresult.ListResult;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class MySQLGameDAO implements GameDAO{
@@ -33,8 +34,15 @@ public class MySQLGameDAO implements GameDAO{
     }
 
     @Override
-    public int getGameDataCollectionSize() {
-        return 0;
+    public void clear() throws DataAccessException{
+        try (var conn = DatabaseManager.getConnection()){
+            var clearGamesStatement = "TRUNCATE games";
+            try (var ps = conn.prepareStatement(clearGamesStatement)){
+                ps.executeUpdate();
+            }
+        } catch (SQLException e){
+            throw new DataAccessException(e.getMessage());
+        }
     }
 
     @Override
@@ -43,7 +51,7 @@ public class MySQLGameDAO implements GameDAO{
     }
 
     @Override
-    public void clear() {
-
+    public int getGameDataCollectionSize() {
+        return 0;
     }
 }

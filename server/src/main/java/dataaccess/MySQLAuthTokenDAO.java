@@ -14,7 +14,6 @@ public class MySQLAuthTokenDAO implements AuthTokenDAO{
     @Override
     public String createAuth(String username) throws DataAccessException {
         String authToken = UUID.randomUUID().toString();
-//        AuthData authData = new AuthData(authToken, username);
 
         String userSQLStatement = "INSERT INTO authData (username, authToken) VALUES (?, ?)";
         try (var conn = DatabaseManager.getConnection()){
@@ -57,11 +56,6 @@ public class MySQLAuthTokenDAO implements AuthTokenDAO{
 
     }
 
-    @Override
-    public int getAuthDataCollectionSize() {
-        return 0;
-    }
-
     private final String[] authDataCreateStatements = {
             """
             CREATE TABLE IF NOT EXISTS authData (
@@ -86,7 +80,19 @@ public class MySQLAuthTokenDAO implements AuthTokenDAO{
     }
 
     @Override
-    public void clear() {
+    public void clear() throws DataAccessException{
+        try (var conn = DatabaseManager.getConnection()){
+            var clearAuthDataStatement = "TRUNCATE authData";
+            try (var ps = conn.prepareStatement(clearAuthDataStatement)){
+                ps.executeUpdate();
+            }
+        } catch (SQLException e){
+            throw new DataAccessException(e.getMessage());
+        }
+    }
 
+    @Override
+    public int getAuthDataCollectionSize() {
+        return 0;
     }
 }

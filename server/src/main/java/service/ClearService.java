@@ -1,9 +1,6 @@
 package service;
 
-import dataaccess.AuthTokenDAO;
-import dataaccess.MemoryAuthTokenDAO;
-import dataaccess.MemoryUserDAO;
-import dataaccess.UserDAO;
+import dataaccess.*;
 import requestresult.ClearResult;
 
 public class ClearService {
@@ -14,7 +11,7 @@ public class ClearService {
         this.gameService = gameService;
     }
 
-    public ClearResult clear(){
+    public ClearResult clear() throws DataAccessException {
         userService.getUserDAO().clear();
         userService.getAuthTokenDAO().clear();
         gameService.getGameDAO().clear();

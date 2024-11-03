@@ -52,11 +52,6 @@ public class MySQLUserDAO implements UserDAO {
         return null;
     }
 
-    @Override
-    public int getUserDataCollectionSize() {
-        return 0;
-    }
-
     private final String[] userCreateStatements = {
             """
             CREATE TABLE IF NOT EXISTS user (
@@ -77,12 +72,24 @@ public class MySQLUserDAO implements UserDAO {
                 }
             }
         } catch (SQLException e){
-            throw new DataAccessException("Unable to configure database for user");
+            throw new DataAccessException(e.getMessage());
         }
     }
 
     @Override
-    public void clear() {
+    public void clear() throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()){
+            var clearUsersStatement = "TRUNCATE user";
+            try (var ps = conn.prepareStatement(clearUsersStatement)){
+                ps.executeUpdate();
+            }
+        } catch (SQLException e){
+            throw new DataAccessException(e.getMessage());
+        }
+    }
 
+    @Override
+    public int getUserDataCollectionSize() {
+        return 0;
     }
 }
