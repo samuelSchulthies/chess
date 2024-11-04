@@ -1,9 +1,13 @@
 package dataaccess;
 
+import chess.ChessGame;
+import com.google.gson.Gson;
 import model.GameData;
+import model.UserData;
 import requestresult.ListRequest;
 import requestresult.ListResult;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -14,7 +18,29 @@ public class MySQLGameDAO implements GameDAO{
     }
     @Override
     public void createGame(GameData game) throws DataAccessException {
+        String gameSQLStatement =
+                "INSERT INTO game (whiteUsername, blackUsername, gameName, gameJSON) VALUES (?, ?, ?, ?)";
+        String whiteUsername = game.whiteUsername();
+        String blackUsername = game.blackUsername();
+        if (game.whiteUsername() == null){
+            whiteUsername = "";
+        }
+        if (game.blackUsername() == null){
+            blackUsername = "";
+        }
+        var gameJSON = new Gson().toJson(game.game());
+        try (var conn = DatabaseManager.getConnection()){
+            try (var ps = conn.prepareStatement(gameSQLStatement)){
+                ps.setString(1, whiteUsername);
+                ps.setString(2, blackUsername);
+                ps.setString(3, game.gameName());
+                ps.setString(4, gameJSON);
 
+                ps.executeUpdate();
+            }
+        } catch (SQLException e){
+            throw new DataAccessException(e.getMessage());
+        }
     }
 
     @Override
@@ -24,6 +50,24 @@ public class MySQLGameDAO implements GameDAO{
 
     @Override
     public GameData getGame(int gameID) throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()){
+            var getGameStatement =
+                    "SELECT gameID, whiteUsername, blackUsername, gameName, gameJSON FROM game WHERE gameID=?";
+
+            try (var ps = conn.prepareStatement(getGameStatement)){
+                ps.setInt(1, gameID);
+
+                try (var rs = ps.executeQuery()){
+                    if (rs.next()) {
+                        return new GameData(rs.getInt("gameID"),
+                                rs.getString("whiteUsername"), rs.getString("blackUsername"),
+                                rs.getString("gameName"), readGame(rs));
+                    }
+                }
+            }
+        } catch (SQLException e){
+            throw new DataAccessException(e.getMessage());
+        }
         return null;
     }
 
@@ -40,14 +84,12 @@ public class MySQLGameDAO implements GameDAO{
     private final String[] gameCreateStatements = {
             """
             CREATE TABLE IF NOT EXISTS game (
-                gameID int NOT NULL,
+                gameID int NOT NULL AUTO_INCREMENT,
                 whiteUsername VARCHAR(256) NOT NULL,
                 blackUsername VARCHAR(256) NOT NULL,
                 gameName VARCHAR(256) NOT NULL,
                 gameJSON TEXT DEFAULT NULL,
-                PRIMARY KEY (gameID),
-                FOREIGN KEY (whiteUsername) REFERENCES user(whiteUsername),
-                FOREIGN KEY (blackUsername) REFERENCES user(blackUsername)
+                PRIMARY KEY (gameID)
             )
             """
     };
@@ -63,6 +105,11 @@ public class MySQLGameDAO implements GameDAO{
         } catch (SQLException e){
             throw new DataAccessException(e.getMessage());
         }
+    }
+
+    private ChessGame readGame (ResultSet rs) throws SQLException{
+        var gameJSON = rs.getString("gameJSON");
+        return new Gson().fromJson(gameJSON, ChessGame.class);
     }
 
     @Override

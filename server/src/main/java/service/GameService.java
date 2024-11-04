@@ -83,7 +83,7 @@ public class GameService {
         return gameDAO.getGameDataCollectionSize();
     }
 
-    GameDAO getGameDAO(){
+    public GameDAO getGameDAO(){
         return gameDAO;
     }
 }

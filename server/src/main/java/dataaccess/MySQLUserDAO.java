@@ -28,7 +28,6 @@ public class MySQLUserDAO implements UserDAO {
         } catch (SQLException e){
             throw new DataAccessException("unable to update database");
         }
-
     }
 
     @Override
