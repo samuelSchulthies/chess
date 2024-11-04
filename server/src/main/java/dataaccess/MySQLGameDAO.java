@@ -45,7 +45,9 @@ public class MySQLGameDAO implements GameDAO{
                 blackUsername VARCHAR(256) NOT NULL,
                 gameName VARCHAR(256) NOT NULL,
                 gameJSON TEXT DEFAULT NULL,
-                PRIMARY KEY (gameID)
+                PRIMARY KEY (gameID),
+                FOREIGN KEY (whiteUsername) REFERENCES user(whiteUsername),
+                FOREIGN KEY (blackUsername) REFERENCES user(blackUsername)
             )
             """
     };

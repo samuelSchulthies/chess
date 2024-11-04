@@ -24,7 +24,7 @@ public class MySQLAuthTokenDAO implements AuthTokenDAO{
                 ps.executeUpdate();
             }
         } catch (SQLException e){
-            throw new DataAccessException("unable to update database");
+            throw new DataAccessException(e.getMessage());
         }
 
         return authToken;
@@ -52,8 +52,16 @@ public class MySQLAuthTokenDAO implements AuthTokenDAO{
     }
 
     @Override
-    public void deleteAuth(String authToken) {
-
+    public void deleteAuth(String authToken) throws DataAccessException{
+        try (var conn = DatabaseManager.getConnection()){
+            var clearAuthRowStatement = "DELETE FROM authData WHERE authToken=?";
+            try (var ps = conn.prepareStatement(clearAuthRowStatement)){
+                ps.setString(1, authToken);
+                ps.executeUpdate();
+            }
+        } catch (SQLException e){
+            throw new DataAccessException(e.getMessage());
+        }
     }
 
     private final String[] authDataCreateStatements = {
