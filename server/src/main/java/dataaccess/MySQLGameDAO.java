@@ -8,6 +8,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class MySQLGameDAO implements GameDAO{
+
+    public MySQLGameDAO() throws DataAccessException {
+        configureDatabase();
+    }
     @Override
     public void createGame(GameData game) throws DataAccessException {
 
@@ -33,10 +37,36 @@ public class MySQLGameDAO implements GameDAO{
 
     }
 
+    private final String[] gameCreateStatements = {
+            """
+            CREATE TABLE IF NOT EXISTS game (
+                gameID int NOT NULL,
+                whiteUsername VARCHAR(256) NOT NULL,
+                blackUsername VARCHAR(256) NOT NULL,
+                gameName VARCHAR(256) NOT NULL,
+                gameJSON TEXT DEFAULT NULL,
+                PRIMARY KEY (gameID)
+            )
+            """
+    };
+
+    private void configureDatabase() throws DataAccessException {
+        DatabaseManager.createDatabase();
+        try (var conn = DatabaseManager.getConnection()) {
+            for (var statement : gameCreateStatements) {
+                try (var preparedStatement = conn.prepareStatement(statement)) {
+                    preparedStatement.executeUpdate();
+                }
+            }
+        } catch (SQLException e){
+            throw new DataAccessException(e.getMessage());
+        }
+    }
+
     @Override
     public void clear() throws DataAccessException{
         try (var conn = DatabaseManager.getConnection()){
-            var clearGamesStatement = "TRUNCATE games";
+            var clearGamesStatement = "TRUNCATE game";
             try (var ps = conn.prepareStatement(clearGamesStatement)){
                 ps.executeUpdate();
             }

@@ -1,5 +1,6 @@
 package dataaccess;
 
+import model.UserData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,8 +16,10 @@ public class MySQLUserDAO_Test {
     @DisplayName("Proper Create User")
     public void positiveCreateUser() throws DataAccessException {
         UserService userService = new UserService(new MySQLUserDAO(), new MySQLAuthTokenDAO());
-        GameService gameService = new GameService(new MemoryGameDAO(), userService.getAuthTokenDAO());
+        GameService gameService = new GameService(new MySQLGameDAO(), userService.getAuthTokenDAO());
         ClearService clearService = new ClearService(userService, gameService);
+
+        clearService.clear();
 
         RegisterRequest newUser = new RegisterRequest("sally","123","sallyisawesome@gmail.com");
         RegisterResult registeredUser = userService.register(newUser);
@@ -30,9 +33,11 @@ public class MySQLUserDAO_Test {
     @Test
     @DisplayName("Improper Create User")
     public void negativeCreateUser() throws DataAccessException {
-        UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthTokenDAO());
-        GameService gameService = new GameService(new MemoryGameDAO(), userService.getAuthTokenDAO());
+        UserService userService = new UserService(new MySQLUserDAO(), new MySQLAuthTokenDAO());
+        GameService gameService = new GameService(new MySQLGameDAO(), userService.getAuthTokenDAO());
         ClearService clearService = new ClearService(userService, gameService);
+
+        clearService.clear();
 
         RegisterRequest newUser = new RegisterRequest("sally","123","sallyisawesome@gmail.com");
         userService.register(newUser);
@@ -49,18 +54,61 @@ public class MySQLUserDAO_Test {
     @Test
     @DisplayName("Proper Get User")
     public void positiveGetUser() throws DataAccessException {
+        UserService userService = new UserService(new MySQLUserDAO(), new MySQLAuthTokenDAO());
+        GameService gameService = new GameService(new MySQLGameDAO(), userService.getAuthTokenDAO());
+        ClearService clearService = new ClearService(userService, gameService);
+
+        clearService.clear();
+
+        RegisterRequest newUser = new RegisterRequest("sally","123","sallyisawesome@gmail.com");
+        RegisterResult registeredUser = userService.register(newUser);
+
+        UserData newUserTypeCast = new UserData(newUser.username(), newUser.password(), newUser.email());
+
+        Assertions.assertEquals(newUserTypeCast, userService.getUserDAO().getUser(registeredUser.username()),
+                "Registered user was not found in the database");
+
+        clearService.clear();
     }
 
     @Test
     @DisplayName("Improper Get User")
     public void negativeGetUser() throws DataAccessException {
+        UserService userService = new UserService(new MySQLUserDAO(), new MySQLAuthTokenDAO());
+        GameService gameService = new GameService(new MySQLGameDAO(), userService.getAuthTokenDAO());
+        ClearService clearService = new ClearService(userService, gameService);
 
+        clearService.clear();
+
+        RegisterRequest newUser = new RegisterRequest("sally","123","sallyisawesome@gmail.com");
+        userService.register(newUser);
+
+        Assertions.assertNull(userService.getUserDAO().getUser("saly"), "retrieved non-existent user");
+
+        clearService.clear();
     }
 
     @Test
     @DisplayName("Clear User")
     public void clearUser() throws DataAccessException {
+        UserService userService = new UserService(new MySQLUserDAO(), new MySQLAuthTokenDAO());
+        GameService gameService = new GameService(new MySQLGameDAO(), userService.getAuthTokenDAO());
+        ClearService clearService = new ClearService(userService, gameService);
 
+        clearService.clear();
+
+        RegisterRequest newUser = new RegisterRequest("sally","123","sallyisawesome@gmail.com");
+        RegisterResult registeredUser = userService.register(newUser);
+        RegisterRequest newUser2 = new RegisterRequest("jim","321","jimisawesome@gmail.com");
+        RegisterResult registeredUser2 = userService.register(newUser2);
+
+        userService.getUserDAO().clear();
+        Assertions.assertNull(userService.getUserDAO().getUser(registeredUser.username()),
+                "retrieved non-existent user");
+        Assertions.assertNull(userService.getUserDAO().getUser(registeredUser2.username()),
+                "retrieved non-existent user");
+
+        clearService.clear();
     }
 
 }
