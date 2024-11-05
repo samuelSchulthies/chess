@@ -10,7 +10,6 @@ import requestresult.*;
 import java.util.Objects;
 
 public class GameService {
-
     private final GameDAO gameDAO;
     private final AuthTokenDAO authTokenDAO;
     private int gameID = 1;
@@ -81,6 +80,10 @@ public class GameService {
 
     int gameDataSize(){
         return gameDAO.getGameDataCollectionSize();
+    }
+
+    public void resetGameID(){
+        gameID = 1;
     }
 
     public GameDAO getGameDAO(){

@@ -3,6 +3,7 @@ import dataaccess.AuthTokenDAO;
 import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 import requestresult.*;
 
 import java.util.Objects;
@@ -22,7 +23,8 @@ public class UserService {
                 ((r.password() != null) && ((!Objects.equals(r.password(), "")))) &&
                         (((r.email() != null) && ((!Objects.equals(r.email(), "")))))) {
             if (userDAO.getUser(r.username()) == null) {
-                UserData user = new UserData(r.username(), r.password(), r.email());
+                String hashedPassword = BCrypt.hashpw(r.password(), BCrypt.gensalt());
+                UserData user = new UserData(r.username(), hashedPassword, r.email());
                 userDAO.createUser(user);
                 LoginRequest newLogin = new LoginRequest(r.username(), r.password());
                 String authToken = login(newLogin).authToken();
@@ -42,7 +44,7 @@ public class UserService {
             throw new DataAccessException("username does not exist");
         }
         UserData userAuthentication = userDAO.getUser(r.username());
-        if(Objects.equals(userAuthentication.password(), r.password())){
+        if(BCrypt.checkpw(r.password(), userAuthentication.password())){
             String authToken = authTokenDAO.createAuth(userAuthentication.username());
             return new LoginResult(r.username(), authToken);
         }

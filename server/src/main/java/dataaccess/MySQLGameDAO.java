@@ -6,6 +6,7 @@ import model.GameData;
 import model.UserData;
 import requestresult.ListRequest;
 import requestresult.ListResult;
+import service.GameService;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -146,7 +147,7 @@ public class MySQLGameDAO implements GameDAO{
     }
 
     @Override
-    public void clear() throws DataAccessException{
+    public void clear(GameService gameService) throws DataAccessException{
         try (var conn = DatabaseManager.getConnection()){
             var clearGamesStatement = "TRUNCATE game";
             try (var ps = conn.prepareStatement(clearGamesStatement)){
@@ -155,6 +156,7 @@ public class MySQLGameDAO implements GameDAO{
         } catch (SQLException e){
             throw new DataAccessException(e.getMessage());
         }
+        gameService.resetGameID();
     }
 
     @Override

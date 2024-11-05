@@ -4,6 +4,7 @@ import model.UserData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mindrot.jbcrypt.BCrypt;
 import requestresult.RegisterRequest;
 import requestresult.RegisterResult;
 import service.ClearService;
@@ -65,8 +66,15 @@ public class MySQLUserDAO_Test {
 
         UserData newUserTypeCast = new UserData(newUser.username(), newUser.password(), newUser.email());
 
-        Assertions.assertEquals(newUserTypeCast, userService.getUserDAO().getUser(registeredUser.username()),
-                "Registered user was not found in the database");
+        Assertions.assertEquals(newUserTypeCast.username(),
+                userService.getUserDAO().getUser(registeredUser.username()).username(),
+                "Registered user's username was not found in the database");
+        Assertions.assertEquals(newUserTypeCast.email(),
+                userService.getUserDAO().getUser(registeredUser.username()).email(),
+                "Registered user's email was not found in the database");
+        Assertions.assertTrue(BCrypt.checkpw(newUserTypeCast.password(),
+                        userService.getUserDAO().getUser(registeredUser.username()).password()),
+                "Registered user's password was not found in the database");
 
         clearService.clear();
     }

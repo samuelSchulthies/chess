@@ -14,7 +14,7 @@ public class ClearService {
     public ClearResult clear() throws DataAccessException {
         userService.getUserDAO().clear();
         userService.getAuthTokenDAO().clear();
-        gameService.getGameDAO().clear();
+        gameService.getGameDAO().clear(gameService);
         return new ClearResult();
     }
 }

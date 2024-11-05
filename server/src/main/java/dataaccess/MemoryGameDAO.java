@@ -4,6 +4,7 @@ import chess.ChessGame;
 import model.GameData;
 import requestresult.ListRequest;
 import requestresult.ListResult;
+import service.GameService;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -48,7 +49,8 @@ public class MemoryGameDAO implements GameDAO {
         return gameDataCollection;
     }
 
-    public void clear(){
+    public void clear(GameService gameService){
         gameDataCollection.clear();
+        gameService.resetGameID();
     }
 }

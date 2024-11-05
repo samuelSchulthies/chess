@@ -219,7 +219,7 @@ public class MySQLGameDAO_Test {
         CreateRequest newGame = new CreateRequest("Sally's game");
         CreateResult createdGame = gameService.create(newGame, registeredUser.authToken());
 
-        gameService.getGameDAO().clear();
+        gameService.getGameDAO().clear(gameService);
         Assertions.assertNull(gameService.getGameDAO().getGame(createdGame.gameID()),
                 "retrieved non-existent game");
 

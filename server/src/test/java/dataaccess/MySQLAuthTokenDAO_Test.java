@@ -10,6 +10,8 @@ import service.ClearService;
 import service.GameService;
 import service.UserService;
 
+import java.sql.SQLException;
+
 public class MySQLAuthTokenDAO_Test {
 
     @Test
@@ -33,19 +35,25 @@ public class MySQLAuthTokenDAO_Test {
     @Test
     @DisplayName("Improper Create Auth")
     public void negativeCreateAuth() throws DataAccessException {
-//        UserService userService = new UserService(new MySQLUserDAO(), new MySQLAuthTokenDAO());
-//        GameService gameService = new GameService(new MySQLGameDAO(), userService.getAuthTokenDAO());
-//        ClearService clearService = new ClearService(userService, gameService);
-//
-//        clearService.clear();
-//
-//        RegisterRequest newUser = new RegisterRequest("sally","123","sallyisawesome@gmail.com");
-//        RegisterResult registeredUser = userService.register(newUser);
-//
-//        Assertions.assertNotNull(userService.getAuthTokenDAO().getAuth(registeredUser.authToken()),
-//                "Created authToken was not found in the database");
-//
-//        clearService.clear();
+        UserService userService = new UserService(new MySQLUserDAO(), new MySQLAuthTokenDAO());
+        GameService gameService = new GameService(new MySQLGameDAO(), userService.getAuthTokenDAO());
+        ClearService clearService = new ClearService(userService, gameService);
+
+        clearService.clear();
+
+        String usernameOneCharTooBig =
+                """
+                12345678901234567890123456789012345678901234567890123456789012345678901234567890
+                12345678901234567890123456789012345678901234567890123456789012345678901234567890
+                12345678901234567890123456789012345678901234567890123456789012345678901234567890
+                1234567801234
+                """;
+
+        RegisterRequest newUser = new RegisterRequest(usernameOneCharTooBig,"123","sallyisawesome@gmail.com");
+        Assertions.assertThrows(DataAccessException.class, () -> userService.register(newUser),
+                "Username too long to generate authToken");
+
+        clearService.clear();
     }
 
     @Test
@@ -60,10 +68,8 @@ public class MySQLAuthTokenDAO_Test {
         RegisterRequest newUser = new RegisterRequest("sally","123","sallyisawesome@gmail.com");
         RegisterResult registeredUser = userService.register(newUser);
 
-        UserData newUserTypeCast = new UserData(newUser.username(), newUser.password(), newUser.email());
-
-        Assertions.assertEquals(newUserTypeCast, userService.getUserDAO().getUser(registeredUser.username()),
-                "Registered user was not found in the database");
+        Assertions.assertNotNull(userService.getAuthTokenDAO().getAuth(registeredUser.authToken()),
+                "Authtoken not found");
 
         clearService.clear();
     }

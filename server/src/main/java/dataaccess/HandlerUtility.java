@@ -5,8 +5,6 @@ import service.ClearService;
 import service.GameService;
 import service.UserService;
 
-import java.util.logging.Handler;
-
 public class HandlerUtility {
 
     static final UserService USER_SERVICE;
