@@ -11,7 +11,7 @@ import service.ClearService;
 import service.GameService;
 import service.UserService;
 
-public class MySQL_UserDAO_Test {
+public class MySQLUserDAOTest {
 
     @Test
     @DisplayName("Proper Create User")
