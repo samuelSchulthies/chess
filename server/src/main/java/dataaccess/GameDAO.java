@@ -12,8 +12,6 @@ import java.util.ArrayList;
 public interface GameDAO {
     void createGame(GameData game) throws DataAccessException;
 
-    void removeGame(int gameID) throws DataAccessException;
-
     GameData getGame(int gameID) throws DataAccessException;
 
     ListResult listGames(ListRequest r) throws DataAccessException;

@@ -15,11 +15,11 @@ public class MySQLAuthTokenDAO implements AuthTokenDAO{
     public String createAuth(String username) throws DataAccessException {
         String authToken = UUID.randomUUID().toString();
 
-        String userSQLStatement = "INSERT INTO authData (username, authToken) VALUES (?, ?)";
+        String userSQLStatement = "INSERT INTO authData (authToken, username) VALUES (?, ?)";
         try (var conn = DatabaseManager.getConnection()){
             try (var ps = conn.prepareStatement(userSQLStatement)){
-                ps.setString(1, username);
-                ps.setString(2, authToken);
+                ps.setString(1, authToken);
+                ps.setString(2, username);
 
                 ps.executeUpdate();
             }
@@ -40,8 +40,8 @@ public class MySQLAuthTokenDAO implements AuthTokenDAO{
 
                 try (var rs = ps.executeQuery()){
                     if (rs.next()) {
-                        return new AuthData(rs.getString("username"),
-                                rs.getString("authToken"));
+                        return new AuthData(rs.getString("authToken"),
+                                rs.getString("username"));
                     }
                 }
             }
@@ -67,8 +67,8 @@ public class MySQLAuthTokenDAO implements AuthTokenDAO{
     private final String[] authDataCreateStatements = {
             """
             CREATE TABLE IF NOT EXISTS authData (
-                username varchar(255) NOT NULL,
                 authToken varchar(255) NOT NULL,
+                username varchar(255) NOT NULL,
                 PRIMARY KEY (authToken)
             )
             """

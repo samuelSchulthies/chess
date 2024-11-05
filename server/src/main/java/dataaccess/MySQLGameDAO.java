@@ -43,9 +43,16 @@ public class MySQLGameDAO implements GameDAO{
         }
     }
 
-    @Override
-    public void removeGame(int gameID) throws DataAccessException {
-
+    private void removeGame(int gameID) throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()){
+            var removeGameStatement = "DELETE FROM game WHERE gameID=?";
+            try (var ps = conn.prepareStatement(removeGameStatement)){
+                ps.setInt(1, gameID);
+                ps.executeUpdate();
+            }
+        } catch (SQLException e){
+            throw new DataAccessException(e.getMessage());
+        }
     }
 
     @Override
@@ -78,7 +85,8 @@ public class MySQLGameDAO implements GameDAO{
 
     @Override
     public void updateGame(int gameID, GameData game) throws DataAccessException {
-
+        removeGame(gameID);
+        createGame(game);
     }
 
     private final String[] gameCreateStatements = {
