@@ -30,8 +30,8 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
-    public ListResult listGames(ListRequest r) throws DataAccessException {
-        return null;
+    public ListResult listGames() throws DataAccessException {
+        return new ListResult(gameDataCollection);
     }
 
     @Override

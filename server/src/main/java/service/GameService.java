@@ -72,7 +72,7 @@ public class GameService {
     }
     public ListResult list(String authToken) throws DataAccessException {
         if (authTokenDAO.getAuth(authToken) != null){
-            return new ListResult(gameDAO.getGameDataCollection());
+            return gameDAO.listGames();
         }
         else {
             throw new DataAccessException("invalid authtoken");

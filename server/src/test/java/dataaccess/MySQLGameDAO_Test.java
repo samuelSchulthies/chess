@@ -1,5 +1,6 @@
 package dataaccess;
 
+import model.GameData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -7,6 +8,8 @@ import requestresult.*;
 import service.ClearService;
 import service.GameService;
 import service.UserService;
+
+import java.util.ArrayList;
 
 public class MySQLGameDAO_Test {
 
@@ -88,7 +91,35 @@ public class MySQLGameDAO_Test {
     @Test
     @DisplayName("Proper List Games")
     public void positiveListGames() throws DataAccessException {
+        UserService userService = new UserService(new MySQLUserDAO(), new MySQLAuthTokenDAO());
+        GameService gameService = new GameService(new MySQLGameDAO(), userService.getAuthTokenDAO());
+        ClearService clearService = new ClearService(userService, gameService);
 
+        clearService.clear();
+
+        RegisterRequest newUser = new RegisterRequest("sally","123","sallyisawesome@gmail.com");
+        RegisterResult registeredUser = userService.register(newUser);
+
+        ArrayList<GameData> expectedGameList = new ArrayList<>();
+
+        CreateRequest newGame = new CreateRequest("Sally's game 1");
+        CreateResult createdGame = gameService.create(newGame, registeredUser.authToken());
+        expectedGameList.add(gameService.getGameDAO().getGame(createdGame.gameID()));
+
+        CreateRequest newGame2 = new CreateRequest("Sally's game 2");
+        CreateResult createdGame2 = gameService.create(newGame2, registeredUser.authToken());
+        expectedGameList.add(gameService.getGameDAO().getGame(createdGame2.gameID()));
+
+        CreateRequest newGame3 = new CreateRequest("Sally's game 3");
+        CreateResult createdGame3 = gameService.create(newGame3, registeredUser.authToken());
+        expectedGameList.add(gameService.getGameDAO().getGame(createdGame3.gameID()));
+
+        ListResult actualGameList = gameService.getGameDAO().listGames();
+
+        Assertions.assertEquals(expectedGameList, actualGameList.games(),
+                "Returned game list does not match expected");
+
+        clearService.clear();
     }
 
     @Test
