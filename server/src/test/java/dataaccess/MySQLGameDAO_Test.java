@@ -50,12 +50,38 @@ public class MySQLGameDAO_Test {
     @Test
     @DisplayName("Proper Get Game")
     public void positiveGetGame() throws DataAccessException {
+        UserService userService = new UserService(new MySQLUserDAO(), new MySQLAuthTokenDAO());
+        GameService gameService = new GameService(new MySQLGameDAO(), userService.getAuthTokenDAO());
+        ClearService clearService = new ClearService(userService, gameService);
 
+        clearService.clear();
+
+        RegisterRequest newUser = new RegisterRequest("sally","123","sallyisawesome@gmail.com");
+        RegisterResult registeredUser = userService.register(newUser);
+
+        CreateRequest newGame = new CreateRequest("Sally's game");
+        CreateResult createdGame = gameService.create(newGame, registeredUser.authToken());
+
+        Assertions.assertEquals(newGame.gameName(), gameService.getGameDAO().getGame(createdGame.gameID()).gameName(),
+                "did not return expected game");
+
+        clearService.clear();
     }
 
     @Test
     @DisplayName("Improper Get Game")
     public void negativeGetGame() throws DataAccessException {
+
+        UserService userService = new UserService(new MySQLUserDAO(), new MySQLAuthTokenDAO());
+        GameService gameService = new GameService(new MySQLGameDAO(), userService.getAuthTokenDAO());
+        ClearService clearService = new ClearService(userService, gameService);
+
+        clearService.clear();
+
+        Assertions.assertNull(gameService.getGameDAO().getGame(1),
+                "found game that shouldn't exist");
+
+        clearService.clear();
 
     }
 
@@ -97,15 +123,52 @@ public class MySQLGameDAO_Test {
     }
 
     @Test
-    @DisplayName("Improper Update Games")
+    @DisplayName("Improper Update Game")
     public void negativeUpdateGame() throws DataAccessException {
+        UserService userService = new UserService(new MySQLUserDAO(), new MySQLAuthTokenDAO());
+        GameService gameService = new GameService(new MySQLGameDAO(), userService.getAuthTokenDAO());
+        ClearService clearService = new ClearService(userService, gameService);
 
+        clearService.clear();
+
+        RegisterRequest newUser = new RegisterRequest("sally","123","sallyisawesome@gmail.com");
+        RegisterResult registeredUser = userService.register(newUser);
+        RegisterRequest newUser2 = new RegisterRequest("david","321","davidisawesome@gmail.com");
+        RegisterResult registeredUser2 = userService.register(newUser2);
+
+        CreateRequest newGame = new CreateRequest("Sally's game");
+        CreateResult createdGame = gameService.create(newGame, registeredUser.authToken());
+
+        JoinRequest newPlayer = new JoinRequest("BLACK", createdGame.gameID());
+        gameService.join(newPlayer, registeredUser.authToken());
+        JoinRequest newPlayer2 = new JoinRequest("BLACK", createdGame.gameID());
+        Assertions.assertThrows(DataAccessException.class, () ->
+                gameService.join(newPlayer2, registeredUser2.authToken()),
+                "game updated with already taken team");
+
+        clearService.clear();
     }
 
     @Test
     @DisplayName("Clear Game")
     public void clearGame() throws DataAccessException {
+        UserService userService = new UserService(new MySQLUserDAO(), new MySQLAuthTokenDAO());
+        GameService gameService = new GameService(new MySQLGameDAO(), userService.getAuthTokenDAO());
+        ClearService clearService = new ClearService(userService, gameService);
 
+        clearService.clear();
+
+        RegisterRequest newUser = new RegisterRequest("sally","123","sallyisawesome@gmail.com");
+        RegisterResult registeredUser = userService.register(newUser);
+
+        CreateRequest newGame = new CreateRequest("Sally's game");
+        CreateResult createdGame = gameService.create(newGame, registeredUser.authToken());
+
+        gameService.getGameDAO().clear();
+        Assertions.assertNull(gameService.getGameDAO().getGame(createdGame.gameID()),
+                "retrieved non-existent game");
+
+        clearService.clear();
     }
 
 }
