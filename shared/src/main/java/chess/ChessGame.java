@@ -324,4 +324,13 @@ public class ChessGame {
     public ChessBoard getBoard() {
         return gameBoard;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessGame chessGame = (ChessGame) o;
+        return Objects.equals(pieceStorage, chessGame.pieceStorage);
+    }
+
 }
