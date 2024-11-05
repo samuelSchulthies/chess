@@ -125,7 +125,31 @@ public class MySQLGameDAO_Test {
     @Test
     @DisplayName("Improper List Games")
     public void negativeListGames() throws DataAccessException {
+        UserService userService = new UserService(new MySQLUserDAO(), new MySQLAuthTokenDAO());
+        GameService gameService = new GameService(new MySQLGameDAO(), userService.getAuthTokenDAO());
+        ClearService clearService = new ClearService(userService, gameService);
 
+        clearService.clear();
+
+        RegisterRequest newUser = new RegisterRequest("sally","123","sallyisawesome@gmail.com");
+        RegisterResult registeredUser = userService.register(newUser);
+
+        CreateRequest newGame = new CreateRequest("Sally's game 1");
+        gameService.create(newGame, registeredUser.authToken());
+
+        CreateRequest newGame2 = new CreateRequest("Sally's game 2");
+        gameService.create(newGame2, registeredUser.authToken());
+
+        CreateRequest newGame3 = new CreateRequest("Sally's game 3");
+        gameService.create(newGame3, registeredUser.authToken());
+
+        userService.logout(registeredUser.authToken());
+
+        Assertions.assertThrows(DataAccessException.class,
+                () -> gameService.list(registeredUser.authToken()),
+                "User with no auth listedGames");
+
+        clearService.clear();
     }
 
     @Test
