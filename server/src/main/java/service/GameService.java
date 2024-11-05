@@ -42,12 +42,12 @@ public class GameService {
         if (r.playerColor() == null) {
             throw new DataAccessException("team color cannot be empty");
         }
-        if (!Objects.equals(game.whiteUsername(), null) && !Objects.equals(game.whiteUsername(), "")
-                && !Objects.equals(game.blackUsername(), null) && !Objects.equals(game.blackUsername(), "")){
+        if (!Objects.equals(game.whiteUsername(), null)
+                && !Objects.equals(game.blackUsername(), null)){
             throw new DataAccessException("game is full");
         }
         if (Objects.equals(r.playerColor(), "BLACK")
-                && ((Objects.equals(game.blackUsername(), null)) || Objects.equals(game.blackUsername(), ""))){
+                && (Objects.equals(game.blackUsername(), null))){
             GameData updatedGame = new GameData(game.gameID(), game.whiteUsername(),
                     authTokenDAO.getAuth(authToken).username(), game.gameName(), game.game());
             gameDAO.updateGame(game.gameID(), updatedGame);
@@ -56,7 +56,7 @@ public class GameService {
             throw new DataAccessException("black is taken");
         }
         if (Objects.equals(r.playerColor(), "WHITE")
-                && ((Objects.equals(game.whiteUsername(), null)) || Objects.equals(game.whiteUsername(), ""))){
+                && (Objects.equals(game.whiteUsername(), null))){
             GameData updatedGame = new GameData(game.gameID(), authTokenDAO.getAuth(authToken).username(),
                     game.blackUsername(), game.gameName(), game.game());
             gameDAO.updateGame(game.gameID(), updatedGame);

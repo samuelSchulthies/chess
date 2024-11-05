@@ -20,19 +20,11 @@ public class MySQLGameDAO implements GameDAO{
     public void createGame(GameData game) throws DataAccessException {
         String gameSQLStatement =
                 "INSERT INTO game (whiteUsername, blackUsername, gameName, gameJSON) VALUES (?, ?, ?, ?)";
-        String whiteUsername = game.whiteUsername();
-        String blackUsername = game.blackUsername();
-        if (game.whiteUsername() == null){
-            whiteUsername = "";
-        }
-        if (game.blackUsername() == null){
-            blackUsername = "";
-        }
         var gameJSON = new Gson().toJson(game.game());
         try (var conn = DatabaseManager.getConnection()){
             try (var ps = conn.prepareStatement(gameSQLStatement)){
-                ps.setString(1, whiteUsername);
-                ps.setString(2, blackUsername);
+                ps.setString(1, game.whiteUsername());
+                ps.setString(2, game.blackUsername());
                 ps.setString(3, game.gameName());
                 ps.setString(4, gameJSON);
 
@@ -85,16 +77,18 @@ public class MySQLGameDAO implements GameDAO{
 
     @Override
     public void updateGame(int gameID, GameData game) throws DataAccessException {
-        removeGame(gameID);
-        createGame(game);
+//        removeGame(gameID);
+//        createGame(game);
+
+
     }
 
     private final String[] gameCreateStatements = {
             """
             CREATE TABLE IF NOT EXISTS game (
                 gameID int NOT NULL AUTO_INCREMENT,
-                whiteUsername VARCHAR(256) NOT NULL,
-                blackUsername VARCHAR(256) NOT NULL,
+                whiteUsername VARCHAR(256),
+                blackUsername VARCHAR(256),
                 gameName VARCHAR(256) NOT NULL,
                 gameJSON TEXT DEFAULT NULL,
                 PRIMARY KEY (gameID)
