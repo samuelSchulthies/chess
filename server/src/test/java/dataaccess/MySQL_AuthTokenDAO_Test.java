@@ -12,7 +12,7 @@ import service.UserService;
 
 import java.sql.SQLException;
 
-public class MySQLAuthTokenDAO_Test {
+public class MySQL_AuthTokenDAO_Test {
 
     @Test
     @DisplayName("Proper Create Auth")

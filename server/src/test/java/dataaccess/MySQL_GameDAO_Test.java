@@ -11,7 +11,7 @@ import service.UserService;
 
 import java.util.ArrayList;
 
-public class MySQLGameDAO_Test {
+public class MySQL_GameDAO_Test {
 
     @Test
     @DisplayName("Proper Create Game")
