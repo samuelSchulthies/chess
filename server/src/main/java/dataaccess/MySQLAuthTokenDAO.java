@@ -75,16 +75,8 @@ public class MySQLAuthTokenDAO implements AuthTokenDAO{
     };
 
     private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (var conn = DatabaseManager.getConnection()) {
-            for (var statement : authDataCreateStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException e){
-            throw new DataAccessException(e.getMessage());
-        }
+        SQLUtility configureDatabase = new SQLUtility(authDataCreateStatements);
+        configureDatabase.configureDatabase();
     }
 
     @Override

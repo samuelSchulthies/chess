@@ -63,16 +63,8 @@ public class MySQLUserDAO implements UserDAO {
     };
 
     private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (var conn = DatabaseManager.getConnection()) {
-            for (var statement : userCreateStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException e){
-            throw new DataAccessException(e.getMessage());
-        }
+        SQLUtility configureDatabase = new SQLUtility(userCreateStatements);
+        configureDatabase.configureDatabase();
     }
 
     @Override
