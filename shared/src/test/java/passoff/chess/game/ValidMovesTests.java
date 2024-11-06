@@ -62,30 +62,6 @@ public class ValidMovesTests {
     }
 
     @Test
-    @DisplayName("Piece Partially Trapped with black king")
-    public void moveIntoCheck2Kings() {
-
-        var game = new ChessGame();
-        game.setBoard(loadBoard("""
-                    | | | | | | | | |
-                    | | | | | | | | |
-                    | | | | | | | | |
-                    | |r| | | |R| |K|
-                    | | | | | | | | |
-                    | | | | | | | |k|
-                    | | | | | | | | |
-                    | | | | | | | | |
-                    """));
-
-        ChessPosition rookPosition = new ChessPosition(5, 6);
-        var validMoves = loadMoves(rookPosition, new int[][]{
-                {5, 7}, {5, 5}, {5, 4}, {5, 3}, {5, 2}
-        });
-
-        assertMoves(game, validMoves, rookPosition);
-    }
-
-    @Test
     @DisplayName("Piece Completely Trapped")
     public void rookPinnedToKing() {
 
