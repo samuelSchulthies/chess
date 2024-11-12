@@ -16,10 +16,13 @@ public class ServerFacadeTests {
     private static ServerFacade serverFacade;
     private static RegisterRequest newUser;
 
+    private static CreateRequest newGame;
+
     @BeforeAll
     public static void init() throws DataAccessException{
 
         newUser = new RegisterRequest("sally","123","sallyisawesome@gmail.com");
+        newGame = new CreateRequest("Sally's game");
 
         server = new Server();
         var port = server.run(0);
@@ -101,7 +104,7 @@ public class ServerFacadeTests {
     @Test
     @DisplayName("Proper Logout Result")
     public void positiveLogout() throws DataAccessException {
-        UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthTokenDAO());
+        UserService userService = new UserService(new MySQLUserDAO(), new MySQLAuthTokenDAO());
         serverFacade.clear();
 
         RegisterResult registeredUser = serverFacade.register(newUser);
@@ -132,7 +135,19 @@ public class ServerFacadeTests {
     @Test
     @DisplayName("Positive Create Result")
     public void positiveCreate() throws DataAccessException {
+        UserService userService = new UserService(new MySQLUserDAO(), new MySQLAuthTokenDAO());
+        GameService gameService = new GameService(new MySQLGameDAO(), userService.getAuthTokenDAO());
+
         serverFacade.clear();
+
+        RegisterResult registeredUser = serverFacade.register(newUser);
+
+        CreateRequest newGame = new CreateRequest("Sally's game");
+        CreateResult createdGame = serverFacade.create(newGame, registeredUser.authToken());
+
+        Assertions.assertNotNull(gameService.getGameDAO().getGame(createdGame.gameID()),
+                "Game with given gameID was not found");
+
         serverFacade.clear();
     }
 
@@ -140,6 +155,17 @@ public class ServerFacadeTests {
     @DisplayName("Negative Create Result")
     public void negativeCreate() throws DataAccessException {
         serverFacade.clear();
+
+        RegisterResult registeredUser = serverFacade.register(newUser);
+
+        CreateRequest newGameEmptyName = new CreateRequest("");
+        Assertions.assertThrows(DataAccessException.class, () -> serverFacade.create(newGameEmptyName, registeredUser.authToken()));
+
+        serverFacade.logout(registeredUser.authToken());
+
+        CreateRequest newGameNoAuth = new CreateRequest("Sally's game");
+        Assertions.assertThrows(DataAccessException.class, () -> serverFacade.create(newGameNoAuth, registeredUser.authToken()));
+
         serverFacade.clear();
     }
 
