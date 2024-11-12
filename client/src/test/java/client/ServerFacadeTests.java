@@ -1,9 +1,6 @@
 package client;
 
-import dataaccess.DataAccessException;
-import dataaccess.MySQLAuthTokenDAO;
-import dataaccess.MySQLGameDAO;
-import dataaccess.MySQLUserDAO;
+import dataaccess.*;
 import org.junit.jupiter.api.*;
 import requestresult.*;
 import server.Server;
@@ -104,7 +101,16 @@ public class ServerFacadeTests {
     @Test
     @DisplayName("Proper Logout Result")
     public void positiveLogout() throws DataAccessException {
+        UserService userService = new UserService(new MemoryUserDAO(), new MemoryAuthTokenDAO());
         serverFacade.clear();
+
+        RegisterResult registeredUser = serverFacade.register(newUser);
+        serverFacade.logout(registeredUser.authToken());
+
+
+        Assertions.assertNull(userService.getAuthTokenDAO().getAuth(registeredUser.authToken()),
+                "AuthToken was not removed");
+
         serverFacade.clear();
     }
 
@@ -112,6 +118,14 @@ public class ServerFacadeTests {
     @DisplayName("Improper Logout Result")
     public void negativeLogout() throws DataAccessException {
         serverFacade.clear();
+
+        RegisterResult registeredUser = serverFacade.register(newUser);
+
+        serverFacade.logout(registeredUser.authToken());
+
+        Assertions.assertThrows(DataAccessException.class, () -> serverFacade.logout(registeredUser.authToken()),
+                "User logged out with bad auth");
+
         serverFacade.clear();
     }
 
