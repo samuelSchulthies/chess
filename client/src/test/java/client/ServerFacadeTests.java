@@ -1,13 +1,15 @@
 package client;
 
 import dataaccess.*;
+import model.GameData;
 import org.junit.jupiter.api.*;
 import requestresult.*;
 import server.Server;
 import server.ServerFacade;
-import service.ClearService;
 import service.GameService;
 import service.UserService;
+
+import java.util.ArrayList;
 
 
 public class ServerFacadeTests {
@@ -142,7 +144,6 @@ public class ServerFacadeTests {
 
         RegisterResult registeredUser = serverFacade.register(newUser);
 
-        CreateRequest newGame = new CreateRequest("Sally's game");
         CreateResult createdGame = serverFacade.create(newGame, registeredUser.authToken());
 
         Assertions.assertNotNull(gameService.getGameDAO().getGame(createdGame.gameID()),
@@ -181,7 +182,6 @@ public class ServerFacadeTests {
         RegisterRequest newUser2 = new RegisterRequest("benson","321","benisawesome@gmail.com");
         RegisterResult registeredUser2 = serverFacade.register(newUser2);
 
-        CreateRequest newGame = new CreateRequest("Sally's game");
         CreateResult createdGame = serverFacade.create(newGame, registeredUser.authToken());
 
         JoinRequest newPlayer = new JoinRequest("BLACK", createdGame.gameID());
@@ -245,7 +245,33 @@ public class ServerFacadeTests {
     @Test
     @DisplayName("Positive List Result")
     public void positiveList() throws DataAccessException {
+        UserService userService = new UserService(new MySQLUserDAO(), new MySQLAuthTokenDAO());
+        GameService gameService = new GameService(new MySQLGameDAO(), userService.getAuthTokenDAO());
+
         serverFacade.clear();
+
+        RegisterRequest newUser = new RegisterRequest("sally","123","sallyisawesome@gmail.com");
+        RegisterResult registeredUser = serverFacade.register(newUser);
+
+        ArrayList<GameData> expectedGameList = new ArrayList<>();
+
+        CreateRequest newGame = new CreateRequest("Sally's game 1");
+        CreateResult createdGame = serverFacade.create(newGame, registeredUser.authToken());
+        expectedGameList.add(gameService.getGameDAO().getGame(createdGame.gameID()));
+
+        CreateRequest newGame2 = new CreateRequest("Sally's game 2");
+        CreateResult createdGame2 = serverFacade.create(newGame2, registeredUser.authToken());
+        expectedGameList.add(gameService.getGameDAO().getGame(createdGame2.gameID()));
+
+        CreateRequest newGame3 = new CreateRequest("Sally's game 3");
+        CreateResult createdGame3 = serverFacade.create(newGame3, registeredUser.authToken());
+        expectedGameList.add(gameService.getGameDAO().getGame(createdGame3.gameID()));
+
+        ListResult actualGameList = serverFacade.list(registeredUser.authToken());
+
+        Assertions.assertEquals(expectedGameList, actualGameList.games(),
+                "Returned game list does not match expected");
+
         serverFacade.clear();
     }
 
@@ -253,13 +279,48 @@ public class ServerFacadeTests {
     @DisplayName("Negative List Result")
     public void negativeList() throws DataAccessException {
         serverFacade.clear();
+
+        RegisterResult registeredUser = serverFacade.register(newUser);
+
+        CreateRequest newGame = new CreateRequest("Sally's game 1");
+        serverFacade.create(newGame, registeredUser.authToken());
+
+        CreateRequest newGame2 = new CreateRequest("Sally's game 2");
+        serverFacade.create(newGame2, registeredUser.authToken());
+
+        CreateRequest newGame3 = new CreateRequest("Sally's game 3");
+        serverFacade.create(newGame3, registeredUser.authToken());
+
+        serverFacade.logout(registeredUser.authToken());
+
+        Assertions.assertThrows(DataAccessException.class,
+                () -> serverFacade.list(registeredUser.authToken()),
+                "User with no auth listedGames");
+
         serverFacade.clear();
     }
 
     @Test
     @DisplayName("Clear Test")
     public void clearTest() throws DataAccessException {
+        UserService userService = new UserService(new MySQLUserDAO(), new MySQLAuthTokenDAO());
+        GameService gameService = new GameService(new MySQLGameDAO(), userService.getAuthTokenDAO());
+
         serverFacade.clear();
+
+        RegisterResult registeredUser = serverFacade.register(newUser);
+        RegisterRequest newUser2 = new RegisterRequest("jim","321","jimisawesome@gmail.com");
+        RegisterResult registeredUser2 = serverFacade.register(newUser2);
+        CreateResult createdGame = serverFacade.create(newGame, registeredUser.authToken());
+
+        serverFacade.clear();
+        Assertions.assertNull(userService.getUserDAO().getUser(registeredUser.username()),
+                "retrieved non-existent user");
+        Assertions.assertNull(userService.getUserDAO().getUser(registeredUser2.username()),
+                "retrieved non-existent user");
+        Assertions.assertNull(gameService.getGameDAO().getGame(createdGame.gameID()),
+                "retrieved non-existent game");
+
         serverFacade.clear();
     }
 
