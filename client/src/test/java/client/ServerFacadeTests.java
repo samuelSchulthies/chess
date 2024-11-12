@@ -172,7 +172,31 @@ public class ServerFacadeTests {
     @Test
     @DisplayName("Positive Join Result")
     public void positiveJoin() throws DataAccessException {
+        UserService userService = new UserService(new MySQLUserDAO(), new MySQLAuthTokenDAO());
+        GameService gameService = new GameService(new MySQLGameDAO(), userService.getAuthTokenDAO());
+
         serverFacade.clear();
+
+        RegisterResult registeredUser = serverFacade.register(newUser);
+        RegisterRequest newUser2 = new RegisterRequest("benson","321","benisawesome@gmail.com");
+        RegisterResult registeredUser2 = serverFacade.register(newUser2);
+
+        CreateRequest newGame = new CreateRequest("Sally's game");
+        CreateResult createdGame = serverFacade.create(newGame, registeredUser.authToken());
+
+        JoinRequest newPlayer = new JoinRequest("BLACK", createdGame.gameID());
+        serverFacade.join(newPlayer, registeredUser.authToken());
+        JoinRequest newPlayer2 = new JoinRequest("WHITE", createdGame.gameID());
+        serverFacade.join(newPlayer2, registeredUser2.authToken());
+
+        Assertions.assertEquals(registeredUser.username(),
+                gameService.getGameDAO().getGame(createdGame.gameID()).blackUsername(),
+                "Joined player did not take BLACK's spot");
+
+        Assertions.assertEquals(registeredUser2.username(),
+                gameService.getGameDAO().getGame(createdGame.gameID()).whiteUsername(),
+                "Joined player did not take WHITE's spot");
+
         serverFacade.clear();
     }
 
@@ -180,6 +204,41 @@ public class ServerFacadeTests {
     @DisplayName("Negative Join Result")
     public void negativeJoin() throws DataAccessException {
         serverFacade.clear();
+
+        RegisterResult registeredUser = serverFacade.register(newUser);
+        RegisterRequest newUser2 = new RegisterRequest("benson","321","benisawesome@gmail.com");
+        RegisterResult registeredUser2 = serverFacade.register(newUser2);
+        RegisterRequest newUser3 = new RegisterRequest("jason","312","jasonisawesome@gmail.com");
+        RegisterResult registeredUser3 = serverFacade.register(newUser3);
+
+        CreateRequest newGame = new CreateRequest("Black taken and full game");
+        CreateResult createdGame = serverFacade.create(newGame, registeredUser.authToken());
+
+        JoinRequest newPlayer = new JoinRequest("BLACK", createdGame.gameID());
+        serverFacade.join(newPlayer, registeredUser.authToken());
+        JoinRequest newPlayer2 = new JoinRequest("BLACK", createdGame.gameID());
+        Assertions.assertThrows(DataAccessException.class, () -> serverFacade.join(newPlayer2, registeredUser2.authToken()),
+                "Player joined black when black was taken");
+        JoinRequest newPlayer2Retry = new JoinRequest("WHITE", createdGame.gameID());
+        serverFacade.join(newPlayer2Retry, registeredUser2.authToken());
+        JoinRequest newPlayer3 = new JoinRequest("WHITE", createdGame.gameID());
+        Assertions.assertThrows(DataAccessException.class, () -> serverFacade.join(newPlayer3, registeredUser3.authToken()),
+                "Player joined full game");
+
+
+        CreateRequest newGame2 = new CreateRequest("White taken");
+        CreateResult createdGame2 = serverFacade.create(newGame2, registeredUser.authToken());
+
+        JoinRequest newPlayer5 = new JoinRequest("WHITE", createdGame2.gameID());
+        serverFacade.join(newPlayer5, registeredUser.authToken());
+        JoinRequest newPlayer6 = new JoinRequest("WHITE", createdGame2.gameID());
+        Assertions.assertThrows(DataAccessException.class, () -> serverFacade.join(newPlayer6, registeredUser2.authToken()),
+                "Player joined white when white was taken");
+
+        JoinRequest newPlayer7 = new JoinRequest("BLACK", 3);
+        Assertions.assertThrows(DataAccessException.class, () -> serverFacade.join(newPlayer7, registeredUser2.authToken()),
+                "Player joined non-existent game");
+
         serverFacade.clear();
     }
 
