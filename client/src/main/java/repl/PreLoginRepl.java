@@ -3,6 +3,7 @@ package repl;
 import client.GameClient;
 import client.PostLoginClient;
 import client.PreLoginClient;
+import client.UserStatus;
 import server.ServerFacade;
 import static ui.EscapeSequences.*;
 
@@ -18,11 +19,11 @@ public class PreLoginRepl {
         ServerFacade server = new ServerFacade(serverUrl);
         gameClient = new GameClient(server);
         postLoginClient = new PostLoginClient(server);
-        preLoginClient = new PreLoginClient(server);
+        preLoginClient = new PreLoginClient(server, postLoginClient);
     }
 
     public void run(){
-        System.out.println("Welcome to 240 chess. Type Help to get started.\n");
+        System.out.println("Welcome to 240 chess. Type help to get started.\n");
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
@@ -33,6 +34,11 @@ public class PreLoginRepl {
             try {
                 result = preLoginClient.eval(line);
                 System.out.print(result);
+                if (postLoginClient.getStatus() == UserStatus.SIGNED_IN){
+                    PostLoginRepl postLoginRepl = new PostLoginRepl(postLoginClient);
+                    postLoginRepl.run();
+                    postLoginClient.setStatus(UserStatus.SIGNED_OUT);
+                }
 
             } catch (Throwable e){
                 System.out.print(e);
@@ -40,9 +46,8 @@ public class PreLoginRepl {
         }
         System.out.println();
     }
-
     private void prompt() {
-        System.out.println("[LOGGED_OUT] >>> " + SET_TEXT_COLOR_GREEN);
+        System.out.print("[LOGGED_OUT] >>> ");
     }
 
 }
