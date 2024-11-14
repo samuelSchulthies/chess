@@ -4,9 +4,7 @@ import chess.ChessGame;
 import chess.ChessPiece;
 import dataaccess.DataAccessException;
 import model.GameData;
-import requestresult.CreateRequest;
-import requestresult.CreateResult;
-import requestresult.ListResult;
+import requestresult.*;
 import server.ServerFacade;
 
 import java.util.Arrays;
@@ -45,17 +43,21 @@ public class PostLoginClient {
 
     public String create(String... params) throws DataAccessException {
         StringBuilder gameName = new StringBuilder();
-        for (int i = 0; i < params.length; ++i){
-            gameName.append(params[i]);
-            if (i != params.length - 1) {
-                gameName.append(" ");
+        if (params.length > 0) {
+            for (int i = 0; i < params.length; ++i) {
+                gameName.append(params[i]);
+                if (i != params.length - 1) {
+                    gameName.append(" ");
+                }
             }
+            CreateRequest createRequest = new CreateRequest(gameName.toString());
+            CreateResult createResult = server.create(createRequest, authToken);
+
+            return String.format("Game " + gameName + " has been created with gameID " + createResult.gameID() + "\n");
         }
 
-        CreateRequest createRequest = new CreateRequest(gameName.toString());
-        CreateResult createResult = server.create(createRequest, authToken);
+        throw new DataAccessException("Please enter a game name");
 
-        return String.format("Game " + gameName + " has been created with gameID " + createResult.gameID() + "\n");
     }
 
     public String list() throws DataAccessException {
@@ -66,7 +68,7 @@ public class PostLoginClient {
 
         for (int i = 0; i < listResult.games().size(); ++i){
             int listIndex = i + 1;
-            gameList.append("Game ");
+            gameList.append("GameID ");
             gameList.append(listIndex);
             gameList.append(" | Name: ");
             gameList.append(listResult.games().get(i).gameName());
@@ -96,7 +98,19 @@ public class PostLoginClient {
     }
 
     public String join(String... params) throws DataAccessException {
-        return null;
+        list();
+        if(params.length == 2){
+            var id = params[0];
+            var team = params[1].toUpperCase();
+
+            int fetchedTeamID = gameNumberToGame.get(Integer.parseInt(id)).gameID();
+
+            JoinRequest joinRequest = new JoinRequest(team, fetchedTeamID);
+            server.join(joinRequest, authToken);
+
+            return String.format("You have joined game " + id + " as " + team + "\n");
+        }
+        throw new DataAccessException("Incorrect number of join arguments. Please try again\n");
     }
 
     public String observe(String... params) throws DataAccessException {
