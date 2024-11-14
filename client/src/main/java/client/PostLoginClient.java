@@ -114,7 +114,14 @@ public class PostLoginClient {
     }
 
     public String observe(String... params) throws DataAccessException {
-        return null;
+        list();
+        if(params.length > 0){
+            var id = params[0];
+            int fetchedTeamID = gameNumberToGame.get(Integer.parseInt(id)).gameID();
+
+            return "Empty game\n";
+        }
+        throw new DataAccessException("Please enter an ID");
     }
 
     public String logout() throws DataAccessException {
