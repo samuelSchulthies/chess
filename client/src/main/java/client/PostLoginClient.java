@@ -1,18 +1,24 @@
 package client;
 
+import chess.ChessGame;
+import chess.ChessPiece;
 import dataaccess.DataAccessException;
+import model.GameData;
 import requestresult.CreateRequest;
 import requestresult.CreateResult;
 import requestresult.ListResult;
 import server.ServerFacade;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PostLoginClient {
     private final ServerFacade server;
     private String authToken = "";
-
     private UserStatus status;
+
+    private Map<Integer, GameData> gameNumberToGame = new HashMap<>();
 
     public PostLoginClient(ServerFacade server) {
         this.server = server;
@@ -56,12 +62,33 @@ public class PostLoginClient {
         StringBuilder gameList = new StringBuilder();
         ListResult listResult = server.list(authToken);
 
+        gameNumberToGame.clear();
+
         for (int i = 0; i < listResult.games().size(); ++i){
             int listIndex = i + 1;
+            gameList.append("Game ");
             gameList.append(listIndex);
-            gameList.append(", ");
-            gameList.append(listResult.games().get(i));
+            gameList.append(" | Name: ");
+            gameList.append(listResult.games().get(i).gameName());
+
+            gameList.append(" | White Player: ");
+            if (listResult.games().get(i).whiteUsername() == null){
+                gameList.append("NO PLAYER");
+            }
+            else {
+                gameList.append(listResult.games().get(i).whiteUsername());
+            }
+
+            gameList.append(" | Black Player: ");
+            if (listResult.games().get(i).blackUsername() == null){
+                gameList.append("NO PLAYER");
+            }
+            else {
+                gameList.append(listResult.games().get(i).blackUsername());
+            }
             gameList.append("\n");
+
+            gameNumberToGame.put(listIndex, listResult.games().get(i));
         }
 
         return gameList.toString();
