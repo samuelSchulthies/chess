@@ -47,7 +47,7 @@ public class PreLoginRepl {
         System.out.println();
     }
     private void prompt() {
-        System.out.print("[LOGGED_OUT] >>> ");
+        System.out.print("\n[LOGGED_OUT] >>> ");
     }
 
 }

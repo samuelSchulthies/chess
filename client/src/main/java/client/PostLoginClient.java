@@ -3,6 +3,7 @@ package client;
 import dataaccess.DataAccessException;
 import requestresult.CreateRequest;
 import requestresult.CreateResult;
+import requestresult.ListResult;
 import server.ServerFacade;
 
 import java.util.Arrays;
@@ -25,7 +26,7 @@ public class PostLoginClient {
 
             return switch (cmd){
                 case "create" -> create(params);
-                case "list" -> list(params);
+                case "list" -> list();
                 case "join" -> join(params);
                 case "observe" -> observe(params);
                 case "logout" -> logout();
@@ -51,8 +52,20 @@ public class PostLoginClient {
         return String.format("Game " + gameName + " has been created with gameID " + createResult.gameID() + "\n");
     }
 
-    public String list(String... params) throws DataAccessException {
-        return null;
+    public String list() throws DataAccessException {
+        StringBuilder gameList = new StringBuilder();
+        ListResult listResult = server.list(authToken);
+
+        for (int i = 0; i < listResult.games().size(); ++i){
+            int listIndex = i + 1;
+            gameList.append(listIndex);
+            gameList.append(", ");
+            gameList.append(listResult.games().get(i));
+            gameList.append("\n");
+        }
+
+        return gameList.toString();
+
     }
 
     public String join(String... params) throws DataAccessException {
