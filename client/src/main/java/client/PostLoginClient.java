@@ -108,6 +108,8 @@ public class PostLoginClient {
             JoinRequest joinRequest = new JoinRequest(team, fetchedTeamID);
             server.join(joinRequest, authToken);
 
+            ChessBoardUI.buildUI();
+
             return String.format("You have joined game " + id + " as " + team + "\n");
         }
         throw new DataAccessException("Incorrect number of join arguments. Please try again\n");
@@ -119,7 +121,9 @@ public class PostLoginClient {
             var id = params[0];
             int fetchedTeamID = gameNumberToGame.get(Integer.parseInt(id)).gameID();
 
-            return "Empty game\n";
+            ChessBoardUI.buildUI();
+
+            return "";
         }
         throw new DataAccessException("Please enter an ID");
     }

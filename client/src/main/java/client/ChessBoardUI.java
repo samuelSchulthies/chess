@@ -4,11 +4,9 @@ import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessPiece;
 import chess.ChessPosition;
-
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import java.util.Objects;
 
 import static ui.EscapeSequences.*;
 
@@ -19,7 +17,6 @@ public class ChessBoardUI {
     private static String columnLabels;
     private static final String SQUARE = "   ";
 
-    private static String teamBoard = "";
     final static Map<ChessPiece.PieceType, Character> PIECE_TYPE_TO_CHAR = Map.of(
             ChessPiece.PieceType.BISHOP, 'B',
             ChessPiece.PieceType.KING, 'K',
@@ -34,7 +31,7 @@ public class ChessBoardUI {
     public ChessBoardUI(){
     }
 
-    public static void main(String[] args){
+    public static void buildUI(){
         gameBoardDefault.resetBoard();
 
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
@@ -56,6 +53,10 @@ public class ChessBoardUI {
         setRowLabels("87654321");
         setColumnLabels("    h  g  f  e  d  c  b  a    ");
         printBoard(out);
+        out.print(RESET_BG_COLOR);
+        out.print(RESET_TEXT_COLOR);
+        out.println();
+        out.println();
     }
 
     public static void printBoard(PrintStream out){
