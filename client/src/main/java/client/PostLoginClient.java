@@ -1,7 +1,5 @@
 package client;
 
-import chess.ChessGame;
-import chess.ChessPiece;
 import dataaccess.DataAccessException;
 import model.GameData;
 import requestresult.*;
