@@ -26,14 +26,14 @@ public class ChessBoard {
                 """;
 
     String defaultBoardLayoutBlack = """
-                |R|N|B|Q|K|B|N|R|
+                |R|N|B|K|Q|B|N|R|
                 |P|P|P|P|P|P|P|P|
                 | | | | | | | | |
                 | | | | | | | | |
                 | | | | | | | | |
                 | | | | | | | | |
                 |p|p|p|p|p|p|p|p|
-                |r|n|b|q|k|b|n|r|
+                |r|n|b|k|q|b|n|r|
                 """;
 
     final static Map<Character, ChessPiece.PieceType> CHAR_TO_PIECE_TYPE = Map.of(

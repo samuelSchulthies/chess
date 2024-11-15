@@ -1,6 +1,7 @@
 package client;
 
 import chess.ChessBoard;
+import chess.ChessGame;
 import chess.ChessPiece;
 import chess.ChessPosition;
 
@@ -32,6 +33,8 @@ public class ChessBoardUI {
 
     public static void main(String[] args){
         gameBoardDefault.resetBoard();
+        gameBoardDefault.changeDefaultBoardLayout("BLACK");
+        gameBoardDefault.resetBoard();
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
         out.print(ERASE_SCREEN);
@@ -58,6 +61,8 @@ public class ChessBoardUI {
             out.print(ROW_LABELS.charAt(row));
             out.print(" ");
             setSquares(out, row);
+            setBoardersGrey(out);
+            out.print(SQUARE);
             clearBoarders(out);
             out.print("\n");
         }
@@ -71,14 +76,12 @@ public class ChessBoardUI {
             }
             if ((col % 2 == colorSwitcher) && (col != 8)) {
                 out.print(SET_BG_COLOR_WHITE);
-                out.print(SET_TEXT_COLOR_BLACK);
             }
             else if (col == 8){
                 setBoardersGrey(out);
             }
             else {
                 out.print(SET_BG_COLOR_BLACK);
-                out.print(SET_TEXT_COLOR_WHITE);
             }
             ChessPosition pieceLocation = new ChessPosition(row + 1, col + 1);
             if (gameBoardDefault.getPiece(pieceLocation) == null){
@@ -86,6 +89,12 @@ public class ChessBoardUI {
             }
             else {
                 out.print(" ");
+                if (gameBoardDefault.getPiece(pieceLocation).getTeamColor() == ChessGame.TeamColor.WHITE){
+                    out.print(SET_TEXT_COLOR_BLUE);
+                }
+                else {
+                    out.print(SET_TEXT_COLOR_RED);
+                }
                 out.print(PIECE_TYPE_TO_CHAR.get(gameBoardDefault.getPiece(pieceLocation).getPieceType()));
                 out.print(" ");
             }
