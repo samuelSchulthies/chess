@@ -96,7 +96,7 @@ public class ServerFacade {
 
     private void throwIfError(HttpURLConnection http) throws IOException, DataAccessException {
         if (http.getResponseCode() != 200){
-            throw new DataAccessException("An error occurred");
+            throw new DataAccessException(http.getResponseMessage());
         }
     }
 

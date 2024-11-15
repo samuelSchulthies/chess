@@ -31,7 +31,7 @@ public class PostLoginRepl {
         System.out.println();
     }
     private void prompt() {
-        System.out.print("[LOGGED_IN] >>> ");
+        System.out.print("\n[LOGGED_IN] >>> ");
     }
 
 }

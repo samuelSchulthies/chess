@@ -101,8 +101,13 @@ public class PostLoginClient {
         if(params.length == 2){
             var id = params[0];
             var team = params[1].toUpperCase();
+            int fetchedTeamID;
 
-            int fetchedTeamID = gameNumberToGame.get(Integer.parseInt(id)).gameID();
+            try {
+                fetchedTeamID = gameNumberToGame.get(Integer.parseInt(id)).gameID();
+            } catch (Throwable e){
+                throw new DataAccessException("Bad input");
+            }
 
             JoinRequest joinRequest = new JoinRequest(team, fetchedTeamID);
             server.join(joinRequest, authToken);
@@ -118,7 +123,13 @@ public class PostLoginClient {
         list();
         if(params.length > 0){
             var id = params[0];
-            int fetchedTeamID = gameNumberToGame.get(Integer.parseInt(id)).gameID();
+            int fetchedTeamID;
+
+            try {
+                fetchedTeamID = gameNumberToGame.get(Integer.parseInt(id)).gameID();
+            } catch (Throwable e){
+                throw new DataAccessException("Bad input");
+            }
 
             ChessBoardUI.buildUI();
 
