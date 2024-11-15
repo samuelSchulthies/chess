@@ -8,15 +8,18 @@ import chess.ChessPosition;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.Objects;
 
 import static ui.EscapeSequences.*;
 
 
 public class ChessBoardUI {
 
-    private static final String ROW_LABELS = "12345678";
-    private static final String COLUMN_LABELS = "    h  g  f  e  d  c  b  a    ";
+    private static String rowLabels;
+    private static String columnLabels;
     private static final String SQUARE = "   ";
+
+    private static String teamBoard = "";
     final static Map<ChessPiece.PieceType, Character> PIECE_TYPE_TO_CHAR = Map.of(
             ChessPiece.PieceType.BISHOP, 'B',
             ChessPiece.PieceType.KING, 'K',
@@ -26,39 +29,54 @@ public class ChessBoardUI {
             ChessPiece.PieceType.ROOK, 'R'
     );
 
-    static private ChessBoard gameBoardDefault = new ChessBoard();
+    static private final ChessBoard gameBoardDefault = new ChessBoard();
 
     public ChessBoardUI(){
     }
 
     public static void main(String[] args){
         gameBoardDefault.resetBoard();
-        gameBoardDefault.changeDefaultBoardLayout("BLACK");
-        gameBoardDefault.resetBoard();
+
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
         out.print(ERASE_SCREEN);
 
+        // Set for white
+        setRowLabels("12345678");
+        setColumnLabels("    a  b  c  d  e  f  g  h    ");
+        printBoard(out);
+
+        out.print(RESET_BG_COLOR);
+        out.println();
+        out.println();
+
+        // Set for black
+        gameBoardDefault.changeDefaultBoardLayout("BLACK");
+        gameBoardDefault.resetBoard();
+        setRowLabels("87654321");
+        setColumnLabels("    h  g  f  e  d  c  b  a    ");
+        printBoard(out);
+    }
+
+    public static void printBoard(PrintStream out){
         labelColumns(out);
         clearBoarders(out);
         out.println();
         labelRows(out);
         labelColumns(out);
     }
-
     public static void labelColumns(PrintStream out){
         setBoardersGrey(out);
 
-        for(char col : COLUMN_LABELS.toCharArray()){
+        for(char col : columnLabels.toCharArray()){
             out.print(col);
         }
     }
     public static void labelRows(PrintStream out){
-
-        for(int row = 0; row < ROW_LABELS.length(); ++row){
+        for(int row = rowLabels.length() - 1; row >= 0; --row){
             setBoardersGrey(out);
             out.print(" ");
-            out.print(ROW_LABELS.charAt(row));
+            out.print(rowLabels.charAt(row));
             out.print(" ");
             setSquares(out, row);
             setBoardersGrey(out);
@@ -69,40 +87,37 @@ public class ChessBoardUI {
     }
 
     public static void setSquares(PrintStream out, int row){
-        int colorSwitcher = 0;
+        int colorSwitcher = 1;
         for (int col = 0; col < 8; ++col){
             if (row % 2 == 1){
-                colorSwitcher = 1;
+                colorSwitcher = 0;
             }
-            if ((col % 2 == colorSwitcher) && (col != 8)) {
+            if ((col % 2 == colorSwitcher)) {
                 out.print(SET_BG_COLOR_WHITE);
-            }
-            else if (col == 8){
-                setBoardersGrey(out);
             }
             else {
                 out.print(SET_BG_COLOR_BLACK);
             }
-            ChessPosition pieceLocation = new ChessPosition(row + 1, col + 1);
-            if (gameBoardDefault.getPiece(pieceLocation) == null){
-                out.print(SQUARE);
-            }
-            else {
-                out.print(" ");
-                if (gameBoardDefault.getPiece(pieceLocation).getTeamColor() == ChessGame.TeamColor.WHITE){
-                    out.print(SET_TEXT_COLOR_BLUE);
-                }
-                else {
-                    out.print(SET_TEXT_COLOR_RED);
-                }
-                out.print(PIECE_TYPE_TO_CHAR.get(gameBoardDefault.getPiece(pieceLocation).getPieceType()));
-                out.print(" ");
-            }
+            setPiece(out, row, col);
         }
     }
 
-    public static void setPiece(PrintStream out){
-
+    public static void setPiece(PrintStream out, int row, int col){
+        ChessPosition pieceLocation = new ChessPosition(row + 1, col + 1);
+        if (gameBoardDefault.getPiece(pieceLocation) == null){
+            out.print(SQUARE);
+        }
+        else {
+            out.print(" ");
+            if (gameBoardDefault.getPiece(pieceLocation).getTeamColor() == ChessGame.TeamColor.WHITE){
+                out.print(SET_TEXT_COLOR_RED);
+            }
+            else {
+                out.print(SET_TEXT_COLOR_BLUE);
+            }
+            out.print(PIECE_TYPE_TO_CHAR.get(gameBoardDefault.getPiece(pieceLocation).getPieceType()));
+            out.print(" ");
+        }
     }
 
     public static void setBoardersGrey(PrintStream out){
@@ -113,7 +128,12 @@ public class ChessBoardUI {
     public static void clearBoarders(PrintStream out){
         out.print(RESET_BG_COLOR);
     }
+    
+    public static void setColumnLabels(String labels){
+        columnLabels = labels;
+    }
 
-
-
+    public static void setRowLabels(String labels){
+        rowLabels = labels;
+    }
 }
