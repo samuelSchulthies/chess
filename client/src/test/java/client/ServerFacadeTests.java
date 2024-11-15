@@ -21,7 +21,7 @@ public class ServerFacadeTests {
     private static CreateRequest newGame;
 
     @BeforeAll
-    public static void init() throws DataAccessException{
+    public static void init() throws DataAccessException {
 
         newUser = new RegisterRequest("sally","123","sallyisawesome@gmail.com");
         newGame = new CreateRequest("Sally's game");

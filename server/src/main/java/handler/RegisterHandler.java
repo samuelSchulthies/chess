@@ -2,8 +2,7 @@ package handler;
 
 
 import com.google.gson.Gson;
-import dataaccess.DataAccessException;
-import model.UserData;
+import Exception.DataAccessException;
 import requestresult.RegisterRequest;
 import requestresult.RegisterResult;
 import service.UserService;

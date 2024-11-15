@@ -3,8 +3,6 @@ package dataaccess;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import model.GameData;
-import model.UserData;
-import requestresult.ListRequest;
 import requestresult.ListResult;
 import service.GameService;
 
@@ -139,7 +137,7 @@ public class MySQLGameDAO implements GameDAO{
     }
 
     @Override
-    public void clear(GameService gameService) throws DataAccessException{
+    public void clear(GameService gameService) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()){
             var clearGamesStatement = "TRUNCATE game";
             try (var ps = conn.prepareStatement(clearGamesStatement)){

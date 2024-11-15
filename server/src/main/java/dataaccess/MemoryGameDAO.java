@@ -1,8 +1,6 @@
 package dataaccess;
 
-import chess.ChessGame;
 import model.GameData;
-import requestresult.ListRequest;
 import requestresult.ListResult;
 import service.GameService;
 
@@ -16,7 +14,7 @@ public class MemoryGameDAO implements GameDAO {
         gameDataCollection.add(game);
     }
 
-    private void removeGame(int gameID) throws DataAccessException{
+    private void removeGame(int gameID) throws DataAccessException {
         gameDataCollection.remove(getGame(gameID));
     }
 

@@ -1,6 +1,6 @@
 package client;
 
-import dataaccess.DataAccessException;
+import Exception.DataAccessException;
 import model.GameData;
 import requestresult.*;
 import server.ServerFacade;

@@ -1,10 +1,6 @@
 package dataaccess;
 
-import chess.ChessGame;
 import model.GameData;
-import requestresult.CreateRequest;
-import requestresult.CreateResult;
-import requestresult.ListRequest;
 import requestresult.ListResult;
 import service.GameService;
 

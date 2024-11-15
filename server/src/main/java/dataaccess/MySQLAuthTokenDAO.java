@@ -1,14 +1,13 @@
 package dataaccess;
 
 import model.AuthData;
-import model.UserData;
 
 import java.sql.SQLException;
 import java.util.UUID;
 
 public class MySQLAuthTokenDAO implements AuthTokenDAO{
 
-    public MySQLAuthTokenDAO() throws DataAccessException{
+    public MySQLAuthTokenDAO() throws DataAccessException {
         configureDatabase();
     }
     @Override
@@ -52,7 +51,7 @@ public class MySQLAuthTokenDAO implements AuthTokenDAO{
     }
 
     @Override
-    public void deleteAuth(String authToken) throws DataAccessException{
+    public void deleteAuth(String authToken) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()){
             var clearAuthRowStatement = "DELETE FROM authData WHERE authToken=?";
             try (var ps = conn.prepareStatement(clearAuthRowStatement)){
@@ -80,7 +79,7 @@ public class MySQLAuthTokenDAO implements AuthTokenDAO{
     }
 
     @Override
-    public void clear() throws DataAccessException{
+    public void clear() throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()){
             var clearAuthDataStatement = "TRUNCATE authData";
             try (var ps = conn.prepareStatement(clearAuthDataStatement)){

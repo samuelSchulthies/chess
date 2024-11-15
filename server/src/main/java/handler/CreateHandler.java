@@ -1,15 +1,12 @@
 package handler;
 
 import com.google.gson.Gson;
-import dataaccess.DataAccessException;
+import Exception.DataAccessException;
 import requestresult.CreateRequest;
 import requestresult.CreateResult;
 import service.GameService;
-import service.UserService;
 import spark.Request;
 import spark.Response;
-
-import java.io.Reader;
 
 public class CreateHandler {
     GameService gameService;

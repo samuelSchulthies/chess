@@ -1,6 +1,5 @@
 package dataaccess;
 
-import model.UserData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,8 +8,6 @@ import requestresult.RegisterResult;
 import service.ClearService;
 import service.GameService;
 import service.UserService;
-
-import java.sql.SQLException;
 
 public class MySQLAuthTokenDAOTest {
 

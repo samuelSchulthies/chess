@@ -2,12 +2,7 @@ package dataaccess;
 
 import model.UserData;
 
-import javax.xml.crypto.Data;
 import java.sql.SQLException;
-
-import java.sql.PreparedStatement;
-import java.sql.Connection;
-import java.sql.Statement;
 
 public class MySQLUserDAO implements UserDAO {
 
