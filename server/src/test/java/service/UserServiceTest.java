@@ -1,6 +1,6 @@
 package service;
 
-import dataaccess.DataAccessException;
+import Exception.DataAccessException;
 import dataaccess.MemoryAuthTokenDAO;
 import dataaccess.MemoryUserDAO;
 import org.junit.jupiter.api.Assertions;
@@ -110,7 +110,7 @@ public class UserServiceTest {
             userService.logout(registeredUser.authToken());
         }
         catch (DataAccessException e){
-            Assertions.assertEquals("dataaccess.DataAccessException: invalid authtoken", e.toString(),
+            Assertions.assertEquals("Exception.DataAccessException: invalid authtoken", e.toString(),
                     "Invalid authtoken exception did not return");
         }
 

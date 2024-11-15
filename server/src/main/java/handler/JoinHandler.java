@@ -1,7 +1,7 @@
 package handler;
 
 import com.google.gson.Gson;
-import dataaccess.DataAccessException;
+import Exception.DataAccessException;
 import requestresult.JoinRequest;
 import requestresult.JoinResult;
 import service.GameService;

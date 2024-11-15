@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import model.GameData;
 import requestresult.ListResult;
 import service.GameService;
+import Exception.DataAccessException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -137,7 +138,7 @@ public class MySQLGameDAO implements GameDAO{
     }
 
     @Override
-    public void clear(GameService gameService) throws DataAccessException{
+    public void clear(GameService gameService) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()){
             var clearGamesStatement = "TRUNCATE game";
             try (var ps = conn.prepareStatement(clearGamesStatement)){

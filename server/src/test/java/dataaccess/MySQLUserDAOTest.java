@@ -10,6 +10,7 @@ import requestresult.RegisterResult;
 import service.ClearService;
 import service.GameService;
 import service.UserService;
+import Exception.DataAccessException;
 
 public class MySQLUserDAOTest {
 

@@ -3,6 +3,7 @@ package dataaccess;
 import model.GameData;
 import requestresult.ListResult;
 import service.GameService;
+import Exception.DataAccessException;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -14,7 +15,7 @@ public class MemoryGameDAO implements GameDAO {
         gameDataCollection.add(game);
     }
 
-    private void removeGame(int gameID) throws DataAccessException{
+    private void removeGame(int gameID) throws DataAccessException {
         gameDataCollection.remove(getGame(gameID));
     }
 

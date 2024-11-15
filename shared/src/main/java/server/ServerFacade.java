@@ -1,7 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
-import dataaccess.DataAccessException;
+import Exception.DataAccessException;
 import requestresult.*;
 
 import java.io.IOException;
