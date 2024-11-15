@@ -137,7 +137,7 @@ public class MySQLGameDAO implements GameDAO{
     }
 
     @Override
-    public void clear(GameService gameService) throws DataAccessException {
+    public void clear(GameService gameService) throws DataAccessException{
         try (var conn = DatabaseManager.getConnection()){
             var clearGamesStatement = "TRUNCATE game";
             try (var ps = conn.prepareStatement(clearGamesStatement)){

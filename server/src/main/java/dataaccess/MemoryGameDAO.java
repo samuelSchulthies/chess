@@ -14,7 +14,7 @@ public class MemoryGameDAO implements GameDAO {
         gameDataCollection.add(game);
     }
 
-    private void removeGame(int gameID) throws DataAccessException {
+    private void removeGame(int gameID) throws DataAccessException{
         gameDataCollection.remove(getGame(gameID));
     }
 

@@ -1,11 +1,8 @@
 package dataaccess;
 
 import model.UserData;
-import requestresult.RegisterRequest;
-import requestresult.RegisterResult;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Objects;
 
 public class MemoryUserDAO implements UserDAO {

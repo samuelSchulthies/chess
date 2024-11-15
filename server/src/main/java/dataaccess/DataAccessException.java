@@ -1,4 +1,4 @@
-package Exception;
+package dataaccess;
 
 import java.lang.reflect.Type;
 import java.util.Objects;

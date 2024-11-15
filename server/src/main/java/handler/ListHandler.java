@@ -1,7 +1,7 @@
 package handler;
 
 import com.google.gson.Gson;
-import Exception.DataAccessException;
+import dataaccess.DataAccessException;
 import requestresult.ListResult;
 import service.GameService;
 import spark.Request;
