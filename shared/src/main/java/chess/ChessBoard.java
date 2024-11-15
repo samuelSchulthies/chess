@@ -2,10 +2,7 @@ package chess;
 
 import org.junit.jupiter.api.extension.ExtensionContext;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 /**
  * A chessboard that can hold and rearrange chess pieces.
@@ -15,7 +12,9 @@ import java.util.NoSuchElementException;
  */
 public class ChessBoard {
 
-    String defaultBoardLayout = """
+    String defaultBoardLayout;
+
+    String defaultBoardLayoutWhite = """
                 |r|n|b|q|k|b|n|r|
                 |p|p|p|p|p|p|p|p|
                 | | | | | | | | |
@@ -24,6 +23,17 @@ public class ChessBoard {
                 | | | | | | | | |
                 |P|P|P|P|P|P|P|P|
                 |R|N|B|Q|K|B|N|R|
+                """;
+
+    String defaultBoardLayoutBlack = """
+                |R|N|B|Q|K|B|N|R|
+                |P|P|P|P|P|P|P|P|
+                | | | | | | | | |
+                | | | | | | | | |
+                | | | | | | | | |
+                | | | | | | | | |
+                |p|p|p|p|p|p|p|p|
+                |r|n|b|q|k|b|n|r|
                 """;
 
     final static Map<Character, ChessPiece.PieceType> CHAR_TO_PIECE_TYPE = Map.of(
@@ -37,6 +47,7 @@ public class ChessBoard {
     private ChessPiece[][] squares = new ChessPiece[8][8];
 
     public ChessBoard() {
+        defaultBoardLayout = defaultBoardLayoutWhite;
 
     }
 
@@ -119,6 +130,16 @@ public class ChessBoard {
             }
         }
     }
+
+    public void changeDefaultBoardLayout(String color){
+        if (Objects.equals(color, "WHITE")){
+            defaultBoardLayout = defaultBoardLayoutWhite;
+        }
+        if (Objects.equals(color, "BLACK")){
+            defaultBoardLayout = defaultBoardLayoutBlack;
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o){
