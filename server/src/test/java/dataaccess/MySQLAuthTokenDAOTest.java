@@ -8,7 +8,7 @@ import requestresult.RegisterResult;
 import service.ClearService;
 import service.GameService;
 import service.UserService;
-import Exception.DataAccessException;
+import exception.DataAccessException;
 
 public class MySQLAuthTokenDAOTest {
 

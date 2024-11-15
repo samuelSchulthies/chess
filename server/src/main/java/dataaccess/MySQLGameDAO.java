@@ -5,7 +5,7 @@ import com.google.gson.Gson;
 import model.GameData;
 import requestresult.ListResult;
 import service.GameService;
-import Exception.DataAccessException;
+import exception.DataAccessException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

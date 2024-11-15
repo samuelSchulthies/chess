@@ -2,7 +2,7 @@ package service;
 
 import requestresult.ClearResult;
 
-import Exception.DataAccessException;
+import exception.DataAccessException;
 
 public class ClearService {
     private final UserService userService;

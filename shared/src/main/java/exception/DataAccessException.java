@@ -1,6 +1,5 @@
-package Exception;
+package exception;
 
-import java.lang.reflect.Type;
 import java.util.Objects;
 
 /**

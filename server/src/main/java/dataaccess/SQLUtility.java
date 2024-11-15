@@ -1,7 +1,7 @@
 package dataaccess;
 
 import java.sql.SQLException;
-import Exception.DataAccessException;
+import exception.DataAccessException;
 
 public class SQLUtility {
 

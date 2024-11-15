@@ -9,7 +9,7 @@ import requestresult.*;
 import server.Server;
 import server.ServerFacade;
 
-import Exception.DataAccessException;
+import exception.DataAccessException;
 import service.GameService;
 import service.UserService;
 

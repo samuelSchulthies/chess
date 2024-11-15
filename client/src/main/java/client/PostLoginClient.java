@@ -1,9 +1,10 @@
 package client;
 
-import Exception.DataAccessException;
+import exception.DataAccessException;
 import model.GameData;
 import requestresult.*;
 import server.ServerFacade;
+import ui.ChessBoardUI;
 
 import java.util.Arrays;
 import java.util.HashMap;

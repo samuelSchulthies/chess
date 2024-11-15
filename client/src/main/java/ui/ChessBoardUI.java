@@ -1,4 +1,4 @@
-package client;
+package ui;
 
 import chess.ChessBoard;
 import chess.ChessGame;
@@ -26,13 +26,13 @@ public class ChessBoardUI {
             ChessPiece.PieceType.ROOK, 'R'
     );
 
-    static private final ChessBoard gameBoardDefault = new ChessBoard();
+    static private final ChessBoard GAME_BOARD_DEFAULT = new ChessBoard();
 
     public ChessBoardUI(){
     }
 
     public static void buildUI(){
-        gameBoardDefault.resetBoard();
+        GAME_BOARD_DEFAULT.resetBoard();
 
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
@@ -48,8 +48,8 @@ public class ChessBoardUI {
         out.println();
 
         // Set for black
-        gameBoardDefault.changeDefaultBoardLayout("BLACK");
-        gameBoardDefault.resetBoard();
+        GAME_BOARD_DEFAULT.changeDefaultBoardLayout("BLACK");
+        GAME_BOARD_DEFAULT.resetBoard();
         setRowLabels("87654321");
         setColumnLabels("    h  g  f  e  d  c  b  a    ");
         printBoard(out);
@@ -105,18 +105,18 @@ public class ChessBoardUI {
 
     public static void setPiece(PrintStream out, int row, int col){
         ChessPosition pieceLocation = new ChessPosition(row + 1, col + 1);
-        if (gameBoardDefault.getPiece(pieceLocation) == null){
+        if (GAME_BOARD_DEFAULT.getPiece(pieceLocation) == null){
             out.print(SQUARE);
         }
         else {
             out.print(" ");
-            if (gameBoardDefault.getPiece(pieceLocation).getTeamColor() == ChessGame.TeamColor.WHITE){
+            if (GAME_BOARD_DEFAULT.getPiece(pieceLocation).getTeamColor() == ChessGame.TeamColor.WHITE){
                 out.print(SET_TEXT_COLOR_RED);
             }
             else {
                 out.print(SET_TEXT_COLOR_BLUE);
             }
-            out.print(PIECE_TYPE_TO_CHAR.get(gameBoardDefault.getPiece(pieceLocation).getPieceType()));
+            out.print(PIECE_TYPE_TO_CHAR.get(GAME_BOARD_DEFAULT.getPiece(pieceLocation).getPieceType()));
             out.print(" ");
         }
     }

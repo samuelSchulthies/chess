@@ -3,7 +3,7 @@ package dataaccess;
 import model.GameData;
 import requestresult.ListResult;
 import service.GameService;
-import Exception.DataAccessException;
+import exception.DataAccessException;
 
 import java.util.ArrayList;
 
