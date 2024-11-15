@@ -110,16 +110,17 @@ public class ServerFacadeTests {
     @Test
     @DisplayName("Proper Logout Result")
     public void positiveLogout() throws DataAccessException {
-//        serverFacade.clear();
-//
-//        RegisterResult registeredUser = serverFacade.register(newUser);
-//        serverFacade.logout(registeredUser.authToken());
-//
-//
-//        Assertions.assertNull(registeredUser.authToken(),
-//                "AuthToken was not removed");
-//
-//        serverFacade.clear();
+        UserService userService = new UserService(new MySQLUserDAO(), new MySQLAuthTokenDAO());
+        serverFacade.clear();
+
+        RegisterResult registeredUser = serverFacade.register(newUser);
+        serverFacade.logout(registeredUser.authToken());
+
+
+        Assertions.assertNull(userService.getAuthTokenDAO().getAuth(registeredUser.authToken()),
+                "AuthToken was not removed");
+
+        serverFacade.clear();
     }
 
     @Test
@@ -174,24 +175,31 @@ public class ServerFacadeTests {
     @Test
     @DisplayName("Positive Join Result")
     public void positiveJoin() throws DataAccessException {
-//
-//        serverFacade.clear();
-//
-//        RegisterResult registeredUser = serverFacade.register(newUser);
-//        RegisterRequest newUser2 = new RegisterRequest("benson","321","benisawesome@gmail.com");
-//        RegisterResult registeredUser2 = serverFacade.register(newUser2);
-//
-//        CreateResult createdGame = serverFacade.create(newGame, registeredUser.authToken());
-//
-//        JoinRequest newPlayer = new JoinRequest("BLACK", createdGame.gameID());
-//        serverFacade.join(newPlayer, registeredUser.authToken());
-//        JoinRequest newPlayer2 = new JoinRequest("WHITE", createdGame.gameID());
-//        serverFacade.join(newPlayer2, registeredUser2.authToken());
-//
-//        Assertions.assertDoesNotThrow(() -> serverFacade.join(newPlayer, registeredUser.authToken()));
-//        Assertions.assertDoesNotThrow(() -> serverFacade.join(newPlayer2, registeredUser2.authToken()));
-//
-//        serverFacade.clear();
+        UserService userService = new UserService(new MySQLUserDAO(), new MySQLAuthTokenDAO());
+        GameService gameService = new GameService(new MySQLGameDAO(), userService.getAuthTokenDAO());
+
+        serverFacade.clear();
+
+        RegisterResult registeredUser = serverFacade.register(newUser);
+        RegisterRequest newUser2 = new RegisterRequest("benson","321","benisawesome@gmail.com");
+        RegisterResult registeredUser2 = serverFacade.register(newUser2);
+
+        CreateResult createdGame = serverFacade.create(newGame, registeredUser.authToken());
+
+        JoinRequest newPlayer = new JoinRequest("BLACK", createdGame.gameID());
+        serverFacade.join(newPlayer, registeredUser.authToken());
+        JoinRequest newPlayer2 = new JoinRequest("WHITE", createdGame.gameID());
+        serverFacade.join(newPlayer2, registeredUser2.authToken());
+
+        Assertions.assertEquals(registeredUser.username(),
+                gameService.getGameDAO().getGame(createdGame.gameID()).blackUsername(),
+                "Joined player did not take BLACK's spot");
+
+        Assertions.assertEquals(registeredUser2.username(),
+                gameService.getGameDAO().getGame(createdGame.gameID()).whiteUsername(),
+                "Joined player did not take WHITE's spot");
+
+        serverFacade.clear();
     }
 
     @Test
