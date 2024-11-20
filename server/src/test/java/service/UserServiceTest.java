@@ -110,7 +110,7 @@ public class UserServiceTest {
             userService.logout(registeredUser.authToken());
         }
         catch (DataAccessException e){
-            Assertions.assertEquals("Exception.DataAccessException: invalid authtoken", e.toString(),
+            Assertions.assertEquals("exception.DataAccessException: invalid authtoken", e.toString(),
                     "Invalid authtoken exception did not return");
         }
 
