@@ -1,6 +1,9 @@
 package repl;
 
+import client.GameClient;
 import client.PostLoginClient;
+import client.UserStatus;
+import server.ServerFacade;
 
 import java.util.Scanner;
 
@@ -8,12 +11,14 @@ import static ui.EscapeSequences.SET_TEXT_COLOR_GREEN;
 
 public class PostLoginRepl {
     private final PostLoginClient postLoginClient;
-    public PostLoginRepl(PostLoginClient postLoginClient) {
+    private final GameClient gameClient;
+    public PostLoginRepl(PostLoginClient postLoginClient, GameClient gameClient) {
         this.postLoginClient = postLoginClient;
+        this.gameClient = gameClient;
     }
 
     public void run(){
-        System.out.println("Type help to see game commands.\n");
+        System.out.println("Type help to see options.\n");
         Scanner scanner = new Scanner(System.in);
         var result = "";
         while (!result.equals("logout")) {
@@ -23,6 +28,11 @@ public class PostLoginRepl {
             try {
                 result = postLoginClient.eval(line);
                 System.out.print(result);
+                if (postLoginClient.getStatus() == UserStatus.IN_GAME){
+                    GameRepl gameRepl = new GameRepl(gameClient);
+                    gameRepl.run();
+                    postLoginClient.setStatus(UserStatus.SIGNED_IN);
+                }
 
             } catch (Throwable e){
                 System.out.print(e);

@@ -1,5 +1,7 @@
 package client;
 
+import client.websocket.ServerMessageObserver;
+import client.websocket.WebSocketFacade;
 import exception.DataAccessException;
 import model.GameData;
 import requestresult.*;
@@ -12,13 +14,16 @@ import java.util.Map;
 
 public class PostLoginClient {
     private final ServerFacade server;
+    private final String serverUrl;
     private String authToken = "";
     private UserStatus status;
-
+    private WebSocketFacade ws;
+    private ServerMessageObserver serverMessageObserver;
     private Map<Integer, GameData> gameNumberToGame = new HashMap<>();
 
-    public PostLoginClient(ServerFacade server) {
+    public PostLoginClient(ServerFacade server, String serverUrl) {
         this.server = server;
+        this.serverUrl = serverUrl;
     }
 
     public String eval(String input){
@@ -111,8 +116,11 @@ public class PostLoginClient {
 
             JoinRequest joinRequest = new JoinRequest(team, fetchedTeamID);
             server.join(joinRequest, authToken);
+            ws = new WebSocketFacade(serverUrl, serverMessageObserver);
+            ws.openGameConnection(authToken, fetchedTeamID);
+            setStatus(UserStatus.IN_GAME);
 
-            ChessBoardUI.buildUI();
+//            ChessBoardUI.buildUI();
 
             return String.format("You have joined game " + id + " as " + team + "\n");
         }
@@ -151,7 +159,6 @@ public class PostLoginClient {
                 observe <GAME_ID>            - join a game as an observer
                 logout
                 help
-                
                 """;
     }
 

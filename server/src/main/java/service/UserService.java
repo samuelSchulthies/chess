@@ -79,4 +79,8 @@ public class UserService {
         return authTokenDAO;
     }
 
+    public String getUsername(String authToken) throws DataAccessException {
+        return authTokenDAO.getAuth(authToken).username();
+    }
+
 }

@@ -1,6 +1,7 @@
 package dataaccess;
 
 import handler.*;
+import server.websocket.WebSocketHandler;
 import service.ClearService;
 import service.GameService;
 import service.UserService;
@@ -22,9 +23,11 @@ public class HandlerUtility {
         }
     }
 
+    public static final WebSocketHandler WEB_SOCKET_HANDLER = new WebSocketHandler(USER_SERVICE, GAME_SERVICE);
+
     public static final ClearHandler CLEAR_HANDLER = new ClearHandler(CLEAR_SERVICE);
     public static final CreateHandler CREATE_HANDLER = new CreateHandler(GAME_SERVICE);
-    public static final JoinHandler JOIN_HANDLER = new JoinHandler(GAME_SERVICE);
+    public static final JoinHandler JOIN_HANDLER = new JoinHandler(GAME_SERVICE, WEB_SOCKET_HANDLER);
     public static final ListHandler LIST_HANDLER = new ListHandler(GAME_SERVICE);
     public static final LoginHandler LOGIN_HANDLER = new LoginHandler(USER_SERVICE);
     public static final LogoutHandler LOGOUT_HANDLER = new LogoutHandler(USER_SERVICE);

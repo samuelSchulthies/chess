@@ -76,7 +76,6 @@ public class PreLoginClient {
                 login <USERNAME> <PASSWORD>
                 help (displays commands again)
                 quit
-                
                 """;
     }
 
