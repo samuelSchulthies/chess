@@ -1,6 +1,6 @@
 package client;
 
-import client.websocket.ServerMessageObserver;
+import client.websocket.ServerMessageHandler;
 import client.websocket.WebSocketFacade;
 import exception.DataAccessException;
 import model.GameData;
@@ -18,7 +18,7 @@ public class PostLoginClient {
     private String authToken = "";
     private UserStatus status;
     private WebSocketFacade ws;
-    private ServerMessageObserver serverMessageObserver;
+    private ServerMessageHandler serverMessageHandler;
     private Map<Integer, GameData> gameNumberToGame = new HashMap<>();
 
     public PostLoginClient(ServerFacade server, String serverUrl) {
@@ -116,7 +116,7 @@ public class PostLoginClient {
 
             JoinRequest joinRequest = new JoinRequest(team, fetchedTeamID);
             server.join(joinRequest, authToken);
-            ws = new WebSocketFacade(serverUrl, serverMessageObserver);
+            ws = new WebSocketFacade(serverUrl, serverMessageHandler);
             ws.openGameConnection(authToken, fetchedTeamID);
             setStatus(UserStatus.IN_GAME);
 
@@ -139,7 +139,7 @@ public class PostLoginClient {
                 throw new DataAccessException("Bad input");
             }
 
-            ws = new WebSocketFacade(serverUrl, serverMessageObserver);
+            ws = new WebSocketFacade(serverUrl, serverMessageHandler);
             ws.openGameConnection(authToken, fetchedTeamID);
             setStatus(UserStatus.OBSERVING);
 

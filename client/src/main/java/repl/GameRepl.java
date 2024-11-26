@@ -1,8 +1,7 @@
 package repl;
 
 import client.GameClient;
-import client.PostLoginClient;
-import client.websocket.ServerMessageObserver;
+import client.websocket.ServerMessageHandler;
 import websocket.messages.ServerMessage;
 
 import java.util.Scanner;
@@ -10,7 +9,9 @@ import java.util.Scanner;
 import static ui.EscapeSequences.RESET_TEXT_COLOR;
 import static ui.EscapeSequences.SET_TEXT_COLOR_RED;
 
-public class GameRepl implements ServerMessageObserver {
+//TODO: SERVER MESSAGE HANDLER FIGURE OUT
+
+public class GameRepl implements ServerMessageHandler {
 
     private final GameClient gameClient;
     public GameRepl(GameClient gameClient) {

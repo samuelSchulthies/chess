@@ -1,14 +1,13 @@
 package repl;
 
 import client.ObserveClient;
-import client.UserStatus;
-import client.websocket.ServerMessageObserver;
+import client.websocket.ServerMessageHandler;
 import websocket.messages.ServerMessage;
 import static ui.EscapeSequences.*;
 
 import java.util.Scanner;
 
-public class ObserveRepl implements ServerMessageObserver {
+public class ObserveRepl implements ServerMessageHandler {
 
     ObserveClient observeClient;
     public ObserveRepl() {
