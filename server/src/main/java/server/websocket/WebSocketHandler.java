@@ -10,6 +10,7 @@ import service.UserService;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
+import java.io.IOException;
 import java.util.Objects;
 
 @WebSocket
@@ -24,7 +25,7 @@ public class WebSocketHandler {
         this.gameService = gameService;
     }
     @OnWebSocketMessage
-    public void onMessage(Session session, String message) throws DataAccessException {
+    public void onMessage(Session session, String message) throws DataAccessException, IOException {
         UserGameCommand userGameCommand = new Gson().fromJson(message, UserGameCommand.class);
         String username = userService.getUsername(userGameCommand.getAuthToken());
 
@@ -36,7 +37,7 @@ public class WebSocketHandler {
         }
     }
 
-    private void connect(Session session, String username, int gameID) throws DataAccessException {
+    private void connect(Session session, String username, int gameID) throws DataAccessException, IOException {
         connections.add(gameID, session);
         String playerStatus;
 
@@ -50,9 +51,10 @@ public class WebSocketHandler {
             playerStatus = "an observer";
         }
 
-        var message = String.format(username + " has joined the game as " + playerStatus);
         var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
-        connections.broadcast();
+        var message = String.format(username + " has joined the game as " + playerStatus);
+        notification.setServerMessageString(message);
+        connections.broadcast(notification);
     }
 
     private void makeMove(Session session, String username){

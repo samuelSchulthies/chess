@@ -2,10 +2,13 @@ package repl;
 
 import client.ObserveClient;
 import client.UserStatus;
+import client.websocket.ServerMessageObserver;
+import websocket.messages.ServerMessage;
+import static ui.EscapeSequences.*;
 
 import java.util.Scanner;
 
-public class ObserveRepl {
+public class ObserveRepl implements ServerMessageObserver {
 
     ObserveClient observeClient;
     public ObserveRepl() {
@@ -34,4 +37,8 @@ public class ObserveRepl {
         System.out.print("\n[OBSERVING] >>> ");
     }
 
+    @Override
+    public void notify(ServerMessage serverMessage) {
+        System.out.println(SET_TEXT_COLOR_RED + serverMessage.getServerMessageString() + RESET_TEXT_COLOR);
+    }
 }

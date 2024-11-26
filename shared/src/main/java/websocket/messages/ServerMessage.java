@@ -1,5 +1,7 @@
 package websocket.messages;
 
+import com.google.gson.Gson;
+
 import java.util.Objects;
 
 /**
@@ -11,6 +13,8 @@ import java.util.Objects;
 public class ServerMessage {
     ServerMessageType serverMessageType;
 
+    String message;
+
     public enum ServerMessageType {
         LOAD_GAME,
         ERROR,
@@ -19,6 +23,18 @@ public class ServerMessage {
 
     public ServerMessage(ServerMessageType type) {
         this.serverMessageType = type;
+    }
+
+    public void setServerMessageString(String newMessage){
+        message = newMessage;
+    }
+
+    public String getServerMessageString(){
+        return message;
+    }
+
+    public String toString(){
+        return new Gson().toJson(this);
     }
 
     public ServerMessageType getServerMessageType() {

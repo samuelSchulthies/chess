@@ -1,7 +1,10 @@
 package server.websocket;
 
 import org.eclipse.jetty.websocket.api.Session;
+import websocket.messages.ServerMessage;
 
+import javax.management.Notification;
+import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ConnectionManager {
@@ -16,7 +19,11 @@ public class ConnectionManager {
         connections.remove(gameID);
     }
 
-    public void broadcast(){
-
+    public void broadcast(ServerMessage notification) throws IOException {
+        for (var connection : connections.values()){
+            if (connection.session.isOpen()){
+                connection.send(notification.toString());
+            }
+        }
     }
 }
