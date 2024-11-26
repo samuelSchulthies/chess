@@ -139,7 +139,11 @@ public class PostLoginClient {
                 throw new DataAccessException("Bad input");
             }
 
-            ChessBoardUI.buildUI();
+            ws = new WebSocketFacade(serverUrl, serverMessageObserver);
+            ws.openGameConnection(authToken, fetchedTeamID);
+            setStatus(UserStatus.OBSERVING);
+
+//            ChessBoardUI.buildUI();
 
             return "";
         }

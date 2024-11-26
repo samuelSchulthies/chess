@@ -11,13 +11,12 @@ import static ui.EscapeSequences.*;
 import java.util.Scanner;
 
 public class PreLoginRepl {
-    private final GameClient gameClient;
     private final PostLoginClient postLoginClient;
     private final PreLoginClient preLoginClient;
+    private final ServerFacade server;
 
     public PreLoginRepl(String serverUrl) {
-        ServerFacade server = new ServerFacade(serverUrl);
-        gameClient = new GameClient(server);
+        server = new ServerFacade(serverUrl);
         postLoginClient = new PostLoginClient(server, serverUrl);
         preLoginClient = new PreLoginClient(server, postLoginClient);
     }
@@ -35,7 +34,7 @@ public class PreLoginRepl {
                 result = preLoginClient.eval(line);
                 System.out.print(result);
                 if (postLoginClient.getStatus() == UserStatus.SIGNED_IN){
-                    PostLoginRepl postLoginRepl = new PostLoginRepl(postLoginClient, gameClient);
+                    PostLoginRepl postLoginRepl = new PostLoginRepl(postLoginClient, server);
                     postLoginRepl.run();
                     postLoginClient.setStatus(UserStatus.SIGNED_OUT);
                 }

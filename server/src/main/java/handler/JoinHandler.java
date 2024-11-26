@@ -23,7 +23,6 @@ public class JoinHandler {
         var join = new Gson().fromJson(req.body(), JoinRequest.class);
         var authToken = req.headers("authorization");
         JoinResult joinResult = gameService.join(join, authToken);
-//        webSocketHandler.
         return new Gson().toJson(joinResult);
     }
 }

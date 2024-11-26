@@ -12,9 +12,9 @@ import static ui.EscapeSequences.SET_TEXT_COLOR_GREEN;
 public class PostLoginRepl {
     private final PostLoginClient postLoginClient;
     private final GameClient gameClient;
-    public PostLoginRepl(PostLoginClient postLoginClient, GameClient gameClient) {
+    public PostLoginRepl(PostLoginClient postLoginClient, ServerFacade server) {
         this.postLoginClient = postLoginClient;
-        this.gameClient = gameClient;
+        gameClient = new GameClient(server);
     }
 
     public void run(){
@@ -31,6 +31,11 @@ public class PostLoginRepl {
                 if (postLoginClient.getStatus() == UserStatus.IN_GAME){
                     GameRepl gameRepl = new GameRepl(gameClient);
                     gameRepl.run();
+                    postLoginClient.setStatus(UserStatus.SIGNED_IN);
+                }
+                if (postLoginClient.getStatus() == UserStatus.OBSERVING){
+                    ObserveRepl observeRepl = new ObserveRepl();
+                    observeRepl.run();
                     postLoginClient.setStatus(UserStatus.SIGNED_IN);
                 }
 
