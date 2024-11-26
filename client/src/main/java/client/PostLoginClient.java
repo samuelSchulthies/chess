@@ -21,9 +21,10 @@ public class PostLoginClient {
     private ServerMessageHandler serverMessageHandler;
     private Map<Integer, GameData> gameNumberToGame = new HashMap<>();
 
-    public PostLoginClient(ServerFacade server, String serverUrl) {
+    public PostLoginClient(ServerFacade server, String serverUrl, ServerMessageHandler serverMessageHandler) {
         this.server = server;
         this.serverUrl = serverUrl;
+        this.serverMessageHandler = serverMessageHandler;
     }
 
     public String eval(String input){

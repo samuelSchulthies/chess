@@ -1,5 +1,6 @@
 package client;
 
+import client.websocket.ServerMessageHandler;
 import exception.DataAccessException;
 import server.ServerFacade;
 
@@ -7,9 +8,11 @@ import java.util.Arrays;
 
 public class GameClient {
     private final ServerFacade server;
+    private final ServerMessageHandler serverMessageHandler;
 
-    public GameClient(ServerFacade server) {
+    public GameClient(ServerFacade server, ServerMessageHandler serverMessageHandler) {
         this.server = server;
+        this.serverMessageHandler = serverMessageHandler;
     }
 
     public String eval(String input){

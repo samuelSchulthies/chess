@@ -4,20 +4,23 @@ import client.GameClient;
 import client.PostLoginClient;
 import client.PreLoginClient;
 import client.UserStatus;
+import client.websocket.ServerMessageHandler;
 import server.Server;
 import server.ServerFacade;
+import websocket.messages.ServerMessage;
+
 import static ui.EscapeSequences.*;
 
 import java.util.Scanner;
 
-public class PreLoginRepl {
+public class PreLoginRepl implements ServerMessageHandler {
     private final PostLoginClient postLoginClient;
     private final PreLoginClient preLoginClient;
     private final ServerFacade server;
 
     public PreLoginRepl(String serverUrl) {
         server = new ServerFacade(serverUrl);
-        postLoginClient = new PostLoginClient(server, serverUrl);
+        postLoginClient = new PostLoginClient(server, serverUrl, this);
         preLoginClient = new PreLoginClient(server, postLoginClient);
     }
 
@@ -34,7 +37,7 @@ public class PreLoginRepl {
                 result = preLoginClient.eval(line);
                 System.out.print(result);
                 if (postLoginClient.getStatus() == UserStatus.SIGNED_IN){
-                    PostLoginRepl postLoginRepl = new PostLoginRepl(postLoginClient, server);
+                    PostLoginRepl postLoginRepl = new PostLoginRepl(postLoginClient, server, this);
                     postLoginRepl.run();
                     postLoginClient.setStatus(UserStatus.SIGNED_OUT);
                 }
@@ -47,6 +50,11 @@ public class PreLoginRepl {
     }
     private void prompt() {
         System.out.print("\n[LOGGED_OUT] >>> ");
+    }
+
+    @Override
+    public void notify(ServerMessage serverMessage) {
+        System.out.println(SET_TEXT_COLOR_RED + serverMessage.getServerMessageString() + RESET_TEXT_COLOR);
     }
 
 }

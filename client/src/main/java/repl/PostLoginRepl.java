@@ -3,6 +3,7 @@ package repl;
 import client.GameClient;
 import client.PostLoginClient;
 import client.UserStatus;
+import client.websocket.ServerMessageHandler;
 import server.ServerFacade;
 
 import java.util.Scanner;
@@ -11,10 +12,13 @@ import static ui.EscapeSequences.SET_TEXT_COLOR_GREEN;
 
 public class PostLoginRepl {
     private final PostLoginClient postLoginClient;
-    private final GameClient gameClient;
-    public PostLoginRepl(PostLoginClient postLoginClient, ServerFacade server) {
+    private final ServerFacade server;
+    private final ServerMessageHandler serverMessageHandler;
+    public PostLoginRepl(PostLoginClient postLoginClient, ServerFacade server, ServerMessageHandler serverMessageHandler) {
         this.postLoginClient = postLoginClient;
-        gameClient = new GameClient(server);
+        this.server = server;
+        this.serverMessageHandler = serverMessageHandler;
+//        gameClient = new GameClient(server);
     }
 
     public void run(){
@@ -29,7 +33,7 @@ public class PostLoginRepl {
                 result = postLoginClient.eval(line);
                 System.out.print(result);
                 if (postLoginClient.getStatus() == UserStatus.IN_GAME){
-                    GameRepl gameRepl = new GameRepl(gameClient);
+                    GameRepl gameRepl = new GameRepl(server, serverMessageHandler);
                     gameRepl.run();
                     postLoginClient.setStatus(UserStatus.SIGNED_IN);
                 }
