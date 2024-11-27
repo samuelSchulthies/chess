@@ -12,6 +12,8 @@ import exception.DataAccessException;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 
 public class MySQLGameDAOTest {
 
@@ -102,24 +104,26 @@ public class MySQLGameDAOTest {
         RegisterRequest newUser = new RegisterRequest("sally","123","sallyisawesome@gmail.com");
         RegisterResult registeredUser = userService.register(newUser);
 
-        ArrayList<GameData> expectedGameList = new ArrayList<>();
+        HashMap<Integer, GameData> expectedGameMap = new HashMap<>();
 
         CreateRequest newGame = new CreateRequest("Sally's game 1");
         CreateResult createdGame = gameService.create(newGame, registeredUser.authToken());
-        expectedGameList.add(gameService.getGameDAO().getGame(createdGame.gameID()));
+        expectedGameMap.put(createdGame.gameID(), gameService.getGameDAO().getGame(createdGame.gameID()));
 
         CreateRequest newGame2 = new CreateRequest("Sally's game 2");
         CreateResult createdGame2 = gameService.create(newGame2, registeredUser.authToken());
-        expectedGameList.add(gameService.getGameDAO().getGame(createdGame2.gameID()));
+        expectedGameMap.put(createdGame2.gameID(), gameService.getGameDAO().getGame(createdGame2.gameID()));
 
         CreateRequest newGame3 = new CreateRequest("Sally's game 3");
         CreateResult createdGame3 = gameService.create(newGame3, registeredUser.authToken());
-        expectedGameList.add(gameService.getGameDAO().getGame(createdGame3.gameID()));
+        expectedGameMap.put(createdGame3.gameID(), gameService.getGameDAO().getGame(createdGame3.gameID()));
 
         ListResult actualGameList = gameService.getGameDAO().listGames();
+        Assertions.assertEquals(expectedGameMap.size(), actualGameList.games().size());
 
-        Assertions.assertEquals(expectedGameList, actualGameList.games(),
-                "Returned game list does not match expected");
+        for (var game : actualGameList.games()){
+            Assertions.assertEquals(game, expectedGameMap.get(game.gameID()));
+        }
 
         clearService.clear();
     }

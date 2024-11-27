@@ -50,6 +50,6 @@ public class MemoryGameDAO implements GameDAO {
 
     public void clear(GameService gameService){
         gameDataCollection.clear();
-        gameService.resetGameID();
+//        gameService.resetGameID();
     }
 }

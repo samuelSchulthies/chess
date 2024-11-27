@@ -148,7 +148,7 @@ public class MySQLGameDAO implements GameDAO{
         } catch (SQLException e){
             throw new DataAccessException(e.getMessage());
         }
-        gameService.resetGameID();
+//        gameService.resetGameID();
     }
 
     @Override

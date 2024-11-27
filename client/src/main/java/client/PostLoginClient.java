@@ -19,8 +19,9 @@ public class PostLoginClient {
     private UserStatus status;
     private WebSocketFacade ws;
     private GameInfo gameInfo;
-    private ServerMessageHandler serverMessageHandler;
-    private Map<Integer, GameData> gameNumberToGame = new HashMap<>();
+    private final ServerMessageHandler serverMessageHandler;
+    private final Map<Integer, Integer> displayIDtoGameID = new HashMap<>();
+    private final Map<Integer, GameData> gameIDtoGame = new HashMap<>();
 
     public PostLoginClient(ServerFacade server, String serverUrl, ServerMessageHandler serverMessageHandler) {
         this.server = server;
@@ -48,7 +49,6 @@ public class PostLoginClient {
     }
 
     public String create(String... params) throws DataAccessException {
-        list();
         StringBuilder gameName = new StringBuilder();
         if (params.length > 0) {
             for (int i = 0; i < params.length; ++i) {
@@ -58,10 +58,8 @@ public class PostLoginClient {
                 }
             }
             CreateRequest createRequest = new CreateRequest(gameName.toString());
-            CreateResult createResult = server.create(createRequest, authToken);
-            //TODO: createResult returns wrong gameID from server
-            int fetchedGameID = gameNumberToGame.get(createResult.gameID()).gameID();
-            return String.format("Game " + gameName + " has been created with gameID " + fetchedGameID + "\n");
+            server.create(createRequest, authToken);
+            return String.format("Game " + gameName + " has been created\n");
         }
 
         throw new DataAccessException("Please enter a game name");
@@ -72,7 +70,7 @@ public class PostLoginClient {
         StringBuilder gameList = new StringBuilder();
         ListResult listResult = server.list(authToken);
 
-        gameNumberToGame.clear();
+        displayIDtoGameID.clear();
 
         for (int i = 0; i < listResult.games().size(); ++i){
             int listIndex = i + 1;
@@ -98,7 +96,8 @@ public class PostLoginClient {
             }
             gameList.append("\n");
 
-            gameNumberToGame.put(listIndex, listResult.games().get(i));
+            displayIDtoGameID.put(listIndex, listResult.games().get(i).gameID());
+            gameIDtoGame.put(listResult.games().get(i).gameID(), listResult.games().get(i));
         }
 
         return gameList.toString();
@@ -113,7 +112,7 @@ public class PostLoginClient {
             int fetchedGameID;
 
             try {
-                fetchedGameID = gameNumberToGame.get(Integer.parseInt(id)).gameID();
+                fetchedGameID = displayIDtoGameID.get(Integer.parseInt(id));
             } catch (Throwable e){
                 throw new DataAccessException("Bad input");
             }
@@ -127,7 +126,7 @@ public class PostLoginClient {
 
 //            ChessBoardUI.buildUI();
 
-            return String.format("You have joined game " + id + " as " + team + "\n");
+            return String.format("You have joined game " + gameIDtoGame.get(fetchedGameID).gameName() + " as " + team + "\n");
         }
         throw new DataAccessException("Incorrect number of join arguments. Please try again\n");
     }
@@ -139,7 +138,7 @@ public class PostLoginClient {
             int fetchedTeamID;
 
             try {
-                fetchedTeamID = gameNumberToGame.get(Integer.parseInt(id)).gameID();
+                fetchedTeamID = displayIDtoGameID.get(Integer.parseInt(id));
             } catch (Throwable e){
                 throw new DataAccessException("Bad input");
             }

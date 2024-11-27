@@ -13,12 +13,12 @@ import java.util.UUID;
 public class GameService {
     private final GameDAO gameDAO;
     private final AuthTokenDAO authTokenDAO;
-    private int gameID = 1;
+    private int gameID;
 
     public GameService(GameDAO gameDAO, AuthTokenDAO authTokenDAO){
         this.gameDAO = gameDAO;
         this.authTokenDAO = authTokenDAO;
-//        createGameID();
+        createGameID();
     }
     public CreateResult create(CreateRequest r, String authToken) throws DataAccessException {
         if (authTokenDAO.getAuth(authToken) == null) {
@@ -29,7 +29,7 @@ public class GameService {
         }
         GameData game = new GameData(gameID, null, null, r.gameName(), new ChessGame());
         createGameID();
-        gameID++;
+//        gameID++;
         gameDAO.createGame(game);
         return new CreateResult(game.gameID());
     }
