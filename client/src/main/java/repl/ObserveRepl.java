@@ -32,12 +32,22 @@ public class ObserveRepl implements ServerMessageHandler {
         }
         System.out.println();
     }
-    private void prompt() {
+    public static void prompt() {
         System.out.print("\n[OBSERVING] >>> ");
     }
 
     @Override
     public void notify(ServerMessage serverMessage) {
-        System.out.println(SET_TEXT_COLOR_RED + serverMessage.getServerMessageString() + RESET_TEXT_COLOR);
+        System.out.println(SET_TEXT_COLOR_RED + serverMessage.getServerMessage() + RESET_TEXT_COLOR);
+    }
+
+    @Override
+    public void loadGame(ServerMessage serverMessage) {
+
+    }
+
+    @Override
+    public void errorMessage(ServerMessage serverMessage) {
+
     }
 }

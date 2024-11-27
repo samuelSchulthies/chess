@@ -21,7 +21,7 @@ public class GameRepl {
     }
 
     public void run(){
-        System.out.println("You have entered a game. Type help to see commands.\n");
+        System.out.println("Type help to see commands.\n");
         Scanner scanner = new Scanner(System.in);
         var result = "";
         while (!result.equals("leave")) {

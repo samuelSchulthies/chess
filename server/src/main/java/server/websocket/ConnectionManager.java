@@ -19,10 +19,10 @@ public class ConnectionManager {
         connections.remove(username);
     }
 
-    public void broadcast(ServerMessage notification) throws IOException {
+    public void broadcast(ServerMessage message) throws IOException {
         for (var connection : connections.values()){
             if (connection.session.isOpen()){
-                connection.send(notification.toString());
+                connection.send(message.toString());
             }
         }
     }

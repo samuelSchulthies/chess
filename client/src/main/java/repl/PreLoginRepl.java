@@ -1,11 +1,7 @@
 package repl;
 
-import client.GameClient;
-import client.PostLoginClient;
-import client.PreLoginClient;
-import client.UserStatus;
+import client.*;
 import client.websocket.ServerMessageHandler;
-import server.Server;
 import server.ServerFacade;
 import websocket.messages.ServerMessage;
 
@@ -17,11 +13,13 @@ public class PreLoginRepl implements ServerMessageHandler {
     private final PostLoginClient postLoginClient;
     private final PreLoginClient preLoginClient;
     private final ServerFacade server;
+    private final PromptSwitcher promptSwitcher;
 
     public PreLoginRepl(String serverUrl) {
         server = new ServerFacade(serverUrl);
         postLoginClient = new PostLoginClient(server, serverUrl, this);
         preLoginClient = new PreLoginClient(server, postLoginClient);
+        promptSwitcher = new PromptSwitcher();
     }
 
     public void run(){
@@ -48,13 +46,24 @@ public class PreLoginRepl implements ServerMessageHandler {
         }
         System.out.println();
     }
-    private void prompt() {
+    public static void prompt() {
         System.out.print("\n[LOGGED_OUT] >>> ");
     }
 
     @Override
     public void notify(ServerMessage serverMessage) {
-        System.out.println("\n" + SET_TEXT_COLOR_RED + serverMessage.getServerMessageString() + RESET_TEXT_COLOR);
+        System.out.println(SET_TEXT_COLOR_RED + serverMessage.getServerMessage() + RESET_TEXT_COLOR);
+        promptSwitcher.runPrompt();
+    }
+
+    @Override
+    public void loadGame(ServerMessage serverMessage) {
+
+    }
+
+    @Override
+    public void errorMessage(ServerMessage serverMessage) {
+
     }
 
 }

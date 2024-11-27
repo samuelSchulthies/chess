@@ -58,8 +58,11 @@ public class WebSocketHandler {
 
         var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
         var message = String.format(username + " has joined the game as " + playerStatus);
-        notification.setServerMessageString(message);
+        notification.setServerMessageNotification(message);
         connections.broadcast(notification);
+
+        var loadGame = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
+        connections.broadcast(loadGame);
     }
 
     private void makeMove(Session session, String username){
@@ -89,7 +92,7 @@ public class WebSocketHandler {
         gameService.getGameDAO().updateGame(gameID, updatedGame);
         var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
         var message = String.format(username + " has left the game");
-        notification.setServerMessageString(message);
+        notification.setServerMessageNotification(message);
         connections.broadcast(notification);
         connections.remove(username);
     }

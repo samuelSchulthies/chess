@@ -16,7 +16,7 @@ public class PostLoginClient {
     private final ServerFacade server;
     private final String serverUrl;
     private String authToken = "";
-    private UserStatus status;
+    public static UserStatus status;
     private WebSocketFacade ws;
     private GameInfo gameInfo;
     private final ServerMessageHandler serverMessageHandler;

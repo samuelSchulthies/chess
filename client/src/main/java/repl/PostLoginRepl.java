@@ -50,7 +50,7 @@ public class PostLoginRepl {
         }
         System.out.println();
     }
-    private void prompt() {
+    public static void prompt() {
         System.out.print("\n[LOGGED_IN] >>> ");
     }
 

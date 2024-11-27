@@ -5,6 +5,7 @@ import client.websocket.WebSocketFacade;
 import exception.DataAccessException;
 import repl.GameRepl;
 import server.ServerFacade;
+import ui.ChessBoardUI;
 
 import java.util.Arrays;
 
@@ -41,14 +42,14 @@ public class GameClient {
         }
     }
 
-    public String redraw() throws DataAccessException{
+    public static String redraw(){
+        ChessBoardUI.buildUI();
         return "redraw";
     }
 
     public String leave() throws DataAccessException{
         ws.closeGameConnection(gameInfo.authToken(), gameInfo.gameID());
         ws = null;
-        GameRepl.prompt();
         return "leave";
     }
 

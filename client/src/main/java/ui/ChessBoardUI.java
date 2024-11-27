@@ -59,21 +59,21 @@ public class ChessBoardUI {
         out.println();
     }
 
-    public static void printBoard(PrintStream out){
+    private static void printBoard(PrintStream out){
         labelColumns(out);
         clearBoarders(out);
         out.println();
         labelRows(out);
         labelColumns(out);
     }
-    public static void labelColumns(PrintStream out){
+    private static void labelColumns(PrintStream out){
         setBoardersGrey(out);
 
         for(char col : columnLabels.toCharArray()){
             out.print(col);
         }
     }
-    public static void labelRows(PrintStream out){
+    private static void labelRows(PrintStream out){
         for(int row = rowLabels.length() - 1; row >= 0; --row){
             setBoardersGrey(out);
             out.print(" ");
@@ -87,7 +87,7 @@ public class ChessBoardUI {
         }
     }
 
-    public static void setSquares(PrintStream out, int row){
+    private static void setSquares(PrintStream out, int row){
         int colorSwitcher = 1;
         for (int col = 0; col < 8; ++col){
             if (row % 2 == 1){
@@ -103,7 +103,7 @@ public class ChessBoardUI {
         }
     }
 
-    public static void setPiece(PrintStream out, int row, int col){
+    private static void setPiece(PrintStream out, int row, int col){
         ChessPosition pieceLocation = new ChessPosition(row + 1, col + 1);
         if (GAME_BOARD_DEFAULT.getPiece(pieceLocation) == null){
             out.print(SQUARE);
@@ -121,20 +121,20 @@ public class ChessBoardUI {
         }
     }
 
-    public static void setBoardersGrey(PrintStream out){
+    private static void setBoardersGrey(PrintStream out){
         out.print(SET_BG_COLOR_LIGHT_GREY);
         out.print(SET_TEXT_COLOR_BLACK);
     }
 
-    public static void clearBoarders(PrintStream out){
+    private static void clearBoarders(PrintStream out){
         out.print(RESET_BG_COLOR);
     }
     
-    public static void setColumnLabels(String labels){
+    private static void setColumnLabels(String labels){
         columnLabels = labels;
     }
 
-    public static void setRowLabels(String labels){
+    private static void setRowLabels(String labels){
         rowLabels = labels;
     }
 }

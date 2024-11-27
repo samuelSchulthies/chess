@@ -1,5 +1,6 @@
 package client.websocket;
 
+import client.GameClient;
 import com.google.gson.Gson;
 import exception.DataAccessException;
 import websocket.commands.UserGameCommand;
@@ -29,7 +30,15 @@ public class WebSocketFacade extends Endpoint {
                 @Override
                 public void onMessage(String message){
                     ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
-                    serverMessageHandler.notify(serverMessage);
+                    if (serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION) {
+                        serverMessageHandler.notify(serverMessage);
+                    }
+                    if (serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME){
+                        GameClient.redraw();
+                    }
+                    if (serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.ERROR){
+
+                    }
                 }
             });
         } catch (URISyntaxException | IOException | DeploymentException e){
