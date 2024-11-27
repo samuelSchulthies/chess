@@ -1,7 +1,10 @@
 package repl;
 
+import chess.ChessBoard;
 import client.*;
 import client.websocket.ServerMessageHandler;
+import client.websocket.WebSocketFacade;
+import exception.DataAccessException;
 import server.ServerFacade;
 import websocket.messages.ServerMessage;
 
@@ -9,17 +12,26 @@ import static ui.EscapeSequences.*;
 
 import java.util.Scanner;
 
-public class PreLoginRepl implements ServerMessageHandler {
+public class PreLoginRepl {
     private final PostLoginClient postLoginClient;
     private final PreLoginClient preLoginClient;
     private final ServerFacade server;
-    private final PromptSwitcher promptSwitcher;
+    private final ServerMessageHandler serverMessageHandler;
+    private final GameClient gameClient;
+    private final ObserveClient observeClient;
+    private final WebSocketFacade ws;
+    private final GameInfo gameInfo;
 
-    public PreLoginRepl(String serverUrl) {
+    public PreLoginRepl(String serverUrl) throws DataAccessException {
+        serverMessageHandler = new ServerMessageHandler();
         server = new ServerFacade(serverUrl);
-        postLoginClient = new PostLoginClient(server, serverUrl, this);
+        ws = new WebSocketFacade(serverUrl, serverMessageHandler);
+        gameInfo = new GameInfo("", 0,"", new ChessBoard());
+
+        observeClient = new ObserveClient();
+        postLoginClient = new PostLoginClient(server, serverUrl, serverMessageHandler);
         preLoginClient = new PreLoginClient(server, postLoginClient);
-        promptSwitcher = new PromptSwitcher();
+        gameClient = new GameClient(server, serverMessageHandler, ws, gameInfo, postLoginClient);
     }
 
     public void run(){
@@ -35,7 +47,7 @@ public class PreLoginRepl implements ServerMessageHandler {
                 result = preLoginClient.eval(line);
                 System.out.print(result);
                 if (postLoginClient.getStatus() == UserStatus.SIGNED_IN){
-                    PostLoginRepl postLoginRepl = new PostLoginRepl(postLoginClient, server, this);
+                    PostLoginRepl postLoginRepl = new PostLoginRepl(postLoginClient, server, serverMessageHandler);
                     postLoginRepl.run();
                     postLoginClient.setStatus(UserStatus.SIGNED_OUT);
                 }
@@ -48,22 +60,6 @@ public class PreLoginRepl implements ServerMessageHandler {
     }
     public static void prompt() {
         System.out.print("\n[LOGGED_OUT] >>> ");
-    }
-
-    @Override
-    public void notify(ServerMessage serverMessage) {
-        System.out.println(SET_TEXT_COLOR_RED + serverMessage.getServerMessage() + RESET_TEXT_COLOR);
-        promptSwitcher.runPrompt();
-    }
-
-    @Override
-    public void loadGame(ServerMessage serverMessage) {
-
-    }
-
-    @Override
-    public void errorMessage(ServerMessage serverMessage) {
-
     }
 
 }

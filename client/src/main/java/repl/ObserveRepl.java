@@ -1,13 +1,10 @@
 package repl;
 
 import client.ObserveClient;
-import client.websocket.ServerMessageHandler;
-import websocket.messages.ServerMessage;
-import static ui.EscapeSequences.*;
 
 import java.util.Scanner;
 
-public class ObserveRepl implements ServerMessageHandler {
+public class ObserveRepl{
 
     ObserveClient observeClient;
     public ObserveRepl() {
@@ -34,20 +31,5 @@ public class ObserveRepl implements ServerMessageHandler {
     }
     public static void prompt() {
         System.out.print("\n[OBSERVING] >>> ");
-    }
-
-    @Override
-    public void notify(ServerMessage serverMessage) {
-        System.out.println(SET_TEXT_COLOR_RED + serverMessage.getServerMessage() + RESET_TEXT_COLOR);
-    }
-
-    @Override
-    public void loadGame(ServerMessage serverMessage) {
-
-    }
-
-    @Override
-    public void errorMessage(ServerMessage serverMessage) {
-
     }
 }

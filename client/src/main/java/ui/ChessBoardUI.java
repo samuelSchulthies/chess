@@ -15,6 +15,7 @@ public class ChessBoardUI {
 
     private static String rowLabels;
     private static String columnLabels;
+    private static PrintStream out;
     private static final String SQUARE = "   ";
 
     final static Map<ChessPiece.PieceType, Character> PIECE_TYPE_TO_CHAR = Map.of(
@@ -26,19 +27,21 @@ public class ChessBoardUI {
             ChessPiece.PieceType.ROOK, 'R'
     );
 
-    static private final ChessBoard GAME_BOARD_DEFAULT = new ChessBoard();
+//    static private final ChessBoard GAME_BOARD_DEFAULT = new ChessBoard();
+
+    static private ChessBoard currentBoard = new ChessBoard();
 
     public ChessBoardUI(){
+        out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
     }
 
-    public static void buildUI(){
-        GAME_BOARD_DEFAULT.resetBoard();
-
-        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+    public static void buildUIWhite(ChessBoard updatedBoard){
+//        GAME_BOARD_DEFAULT.changeDefaultBoardLayout("WHITE");
+//        GAME_BOARD_DEFAULT.resetBoard();
+        setBoard(updatedBoard);
 
         out.print(ERASE_SCREEN);
 
-        // Set for white
         setRowLabels("12345678");
         setColumnLabels("    a  b  c  d  e  f  g  h    ");
         printBoard(out);
@@ -46,10 +49,14 @@ public class ChessBoardUI {
         out.print(RESET_BG_COLOR);
         out.println();
         out.println();
+    }
 
-        // Set for black
-        GAME_BOARD_DEFAULT.changeDefaultBoardLayout("BLACK");
-        GAME_BOARD_DEFAULT.resetBoard();
+    public static void buildUIBlack(ChessBoard updatedBoard){
+        currentBoard.changeDefaultBoardLayout("BLACK");
+        currentBoard.resetBoard();
+
+        out.print(ERASE_SCREEN);
+
         setRowLabels("87654321");
         setColumnLabels("    h  g  f  e  d  c  b  a    ");
         printBoard(out);
@@ -105,18 +112,18 @@ public class ChessBoardUI {
 
     private static void setPiece(PrintStream out, int row, int col){
         ChessPosition pieceLocation = new ChessPosition(row + 1, col + 1);
-        if (GAME_BOARD_DEFAULT.getPiece(pieceLocation) == null){
+        if (currentBoard.getPiece(pieceLocation) == null){
             out.print(SQUARE);
         }
         else {
             out.print(" ");
-            if (GAME_BOARD_DEFAULT.getPiece(pieceLocation).getTeamColor() == ChessGame.TeamColor.WHITE){
+            if (currentBoard.getPiece(pieceLocation).getTeamColor() == ChessGame.TeamColor.WHITE){
                 out.print(SET_TEXT_COLOR_RED);
             }
             else {
                 out.print(SET_TEXT_COLOR_BLUE);
             }
-            out.print(PIECE_TYPE_TO_CHAR.get(GAME_BOARD_DEFAULT.getPiece(pieceLocation).getPieceType()));
+            out.print(PIECE_TYPE_TO_CHAR.get(currentBoard.getPiece(pieceLocation).getPieceType()));
             out.print(" ");
         }
     }
@@ -136,5 +143,9 @@ public class ChessBoardUI {
 
     private static void setRowLabels(String labels){
         rowLabels = labels;
+    }
+
+    private static void setBoard(ChessBoard updatedBoard){
+        currentBoard = updatedBoard;
     }
 }

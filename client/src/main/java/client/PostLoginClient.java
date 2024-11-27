@@ -1,5 +1,7 @@
 package client;
 
+import chess.ChessBoard;
+import chess.ChessGame;
 import client.websocket.ServerMessageHandler;
 import client.websocket.WebSocketFacade;
 import exception.DataAccessException;
@@ -121,7 +123,7 @@ public class PostLoginClient {
             server.join(joinRequest, authToken);
             ws = new WebSocketFacade(serverUrl, serverMessageHandler);
             ws.openGameConnection(authToken, fetchedGameID);
-            gameInfo = new GameInfo(authToken, fetchedGameID);
+            gameInfo = new GameInfo(authToken, fetchedGameID, team, gameIDtoGame.get(fetchedGameID).game().getBoard());
             setStatus(UserStatus.IN_GAME);
 
 //            ChessBoardUI.buildUI();
@@ -192,6 +194,12 @@ public class PostLoginClient {
 
     public WebSocketFacade getWs(){
         return ws;
+    }
+
+    public void updateBoard(int gameID) throws DataAccessException {
+        list();
+        int fetchedGameID = displayIDtoGameID.get(gameID);
+        gameInfo.setBoard(gameIDtoGame.get(fetchedGameID).game().getBoard());
     }
 }
 

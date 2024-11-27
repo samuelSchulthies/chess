@@ -2,6 +2,7 @@ package repl;
 
 import client.GameClient;
 import client.GameInfo;
+import client.PostLoginClient;
 import client.websocket.ServerMessageHandler;
 import client.websocket.WebSocketFacade;
 import server.ServerFacade;
@@ -16,8 +17,8 @@ public class GameRepl {
 
     private final GameClient gameClient;
     public GameRepl(ServerFacade server, ServerMessageHandler serverMessageHandler,
-                    WebSocketFacade ws, GameInfo gameInfo) {
-        gameClient = new GameClient(server, serverMessageHandler, ws, gameInfo);
+                    WebSocketFacade ws, GameInfo gameInfo, PostLoginClient postLoginClient) {
+        gameClient = new GameClient(server, serverMessageHandler, ws, gameInfo, postLoginClient);
     }
 
     public void run(){
