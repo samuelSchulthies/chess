@@ -11,6 +11,7 @@ import service.UserService;
 import exception.DataAccessException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class MySQLGameDAOTest {
 

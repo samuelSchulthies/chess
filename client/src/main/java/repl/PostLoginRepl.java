@@ -33,7 +33,8 @@ public class PostLoginRepl {
                 result = postLoginClient.eval(line);
                 System.out.print(result);
                 if (postLoginClient.getStatus() == UserStatus.IN_GAME){
-                    GameRepl gameRepl = new GameRepl(server, serverMessageHandler);
+                    GameRepl gameRepl = new GameRepl(server, serverMessageHandler,
+                            postLoginClient.getWs(), postLoginClient.getGameInfo());
                     gameRepl.run();
                     postLoginClient.setStatus(UserStatus.SIGNED_IN);
                 }

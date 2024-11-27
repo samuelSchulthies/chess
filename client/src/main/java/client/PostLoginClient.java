@@ -18,6 +18,7 @@ public class PostLoginClient {
     private String authToken = "";
     private UserStatus status;
     private WebSocketFacade ws;
+    private GameInfo gameInfo;
     private ServerMessageHandler serverMessageHandler;
     private Map<Integer, GameData> gameNumberToGame = new HashMap<>();
 
@@ -47,6 +48,7 @@ public class PostLoginClient {
     }
 
     public String create(String... params) throws DataAccessException {
+        list();
         StringBuilder gameName = new StringBuilder();
         if (params.length > 0) {
             for (int i = 0; i < params.length; ++i) {
@@ -57,8 +59,9 @@ public class PostLoginClient {
             }
             CreateRequest createRequest = new CreateRequest(gameName.toString());
             CreateResult createResult = server.create(createRequest, authToken);
-
-            return String.format("Game " + gameName + " has been created with gameID " + createResult.gameID() + "\n");
+            //TODO: createResult returns wrong gameID from server
+            int fetchedGameID = gameNumberToGame.get(createResult.gameID()).gameID();
+            return String.format("Game " + gameName + " has been created with gameID " + fetchedGameID + "\n");
         }
 
         throw new DataAccessException("Please enter a game name");
@@ -107,18 +110,19 @@ public class PostLoginClient {
         if(params.length == 2){
             var id = params[0];
             var team = params[1].toUpperCase();
-            int fetchedTeamID;
+            int fetchedGameID;
 
             try {
-                fetchedTeamID = gameNumberToGame.get(Integer.parseInt(id)).gameID();
+                fetchedGameID = gameNumberToGame.get(Integer.parseInt(id)).gameID();
             } catch (Throwable e){
                 throw new DataAccessException("Bad input");
             }
 
-            JoinRequest joinRequest = new JoinRequest(team, fetchedTeamID);
+            JoinRequest joinRequest = new JoinRequest(team, fetchedGameID);
             server.join(joinRequest, authToken);
             ws = new WebSocketFacade(serverUrl, serverMessageHandler);
-            ws.openGameConnection(authToken, fetchedTeamID);
+            ws.openGameConnection(authToken, fetchedGameID);
+            gameInfo = new GameInfo(authToken, fetchedGameID);
             setStatus(UserStatus.IN_GAME);
 
 //            ChessBoardUI.buildUI();
@@ -171,12 +175,24 @@ public class PostLoginClient {
         authToken = newAuthToken;
     }
 
+    public String getAuthToken(){
+        return authToken;
+    }
+
+    public GameInfo getGameInfo(){
+        return gameInfo;
+    }
+
     public void setStatus(UserStatus newStatus){
         status = newStatus;
     }
 
     public UserStatus getStatus(){
         return status;
+    }
+
+    public WebSocketFacade getWs(){
+        return ws;
     }
 }
 

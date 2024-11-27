@@ -1,7 +1,9 @@
 package client;
 
 import client.websocket.ServerMessageHandler;
+import client.websocket.WebSocketFacade;
 import exception.DataAccessException;
+import repl.GameRepl;
 import server.ServerFacade;
 
 import java.util.Arrays;
@@ -9,10 +11,15 @@ import java.util.Arrays;
 public class GameClient {
     private final ServerFacade server;
     private final ServerMessageHandler serverMessageHandler;
+    private final GameInfo gameInfo;
+    private WebSocketFacade ws;
 
-    public GameClient(ServerFacade server, ServerMessageHandler serverMessageHandler) {
+    public GameClient(ServerFacade server, ServerMessageHandler serverMessageHandler,
+                      WebSocketFacade ws, GameInfo gameInfo) {
         this.server = server;
         this.serverMessageHandler = serverMessageHandler;
+        this.ws = ws;
+        this.gameInfo = gameInfo;
     }
 
     public String eval(String input){
@@ -39,6 +46,9 @@ public class GameClient {
     }
 
     public String leave() throws DataAccessException{
+        ws.closeGameConnection(gameInfo.authToken(), gameInfo.gameID());
+        ws = null;
+        GameRepl.prompt();
         return "leave";
     }
 

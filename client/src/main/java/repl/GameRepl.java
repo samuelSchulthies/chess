@@ -1,7 +1,9 @@
 package repl;
 
 import client.GameClient;
+import client.GameInfo;
 import client.websocket.ServerMessageHandler;
+import client.websocket.WebSocketFacade;
 import server.ServerFacade;
 import websocket.messages.ServerMessage;
 
@@ -13,8 +15,9 @@ import static ui.EscapeSequences.SET_TEXT_COLOR_RED;
 public class GameRepl {
 
     private final GameClient gameClient;
-    public GameRepl(ServerFacade server, ServerMessageHandler serverMessageHandler) {
-        gameClient = new GameClient(server, serverMessageHandler);
+    public GameRepl(ServerFacade server, ServerMessageHandler serverMessageHandler,
+                    WebSocketFacade ws, GameInfo gameInfo) {
+        gameClient = new GameClient(server, serverMessageHandler, ws, gameInfo);
     }
 
     public void run(){
@@ -35,7 +38,7 @@ public class GameRepl {
         }
         System.out.println();
     }
-    private void prompt() {
+    public static void prompt() {
         System.out.print("\n[IN_GAME] >>> ");
     }
 

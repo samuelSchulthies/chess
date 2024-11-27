@@ -8,6 +8,7 @@ import model.GameData;
 import requestresult.*;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class GameService {
     private final GameDAO gameDAO;
@@ -17,6 +18,7 @@ public class GameService {
     public GameService(GameDAO gameDAO, AuthTokenDAO authTokenDAO){
         this.gameDAO = gameDAO;
         this.authTokenDAO = authTokenDAO;
+//        createGameID();
     }
     public CreateResult create(CreateRequest r, String authToken) throws DataAccessException {
         if (authTokenDAO.getAuth(authToken) == null) {
@@ -26,6 +28,7 @@ public class GameService {
             throw new DataAccessException("game name cannot be empty");
         }
         GameData game = new GameData(gameID, null, null, r.gameName(), new ChessGame());
+        createGameID();
         gameID++;
         gameDAO.createGame(game);
         return new CreateResult(game.gameID());
@@ -88,5 +91,9 @@ public class GameService {
 
     public GameDAO getGameDAO(){
         return gameDAO;
+    }
+
+    private void createGameID(){
+        gameID = Math.abs(UUID.randomUUID().hashCode());
     }
 }
