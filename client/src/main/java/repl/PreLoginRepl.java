@@ -1,10 +1,7 @@
 package repl;
 
-import chess.ChessBoard;
 import client.*;
 import client.websocket.ServerMessageHandler;
-import client.websocket.WebSocketFacade;
-import exception.DataAccessException;
 import server.ServerFacade;
 import websocket.messages.ServerMessage;
 
@@ -17,21 +14,12 @@ public class PreLoginRepl {
     private final PreLoginClient preLoginClient;
     private final ServerFacade server;
     private final ServerMessageHandler serverMessageHandler;
-    private final GameClient gameClient;
-    private final ObserveClient observeClient;
-    private final WebSocketFacade ws;
-    private final GameInfo gameInfo;
 
-    public PreLoginRepl(String serverUrl) throws DataAccessException {
+    public PreLoginRepl(String serverUrl) {
         serverMessageHandler = new ServerMessageHandler();
         server = new ServerFacade(serverUrl);
-        ws = new WebSocketFacade(serverUrl, serverMessageHandler);
-        gameInfo = new GameInfo("", 0,"", new ChessBoard());
-
-        observeClient = new ObserveClient();
         postLoginClient = new PostLoginClient(server, serverUrl, serverMessageHandler);
         preLoginClient = new PreLoginClient(server, postLoginClient);
-        gameClient = new GameClient(server, serverMessageHandler, ws, gameInfo, postLoginClient);
     }
 
     public void run(){

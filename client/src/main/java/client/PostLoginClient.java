@@ -198,8 +198,7 @@ public class PostLoginClient {
 
     public void updateBoard(int gameID) throws DataAccessException {
         list();
-        int fetchedGameID = displayIDtoGameID.get(gameID);
-        gameInfo.setBoard(gameIDtoGame.get(fetchedGameID).game().getBoard());
+        gameInfo.setBoard(gameIDtoGame.get(gameID).game().getBoard());
     }
 }
 

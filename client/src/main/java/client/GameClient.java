@@ -50,13 +50,13 @@ public class GameClient {
         if (Objects.equals(gameInfo.getTeam(), "WHITE")){
             ChessBoardUI.buildUIWhite(gameInfo.getBoard());
         }
-        if (Objects.equals(gameInfo.getTeam(), "BLACK")){
+        else if (Objects.equals(gameInfo.getTeam(), "BLACK")){
 //            ChessBoardUI.buildUIBlack();
         }
         else {
             throw new DataAccessException("Player is not on either team");
         }
-        return "redraw";
+        return "";
     }
 
     public String leave() throws DataAccessException{

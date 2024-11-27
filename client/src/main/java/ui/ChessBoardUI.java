@@ -15,7 +15,7 @@ public class ChessBoardUI {
 
     private static String rowLabels;
     private static String columnLabels;
-    private static PrintStream out;
+    private static final PrintStream out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
     private static final String SQUARE = "   ";
 
     final static Map<ChessPiece.PieceType, Character> PIECE_TYPE_TO_CHAR = Map.of(
@@ -32,7 +32,6 @@ public class ChessBoardUI {
     static private ChessBoard currentBoard = new ChessBoard();
 
     public ChessBoardUI(){
-        out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
     }
 
     public static void buildUIWhite(ChessBoard updatedBoard){
@@ -42,6 +41,8 @@ public class ChessBoardUI {
 
         out.print(ERASE_SCREEN);
 
+        out.print("Printing board...\n");
+
         setRowLabels("12345678");
         setColumnLabels("    a  b  c  d  e  f  g  h    ");
         printBoard(out);
@@ -49,6 +50,8 @@ public class ChessBoardUI {
         out.print(RESET_BG_COLOR);
         out.println();
         out.println();
+
+        out.print(RESET_TEXT_COLOR);
     }
 
     public static void buildUIBlack(ChessBoard updatedBoard){

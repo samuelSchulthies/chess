@@ -33,8 +33,12 @@ public class WebSocketFacade extends Endpoint {
                     if (serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION) {
                         serverMessageHandler.notify(serverMessage);
                     }
-                    if (serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME){
-                        serverMessageHandler.loadGame(serverMessage);
+                    try {
+                        if (serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
+                            serverMessageHandler.loadGame(serverMessage);
+                        }
+                    } catch (DataAccessException e){
+                        throw new RuntimeException(e);
                     }
                     if (serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.ERROR){
 

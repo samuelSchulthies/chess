@@ -19,6 +19,7 @@ public class GameRepl {
     public GameRepl(ServerFacade server, ServerMessageHandler serverMessageHandler,
                     WebSocketFacade ws, GameInfo gameInfo, PostLoginClient postLoginClient) {
         gameClient = new GameClient(server, serverMessageHandler, ws, gameInfo, postLoginClient);
+        serverMessageHandler.setGameClient(gameClient);
     }
 
     public void run(){
