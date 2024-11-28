@@ -1,5 +1,6 @@
 package server.websocket;
 
+import chess.*;
 import com.google.gson.Gson;
 import exception.DataAccessException;
 import model.GameData;
@@ -26,13 +27,14 @@ public class WebSocketHandler {
         this.gameService = gameService;
     }
     @OnWebSocketMessage
-    public void onMessage(Session session, String message) throws DataAccessException, IOException {
+    public void onMessage(Session session, String message) throws DataAccessException, IOException, InvalidMoveException {
         UserGameCommand userGameCommand = new Gson().fromJson(message, UserGameCommand.class);
         String username = userService.getUsername(userGameCommand.getAuthToken());
 
         switch (userGameCommand.getCommandType()) {
             case CONNECT -> connect(session, username, userGameCommand.getGameID(), userGameCommand.getAuthToken());
-            case MAKE_MOVE -> makeMove(session, username);
+            case MAKE_MOVE -> makeMove(username, userGameCommand.getMove(), userGameCommand.getGameID(),
+                    userGameCommand.getAuthToken(), userGameCommand.getLetterMoves());
             case LEAVE -> leave(username, userGameCommand.getGameID(), userGameCommand.getAuthToken());
             case RESIGN -> resign(session, username);
         }
@@ -65,8 +67,34 @@ public class WebSocketHandler {
         connections.broadcast(loadGame);
     }
 
-    private void makeMove(Session session, String username){
+    private void makeMove(String username, ChessMove move, int gameID, String authToken,
+                          MovesFromUser letterMoves) throws DataAccessException, InvalidMoveException, IOException {
+        if (userService.getAuthTokenDAO().getAuth(authToken) == null) {
+            throw new DataAccessException("invalid authtoken");
+        }
 
+        GameData currentGame = gameService.getGameDAO().getGame(gameID);
+        try {
+            currentGame.game().makeMove(move);
+        } catch (InvalidMoveException e){
+            throw new InvalidMoveException(e.getMessage());
+        }
+
+        ChessBoard board = currentGame.game().getBoard();
+
+        GameData updatedGame = new GameData(gameID, currentGame.whiteUsername(),
+                currentGame.blackUsername(), currentGame.gameName(), currentGame.game());
+
+        gameService.getGameDAO().updateGame(gameID, updatedGame);
+
+        var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+        var message = String.format(username + " moved " + letterMoves.startPosition()
+                + " to " + letterMoves.endPosition());
+        notification.setServerMessageNotification(message);
+        connections.broadcast(notification);
+
+        var loadGame = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
+        connections.broadcast(loadGame);
     }
 
     private void leave(String username, int gameID, String authToken) throws IOException, DataAccessException {

@@ -73,6 +73,7 @@ public class PostLoginClient {
         ListResult listResult = server.list(authToken);
 
         displayIDtoGameID.clear();
+        gameIDtoGame.clear();
 
         for (int i = 0; i < listResult.games().size(); ++i){
             int listIndex = i + 1;

@@ -10,8 +10,8 @@ import java.util.*;
  */
 public class ChessGame {
 
-    static private ChessBoard gameBoard = new ChessBoard();
-    static TeamColor teamTurn;
+    private ChessBoard gameBoard = new ChessBoard();
+    private TeamColor teamTurn;
     private ChessPiece pieceStorage;
     Boolean validMovesFlag = false;
     Boolean exception = false;

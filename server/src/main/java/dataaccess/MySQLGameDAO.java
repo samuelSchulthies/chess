@@ -1,5 +1,6 @@
 package dataaccess;
 
+import chess.ChessBoard;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import model.GameData;
@@ -100,6 +101,7 @@ public class MySQLGameDAO implements GameDAO{
         String gameSQLStatement =
                 "UPDATE game SET whiteUsername = ?, blackUsername = ?, gameJSON = ? WHERE gameID = ?";
         var gameJSON = new Gson().toJson(game.game());
+
         try (var conn = DatabaseManager.getConnection()){
             try (var ps = conn.prepareStatement(gameSQLStatement)){
                 ps.setString(1, game.whiteUsername());

@@ -49,7 +49,6 @@ public class ChessBoardUI {
 
         out.print(RESET_BG_COLOR);
         out.println();
-        out.println();
 
         out.print(RESET_TEXT_COLOR);
     }

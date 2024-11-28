@@ -1,13 +1,17 @@
 package client;
 
+import chess.ChessMove;
+import chess.ChessPiece;
+import chess.ChessPosition;
+import chess.MovesFromUser;
 import client.websocket.ServerMessageHandler;
 import client.websocket.WebSocketFacade;
 import exception.DataAccessException;
-import repl.GameRepl;
 import server.ServerFacade;
 import ui.ChessBoardUI;
 
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Objects;
 
 public class GameClient {
@@ -16,6 +20,24 @@ public class GameClient {
     private final GameInfo gameInfo;
     private WebSocketFacade ws;
     private final PostLoginClient postLoginClient;
+
+    final static Map<Character, Integer> LETTER_TO_NUM = Map.of(
+            'a', 1,
+            'b', 2,
+            'c', 3,
+            'd', 4,
+            'e', 5,
+            'f', 6,
+            'g', 7,
+            'h', 8
+    );
+
+    final static Map<String, ChessPiece.PieceType> STRING_TO_PIECE_TYPE = Map.of(
+            "bishop", ChessPiece.PieceType.BISHOP,
+            "knight", ChessPiece.PieceType.KNIGHT,
+            "queen", ChessPiece.PieceType.QUEEN,
+            "rook", ChessPiece.PieceType.ROOK
+    );
 
     public GameClient(ServerFacade server, ServerMessageHandler serverMessageHandler,
                       WebSocketFacade ws, GameInfo gameInfo, PostLoginClient postLoginClient) {
@@ -66,6 +88,34 @@ public class GameClient {
     }
 
     public String move(String... params) throws DataAccessException{
+        if((params.length != 3) && (params.length != 2)){
+            throw new DataAccessException("Incorrect move arguments");
+        }
+
+        ChessPiece.PieceType promotionPiece;
+        if (params.length == 3){
+            promotionPiece = STRING_TO_PIECE_TYPE.get(params[2]);
+        }
+        else {
+            promotionPiece = null;
+        }
+
+        var pieceLocation = params[0];
+        int pieceRow = Character.getNumericValue(pieceLocation.charAt(1));
+        int pieceCol = LETTER_TO_NUM.get(pieceLocation.charAt(0));
+
+        var moveLocation = params[1];
+        int moveRow = Character.getNumericValue(moveLocation.charAt(1));
+        int moveCol = LETTER_TO_NUM.get(moveLocation.charAt(0));
+
+        ChessPosition startPosition = new ChessPosition(pieceRow, pieceCol);
+        ChessPosition endPosition = new ChessPosition(moveRow, moveCol);
+
+        ChessMove newMove = new ChessMove(startPosition, endPosition, promotionPiece);
+        MovesFromUser originalMoves = new MovesFromUser(pieceLocation, moveLocation);
+
+        ws.makeMove(gameInfo.getAuthToken(), gameInfo.getGameID(), newMove, originalMoves);
+
         return "move";
     }
 
@@ -80,11 +130,11 @@ public class GameClient {
     public String help(){
         return """
                 
-                redraw                         - Redraws the chess board
-                leave                          - Removes player from game
-                move <PIECE_POSITION & MOVE>   - Input desired chess move (ex: e2e4)
-                resign                         - forfeits game
-                highlight <PIECE_POSITION>     - shows all valid moves for the piece at that position
+                redraw                        - Redraws the chess board
+                leave                         - Removes player from game
+                move <START END PROMO_PIECE>  - Input desired chess move (ex: b7 b8 queen)
+                resign                        - forfeits game
+                highlight <PIECE_POSITION>    - shows all valid moves for the piece at that position
                 help
                 """;
     }
