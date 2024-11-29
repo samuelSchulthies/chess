@@ -74,9 +74,20 @@ public class WebSocketHandler {
         }
 
         GameData game = gameService.getGameDAO().getGame(gameID);
-//        if(game.game().isInCheckmate(getUserTeam(username, game))){
-//            game.game().setGameOver(true);
+
+//        if (getUser(username, game, true) == null) {
+//            var errorMissingUser = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
+//            var missingUserMessage = String.format(getTeam(username, game, true) +
+//                    " is vacant. Cannot play alone.");
+//            errorMissingUser.setServerMessageNotification(missingUserMessage);
+//            connections.broadcast(errorMissingUser);
+//            return;
 //        }
+
+        if (isAlone(username, game)){
+            return;
+        }
+
         if (!game.game().getGameOver()){
             try {
                 game.game().makeMove(move);
@@ -136,7 +147,7 @@ public class WebSocketHandler {
                     game.gameName(), game.game());
         }
         else {
-            throw new DataAccessException("User is not in this game");
+            throw new DataAccessException("(leave) User is not in this game");
         }
 
         var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
@@ -149,6 +160,10 @@ public class WebSocketHandler {
     private void resign(String username, String authToken, int gameID) throws DataAccessException, IOException {
         if (userService.getAuthTokenDAO().getAuth(authToken) == null) {
             throw new DataAccessException("invalid authtoken");
+        }
+
+        if (isAlone(username, gameService.getGameDAO().getGame(gameID))){
+            return;
         }
 
         GameData game = gameService.getGameDAO().getGame(gameID);
@@ -164,7 +179,7 @@ public class WebSocketHandler {
             losingTeam = "White";
         }
         else {
-            throw new DataAccessException("User is not in this game");
+            throw new DataAccessException("(resign) User is not in this game");
         }
 
         game.game().setGameOver(true);
@@ -187,26 +202,56 @@ public class WebSocketHandler {
     }
 
     public ChessGame.TeamColor getTeam(String username, GameData game, boolean opposingTeam) throws DataAccessException {
-        if (Objects.equals(game.whiteUsername(), username) && (!opposingTeam)){
-            return ChessGame.TeamColor.WHITE;
+        if (Objects.equals(game.whiteUsername(), username)){
+            if (!opposingTeam) {
+                return ChessGame.TeamColor.WHITE;
+            }
+            else {
+                return ChessGame.TeamColor.BLACK;
+            }
         }
-        else if (Objects.equals(game.blackUsername(), username) && (!opposingTeam)){
-            return ChessGame.TeamColor.BLACK;
+        if (Objects.equals(game.blackUsername(), username)){
+            if (!opposingTeam) {
+                return ChessGame.TeamColor.BLACK;
+            }
+            else {
+                return ChessGame.TeamColor.WHITE;
+            }
         }
-        else {
-            throw new DataAccessException("User is not in this game");
-        }
+        throw new DataAccessException("(getTeam) User is not in this game");
     }
 
     public String getUser(String username, GameData game, boolean opposingUser) throws DataAccessException {
-        if (Objects.equals(game.whiteUsername(), username) && (!opposingUser)){
-            return game.whiteUsername();
+        if (Objects.equals(game.whiteUsername(), username)){
+            if (!opposingUser) {
+                return game.whiteUsername();
+            }
+            else {
+                return game.blackUsername();
+            }
         }
-        else if (Objects.equals(game.blackUsername(), username) && (!opposingUser)){
-            return game.blackUsername();
+        if (Objects.equals(game.blackUsername(), username)){
+            if (!opposingUser) {
+                return game.blackUsername();
+            }
+            else {
+                return game.whiteUsername();
+            }
         }
         else {
-            throw new DataAccessException("User is not in this game");
+            throw new DataAccessException("(getUser) User is not in this game");
         }
+    }
+
+    public boolean isAlone(String username, GameData game) throws DataAccessException, IOException {
+        if (getUser(username, game, true) == null) {
+            var errorMissingUser = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
+            var missingUserMessage = String.format(getTeam(username, game, true) +
+                    " is vacant. Cannot play alone.");
+            errorMissingUser.setServerMessageNotification(missingUserMessage);
+            connections.broadcast(errorMissingUser);
+            return true;
+        }
+        return false;
     }
 }

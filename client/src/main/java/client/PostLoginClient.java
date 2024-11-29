@@ -51,21 +51,20 @@ public class PostLoginClient {
     }
 
     public String create(String... params) throws DataAccessException {
-        StringBuilder gameName = new StringBuilder();
-        if (params.length > 0) {
-            for (int i = 0; i < params.length; ++i) {
-                gameName.append(params[i]);
-                if (i != params.length - 1) {
-                    gameName.append(" ");
-                }
-            }
-            CreateRequest createRequest = new CreateRequest(gameName.toString());
-            server.create(createRequest, authToken);
-            return String.format("Game " + gameName + " has been created\n");
+//        StringBuilder gameName = new StringBuilder();
+        if (params.length != 1) {
+            throw new DataAccessException("Please enter a game name with no spaces");
         }
-
-        throw new DataAccessException("Please enter a game name");
-
+//        for (int i = 0; i < params.length; ++i) {
+//            gameName.append(params[i]);
+//            if (i != params.length - 1) {
+//                gameName.append(" ");
+//            }
+//        }
+        var gameName = params[0];
+        CreateRequest createRequest = new CreateRequest(gameName);
+        server.create(createRequest, authToken);
+        return String.format("Game " + gameName + " has been created\n");
     }
 
     public String list() throws DataAccessException {
@@ -109,29 +108,30 @@ public class PostLoginClient {
 
     public String join(String... params) throws DataAccessException {
         list();
-        if(params.length == 2){
-            var id = params[0];
-            var team = params[1].toUpperCase();
-            int fetchedGameID;
+        if(params.length != 2) {
+            throw new DataAccessException("Incorrect number of join arguments. Please try again\n");
+        }
+        var id = params[0];
+        var team = params[1].toUpperCase();
+        int fetchedGameID;
 
-            try {
-                fetchedGameID = displayIDtoGameID.get(Integer.parseInt(id));
-            } catch (Throwable e){
-                throw new DataAccessException("Bad input");
-            }
+        try {
+            fetchedGameID = displayIDtoGameID.get(Integer.parseInt(id));
+        } catch (Throwable e){
+            throw new DataAccessException("Bad input");
+        }
 
-            JoinRequest joinRequest = new JoinRequest(team, fetchedGameID);
-            server.join(joinRequest, authToken);
-            ws = new WebSocketFacade(serverUrl, serverMessageHandler);
-            ws.openGameConnection(authToken, fetchedGameID);
-            gameInfo = new GameInfo(authToken, fetchedGameID, team, gameIDtoGame.get(fetchedGameID).game().getBoard());
-            setStatus(UserStatus.IN_GAME);
+        JoinRequest joinRequest = new JoinRequest(team, fetchedGameID);
+        server.join(joinRequest, authToken);
+        ws = new WebSocketFacade(serverUrl, serverMessageHandler);
+        ws.openGameConnection(authToken, fetchedGameID);
+        gameInfo = new GameInfo(authToken, fetchedGameID, team, gameIDtoGame.get(fetchedGameID).game().getBoard());
+        setStatus(UserStatus.IN_GAME);
 
 //            ChessBoardUI.buildUI();
 
-            return String.format("You have joined game " + gameIDtoGame.get(fetchedGameID).gameName() + " as " + team + "\n");
-        }
-        throw new DataAccessException("Incorrect number of join arguments. Please try again\n");
+        return String.format("You have joined game " + gameIDtoGame.get(fetchedGameID).gameName() + " as " + team + "\n");
+
     }
 
     public String observe(String... params) throws DataAccessException {
@@ -195,6 +195,14 @@ public class PostLoginClient {
 
     public WebSocketFacade getWs(){
         return ws;
+    }
+
+    public void updateGames() throws DataAccessException {
+        list();
+    }
+
+    public GameData getGame(int gameID){
+        return gameIDtoGame.get(gameID);
     }
 
     public void updateBoard(int gameID) throws DataAccessException {

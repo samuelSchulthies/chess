@@ -8,6 +8,7 @@ public class GameInfo {
     private int gameID;
     private String team;
     private ChessBoard board;
+    public boolean waitingForPlayer = true;
 
     public GameInfo(String authToken, int gameID, String team, ChessBoard board){
         this.authToken = authToken;
@@ -34,5 +35,13 @@ public class GameInfo {
 
     public void setBoard(ChessBoard updatedBoard){
         board = updatedBoard;
+    }
+
+    public void setWaitingForPlayer(boolean setWaitingForPlayer){
+        waitingForPlayer = setWaitingForPlayer;
+    }
+
+    public boolean getWaitingForPlayer(){
+        return waitingForPlayer;
     }
 }

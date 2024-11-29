@@ -23,10 +23,11 @@ public class GameRepl {
     }
 
     public void run(){
-        System.out.println("Type help to see commands.\n");
-        Scanner scanner = new Scanner(System.in);
 
+        Scanner scanner = new Scanner(System.in);
         var result = "";
+
+        System.out.println("Type help to see commands.\n");
         while (!result.equals("leave")) {
             prompt();
             String line = scanner.nextLine();
@@ -45,6 +46,21 @@ public class GameRepl {
         }
         System.out.println();
     }
+
+//    public void preGameRepl(){
+//        Scanner scanner = new Scanner(System.in);
+//        var result = "";
+//
+//        System.out.println("Waiting for other player to join. Type leave to return to game options.\n");
+//        while ((!result.equalsIgnoreCase("leave")) ||
+//                (!gameClient.gameInfo.getWaitingForPlayer())) {
+//            result = scanner.nextLine();
+//            gameClient.updateVacantTeam();
+//        }
+//        if(!result.equalsIgnoreCase("leave")){
+//            run();
+//        }
+//    }
     public static void prompt() {
         System.out.print("\n[IN_GAME] >>> ");
     }

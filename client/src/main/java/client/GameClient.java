@@ -18,7 +18,7 @@ import java.util.Scanner;
 public class GameClient {
     private final ServerFacade server;
     private final ServerMessageHandler serverMessageHandler;
-    private final GameInfo gameInfo;
+    public final GameInfo gameInfo;
     private WebSocketFacade ws;
     private final PostLoginClient postLoginClient;
     private boolean resignRestrictionFlag = false;
@@ -164,6 +164,13 @@ public class GameClient {
                 highlight <PIECE_POSITION>    - shows all valid moves for the piece at that position
                 help
                 """;
+    }
+
+    public void updateVacantTeam(){
+        if((postLoginClient.getGame(gameInfo.getGameID()).whiteUsername() != null)
+                && (postLoginClient.getGame(gameInfo.getGameID()).blackUsername() != null)) {
+            gameInfo.setWaitingForPlayer(false);
+        }
     }
 
     public void setResignRestrictionFlag(boolean setBool){
