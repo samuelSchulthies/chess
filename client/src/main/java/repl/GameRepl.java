@@ -25,6 +25,7 @@ public class GameRepl {
     public void run(){
         System.out.println("Type help to see commands.\n");
         Scanner scanner = new Scanner(System.in);
+
         var result = "";
         while (!result.equals("leave")) {
             prompt();
@@ -33,6 +34,10 @@ public class GameRepl {
             try {
                 result = gameClient.eval(line);
                 System.out.print(result);
+
+                if (result.equals("resign")){
+                    gameClient.setResignRestrictionFlag(true);
+                }
 
             } catch (Throwable e){
                 System.out.print(e);

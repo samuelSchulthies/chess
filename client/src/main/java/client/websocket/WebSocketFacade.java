@@ -42,7 +42,7 @@ public class WebSocketFacade extends Endpoint {
                         throw new RuntimeException(e);
                     }
                     if (serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.ERROR){
-
+                            serverMessageHandler.errorMessage(serverMessage);
                     }
                 }
             });

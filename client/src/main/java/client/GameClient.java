@@ -13,6 +13,7 @@ import ui.ChessBoardUI;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Scanner;
 
 public class GameClient {
     private final ServerFacade server;
@@ -20,6 +21,7 @@ public class GameClient {
     private final GameInfo gameInfo;
     private WebSocketFacade ws;
     private final PostLoginClient postLoginClient;
+    private boolean resignRestrictionFlag = false;
 
     final static Map<Character, Integer> LETTER_TO_NUM = Map.of(
             'a', 1,
@@ -58,7 +60,7 @@ public class GameClient {
                 case "redraw" -> redraw();
                 case "leave" -> leave();
                 case "move" -> move(params);
-                case "resign" -> resign();
+                case "resign" -> resign(params);
                 case "highlight" -> highlight(params);
                 default -> help();
             };
@@ -92,6 +94,10 @@ public class GameClient {
             throw new DataAccessException("Incorrect move arguments");
         }
 
+//        if(resignRestrictionFlag){
+//            return "Game over, moves not allowed";
+//        }
+
         ChessPiece.PieceType promotionPiece;
         if (params.length == 3){
             promotionPiece = STRING_TO_PIECE_TYPE.get(params[2]);
@@ -119,8 +125,29 @@ public class GameClient {
         return "move";
     }
 
-    public String resign() throws DataAccessException{
-        return "resign";
+    public String resign(String... params) throws DataAccessException{
+        if(resignRestrictionFlag){
+            return "Game over, double resign not allowed";
+        }
+
+        if(params.length != 0){
+            throw new DataAccessException("Too many arguments");
+        }
+        String prompt = "[RESIGN?] >>> ";
+        System.out.println("\nConfirm resignation (y/n)? Game will be forfeit, opposing team wins.\n");
+        Scanner scanner = new Scanner(System.in);
+        var result = "";
+        while (!result.equals(("y")) && (!result.equals("n"))) {
+            System.out.print(prompt);
+            String line = scanner.nextLine();
+            result = line.toLowerCase();
+        }
+
+        if (result.equals("y")) {
+            ws.resign(gameInfo.getAuthToken(), gameInfo.getGameID());
+            return "resign";
+        }
+        return "Cancelled resign";
     }
 
     public String highlight(String... params) throws DataAccessException{
@@ -137,6 +164,10 @@ public class GameClient {
                 highlight <PIECE_POSITION>    - shows all valid moves for the piece at that position
                 help
                 """;
+    }
+
+    public void setResignRestrictionFlag(boolean setBool){
+        resignRestrictionFlag = setBool;
     }
 
 }

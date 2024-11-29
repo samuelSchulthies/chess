@@ -8,8 +8,7 @@ import exception.DataAccessException;
 import server.ServerFacade;
 import websocket.messages.ServerMessage;
 
-import static ui.EscapeSequences.RESET_TEXT_COLOR;
-import static ui.EscapeSequences.SET_TEXT_COLOR_RED;
+import static ui.EscapeSequences.*;
 
 public class ServerMessageHandler {
 
@@ -20,7 +19,7 @@ public class ServerMessageHandler {
 
     }
     void notify(ServerMessage serverMessage) {
-        System.out.println(SET_TEXT_COLOR_RED + serverMessage.getServerMessage() + RESET_TEXT_COLOR);
+        System.out.println(SET_TEXT_COLOR_BLUE + serverMessage.getServerMessage() + RESET_TEXT_COLOR);
         promptSwitcher.runPrompt();
     }
 
@@ -30,6 +29,8 @@ public class ServerMessageHandler {
     }
 
     void errorMessage(ServerMessage serverMessage) {
+        System.out.println(SET_TEXT_COLOR_RED + serverMessage.getServerMessage() + RESET_TEXT_COLOR);
+        promptSwitcher.runPrompt();
     }
 
     public void setGameClient(GameClient initializedGameClient){

@@ -13,8 +13,9 @@ public class ChessGame {
     private ChessBoard gameBoard = new ChessBoard();
     private TeamColor teamTurn;
     private ChessPiece pieceStorage;
-    Boolean validMovesFlag = false;
-    Boolean exception = false;
+    private Boolean validMovesFlag = false;
+    private Boolean exception = false;
+    private Boolean gameOver = false;
 
     public ChessGame() {
         gameBoard.resetBoard();
@@ -125,7 +126,7 @@ public class ChessGame {
             }
         }
         else {
-            throw new InvalidMoveException("The move " + move + "does not have a chess piece");
+            throw new InvalidMoveException("The move " + move + " does not have a chess piece");
         }
         if (!validMovesFlag) {
             if (getTeamTurn() == TeamColor.BLACK) {
@@ -241,8 +242,6 @@ public class ChessGame {
         return kingMovesSize == 0;
     }
 
-
-
     public Collection<ChessMove> validKingMoves(TeamColor teamColor){
         Collection<ChessMove> validKingMovesCollection = new ArrayList<>();
         for (int row = 1; row < 9; ++row) {
@@ -323,6 +322,14 @@ public class ChessGame {
      */
     public ChessBoard getBoard() {
         return gameBoard;
+    }
+
+    public void setGameOver(boolean gameState){
+        gameOver = gameState;
+    }
+
+    public Boolean getGameOver(){
+        return gameOver;
     }
 
     @Override
