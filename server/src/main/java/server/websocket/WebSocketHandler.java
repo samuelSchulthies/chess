@@ -45,7 +45,7 @@ public class WebSocketHandler {
             throw new DataAccessException("invalid authtoken");
         }
 
-        connections.add(username, session);
+        connections.add(username, session, gameID);
         String playerStatus;
 
         if (Objects.equals(gameService.getGameDAO().getGame(gameID).whiteUsername(), username)){
@@ -61,10 +61,10 @@ public class WebSocketHandler {
         var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
         var message = String.format(username + " has joined the game as " + playerStatus);
         notification.setServerMessageNotification(message);
-        connections.broadcast(notification);
+        connections.broadcastAll(notification, gameID);
 
         var loadGame = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
-        connections.broadcast(loadGame);
+        connections.broadcastOne(loadGame, username, gameID);
     }
 
     private void makeMove(String username, ChessMove move, int gameID, String authToken,
@@ -88,6 +88,14 @@ public class WebSocketHandler {
             return;
         }
 
+        if (game.game().getTeamTurn() != getTeam(username, game, false)){
+            var error = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
+            var errorMessage = String.format(e.getMessage());
+            error.setServerMessageError(errorMessage);
+            connections.broadcastOne(error, username, gameID);
+            return;
+        }
+
         if (!game.game().getGameOver()){
             try {
                 game.game().makeMove(move);
@@ -95,14 +103,16 @@ public class WebSocketHandler {
                 var error = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
                 var errorMessage = String.format(e.getMessage());
                 error.setServerMessageError(errorMessage);
-                connections.broadcast(error);
+                connections.broadcastOne(error, username, gameID);
+                return;
             }
         }
         else {
             var error = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
             var errorMessage = "Game is over, no more moves can be made";
             error.setServerMessageError(errorMessage);
-            connections.broadcast(error);
+            connections.broadcastOne(error, username, gameID);
+            return;
         }
 
         sendUpdate(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName(), game.game());
@@ -111,25 +121,25 @@ public class WebSocketHandler {
         var message = String.format(username + " moved " + letterMoves.startPosition()
                 + " to " + letterMoves.endPosition());
         notification.setServerMessageNotification(message);
-        connections.broadcast(notification);
+        connections.broadcastAll(notification, gameID);
 
         if(game.game().isInCheckmate(getTeam(username, game, true))) {
             game.game().setGameOver(true);
             var notificationCheckMate = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
             var messageCheckMate = String.format(getUser(username, game, true) + " is in checkmate");
             notificationCheckMate.setServerMessageNotification(messageCheckMate);
-            connections.broadcast(notificationCheckMate);
+            connections.broadcastAll(notificationCheckMate, gameID);
         }
 
         if (game.game().isInCheck(getTeam(username, game, true))){
             var notificationCheck = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
             var messageCheck = String.format(getUser(username, game, true) + " is in check");
             notificationCheck.setServerMessageNotification(messageCheck);
-            connections.broadcast(notificationCheck);
+            connections.broadcastAll(notificationCheck, gameID);
         }
 
         var loadGame = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
-        connections.broadcast(loadGame);
+        connections.broadcastAll(loadGame, gameID);
     }
 
     private void leave(String username, int gameID, String authToken) throws IOException, DataAccessException {
@@ -153,8 +163,8 @@ public class WebSocketHandler {
         var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
         var message = String.format(username + " has left the game");
         notification.setServerMessageNotification(message);
-        connections.broadcast(notification);
-        connections.remove(username);
+        connections.broadcastAll(notification, gameID);
+        connections.remove(username, gameID);
     }
 
     private void resign(String username, String authToken, int gameID) throws DataAccessException, IOException {
@@ -190,7 +200,7 @@ public class WebSocketHandler {
         var message = String.format(losingTeam + ", " + username + ", " +
                 "has forfeit the game and " + winningTeam + " wins");
         notification.setServerMessageNotification(message);
-        connections.broadcast(notification);
+        connections.broadcastAll(notification, gameID);
 
     }
 
@@ -249,7 +259,7 @@ public class WebSocketHandler {
             var missingUserMessage = String.format(getTeam(username, game, true) +
                     " is vacant. Cannot play alone.");
             errorMissingUser.setServerMessageNotification(missingUserMessage);
-            connections.broadcast(errorMissingUser);
+            connections.broadcastOne(errorMissingUser, username, game.gameID());
             return true;
         }
         return false;

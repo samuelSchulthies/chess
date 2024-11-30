@@ -61,10 +61,10 @@ public class ChessBoardUI {
     public static void buildUIBlack(ChessBoard updatedBoard){
 //        currentBoard.changeDefaultBoardLayout("BLACK");
 //        currentBoard.resetBoard();
-        GAME_BOARD_DEFAULT.resetBoard();
-        setBoard(GAME_BOARD_DEFAULT);
+//        GAME_BOARD_DEFAULT.resetBoard();
+//        setBoard(GAME_BOARD_DEFAULT);
         isWhite = false;
-//        setBoard(updatedBoard);
+        setBoard(updatedBoard);
 
         out.print(ERASE_SCREEN);
 
