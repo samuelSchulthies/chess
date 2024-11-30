@@ -30,8 +30,10 @@ public class ConnectionManager {
             }
     }
 
-    public void broadcastAll(ServerMessage message, int gameID) throws IOException {
+    public void broadcastAll(ServerMessage message, String username, int gameID) throws IOException {
         for (var connectionsFromID : gameIDToUserSession.get(gameID))
-            connectionsFromID.send(message.toString());
+            if(!Objects.equals(connectionsFromID.username, username)){
+                connectionsFromID.send(message.toString());
+            }
     }
 }

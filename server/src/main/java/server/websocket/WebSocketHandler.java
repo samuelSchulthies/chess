@@ -61,9 +61,11 @@ public class WebSocketHandler {
         var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
         var message = String.format(username + " has joined the game as " + playerStatus);
         notification.setServerMessageNotification(message);
-        connections.broadcastAll(notification, gameID);
+        connections.broadcastAll(notification, username, gameID);
 
         var loadGame = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
+        var loadGameMessage = "game";
+        loadGame.setServerMessageLoadGame(loadGameMessage);
         connections.broadcastOne(loadGame, username, gameID);
     }
 
@@ -91,7 +93,7 @@ public class WebSocketHandler {
 
         if (piece == null){
             var error = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
-            var errorMessage = "There is no piece at the given location";
+            var errorMessage = "Error: There is no piece at the given location";
             error.setServerMessageError(errorMessage);
             connections.broadcastOne(error, username, gameID);
             return;
@@ -99,7 +101,7 @@ public class WebSocketHandler {
 
         if (piece.getTeamColor() != getTeam(username, game, false)){
             var error = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
-            var errorMessage = "You cannot move the opposing team's pieces";
+            var errorMessage = "Error: You cannot move the opposing team's pieces";
             error.setServerMessageError(errorMessage);
             connections.broadcastOne(error, username, gameID);
             return;
@@ -110,7 +112,7 @@ public class WebSocketHandler {
                 game.game().makeMove(move);
             } catch (InvalidMoveException e){
                 var error = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
-                var errorMessage = String.format(e.getMessage());
+                var errorMessage = String.format("Error: " + e.getMessage());
                 error.setServerMessageError(errorMessage);
                 connections.broadcastOne(error, username, gameID);
                 return;
@@ -118,7 +120,7 @@ public class WebSocketHandler {
         }
         else {
             var error = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
-            var errorMessage = "Game is over, no more moves can be made";
+            var errorMessage = "Error: Game is over, no more moves can be made";
             error.setServerMessageError(errorMessage);
             connections.broadcastOne(error, username, gameID);
             return;
@@ -130,25 +132,25 @@ public class WebSocketHandler {
         var message = String.format(username + " moved " + letterMoves.startPosition()
                 + " to " + letterMoves.endPosition());
         notification.setServerMessageNotification(message);
-        connections.broadcastAll(notification, gameID);
+        connections.broadcastAll(notification, username, gameID);
 
         if(game.game().isInCheckmate(getTeam(username, game, true))) {
             game.game().setGameOver(true);
             var notificationCheckMate = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
             var messageCheckMate = String.format(getUser(username, game, true) + " is in checkmate");
             notificationCheckMate.setServerMessageNotification(messageCheckMate);
-            connections.broadcastAll(notificationCheckMate, gameID);
+            connections.broadcastAll(notificationCheckMate, username, gameID);
         }
 
         if (game.game().isInCheck(getTeam(username, game, true))){
             var notificationCheck = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
             var messageCheck = String.format(getUser(username, game, true) + " is in check");
             notificationCheck.setServerMessageNotification(messageCheck);
-            connections.broadcastAll(notificationCheck, gameID);
+            connections.broadcastAll(notificationCheck, username, gameID);
         }
 
         var loadGame = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
-        connections.broadcastAll(loadGame, gameID);
+        connections.broadcastAll(loadGame, username, gameID);
     }
 
     private void leave(String username, int gameID, String authToken) throws IOException, DataAccessException {
@@ -172,7 +174,7 @@ public class WebSocketHandler {
         var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
         var message = String.format(username + " has left the game");
         notification.setServerMessageNotification(message);
-        connections.broadcastAll(notification, gameID);
+        connections.broadcastAll(notification, username, gameID);
         connections.remove(username, gameID);
     }
 
@@ -189,7 +191,7 @@ public class WebSocketHandler {
 
         if (game.game().getGameOver()) {
             var error = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
-            var errorMessage = "Cannot resign in an ended game";
+            var errorMessage = "Error: Cannot resign in an ended game";
             error.setServerMessageError(errorMessage);
             connections.broadcastOne(error, username, gameID);
             return;
@@ -218,7 +220,7 @@ public class WebSocketHandler {
         var message = String.format(losingTeam + ", " + username + ", " +
                 "has forfeit the game and " + winningTeam + " wins");
         notification.setServerMessageNotification(message);
-        connections.broadcastAll(notification, gameID);
+        connections.broadcastAll(notification, username, gameID);
 
     }
 
@@ -274,7 +276,7 @@ public class WebSocketHandler {
     public boolean isAlone(String username, GameData game) throws DataAccessException, IOException {
         if (getUser(username, game, true) == null) {
             var errorMissingUser = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
-            var missingUserMessage = String.format(getTeam(username, game, true) +
+            var missingUserMessage = String.format("Error: " + getTeam(username, game, true) +
                     " is vacant. Cannot play alone.");
             errorMissingUser.setServerMessageNotification(missingUserMessage);
             connections.broadcastOne(errorMissingUser, username, game.gameID());
