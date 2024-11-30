@@ -10,10 +10,7 @@ import exception.DataAccessException;
 import server.ServerFacade;
 import ui.ChessBoardUI;
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 
 public class GameClient {
     private final ServerFacade server;
@@ -23,7 +20,7 @@ public class GameClient {
     private final PostLoginClient postLoginClient;
     private boolean resignRestrictionFlag = false;
 
-    final static Map<Character, Integer> LETTER_TO_NUM = Map.of(
+    final static Map<Character, Integer> ALPHA_CHAR_TO_INT = Map.of(
             'a', 1,
             'b', 2,
             'c', 3,
@@ -33,6 +30,19 @@ public class GameClient {
             'g', 7,
             'h', 8
     );
+
+    final static Map<Character, Integer> NUM_CHAR_TO_INT = Map.of(
+            '1', 1,
+            '2', 2,
+            '3', 3,
+            '4', 4,
+            '5', 5,
+            '6', 6,
+            '7', 7,
+            '8', 8
+    );
+
+    final static Set<Integer> VALID_NUMBERS = Set.of(1, 2, 4, 5, 6, 7, 8);
 
     final static Map<String, ChessPiece.PieceType> STRING_TO_PIECE_TYPE = Map.of(
             "bishop", ChessPiece.PieceType.BISHOP,
@@ -89,14 +99,10 @@ public class GameClient {
         return "leave";
     }
 
-    public String move(String... params) throws DataAccessException{
+    public String move(String... params) throws DataAccessException, RuntimeException{
         if((params.length != 3) && (params.length != 2)){
             throw new DataAccessException("Incorrect move arguments");
         }
-
-//        if(resignRestrictionFlag){
-//            return "Game over, moves not allowed";
-//        }
 
         ChessPiece.PieceType promotionPiece;
         if (params.length == 3){
@@ -107,22 +113,42 @@ public class GameClient {
         }
 
         var pieceLocation = params[0];
-        int pieceRow;
-        try {
-            pieceRow = Character.getNumericValue(pieceLocation.charAt(1));
-        } catch (NullPointerException e){
-            throw new RuntimeException("Piece's row was invalid. Please check the template in help and try again");
+        if (pieceLocation.length() != 2){
+            throw new RuntimeException("Invalid move or piece location");
         }
-        int pieceCol = LETTER_TO_NUM.get(pieceLocation.charAt(0));
+        int pieceRow;
+        int pieceCol;
+        if (NUM_CHAR_TO_INT.get(pieceLocation.charAt(1)) == null){
+            throw new RuntimeException("Invalid move or piece location");
+        }
+        else {
+            pieceRow = NUM_CHAR_TO_INT.get(pieceLocation.charAt(1));
+        }
+        if (ALPHA_CHAR_TO_INT.get(pieceLocation.charAt(0)) == null){
+            throw new RuntimeException("Invalid move or piece location");
+        }
+        else {
+            pieceCol = ALPHA_CHAR_TO_INT.get(pieceLocation.charAt(0));
+        }
 
         var moveLocation = params[1];
-        int moveRow;
-        try {
-            moveRow = Character.getNumericValue(moveLocation.charAt(1));
-        } catch (NullPointerException e){
-            throw new RuntimeException("Row for this move was invalid. Please check the template in help and try again");
+        if (moveLocation.length() != 2){
+            throw new RuntimeException("Move invalid");
         }
-        int moveCol = LETTER_TO_NUM.get(moveLocation.charAt(0));
+        int moveRow;
+        int moveCol;
+        if (NUM_CHAR_TO_INT.get(moveLocation.charAt(1)) == null){
+            throw new RuntimeException("Invalid move or piece location");
+        }
+        else {
+            moveRow = NUM_CHAR_TO_INT.get(moveLocation.charAt(1));
+        }
+        if (ALPHA_CHAR_TO_INT.get(moveLocation.charAt(0)) == null){
+            throw new RuntimeException("Invalid move or piece location");
+        }
+        else {
+            moveCol = ALPHA_CHAR_TO_INT.get(moveLocation.charAt(0));
+        }
 
         ChessPosition startPosition = new ChessPosition(pieceRow, pieceCol);
         ChessPosition endPosition = new ChessPosition(moveRow, moveCol);

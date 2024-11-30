@@ -89,6 +89,14 @@ public class WebSocketHandler {
             return;
         }
 
+        if (piece == null){
+            var error = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
+            var errorMessage = "There is no piece at the given location";
+            error.setServerMessageError(errorMessage);
+            connections.broadcastOne(error, username, gameID);
+            return;
+        }
+
         if (piece.getTeamColor() != getTeam(username, game, false)){
             var error = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
             var errorMessage = "You cannot move the opposing team's pieces";
@@ -173,11 +181,20 @@ public class WebSocketHandler {
             throw new DataAccessException("invalid authtoken");
         }
 
-        if (isAlone(username, gameService.getGameDAO().getGame(gameID))){
+        GameData game = gameService.getGameDAO().getGame(gameID);
+
+        if (isAlone(username, game)){
             return;
         }
 
-        GameData game = gameService.getGameDAO().getGame(gameID);
+        if (game.game().getGameOver()) {
+            var error = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
+            var errorMessage = "Cannot resign in an ended game";
+            error.setServerMessageError(errorMessage);
+            connections.broadcastOne(error, username, gameID);
+            return;
+        }
+
         String winningTeam;
         String losingTeam;
 

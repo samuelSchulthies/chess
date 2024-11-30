@@ -106,7 +106,7 @@ public class ChessGame {
             }
 
             if(!isInMoveSet(move)){
-                throw new InvalidMoveException("The move " + move.getEndPosition() + " is not in this piece's valid moves");
+                throw new InvalidMoveException("The given move is not in this piece's valid moves");
             }
 
             if((move.getPromotionPiece() != null) &&

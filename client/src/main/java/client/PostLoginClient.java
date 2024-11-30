@@ -76,6 +76,9 @@ public class PostLoginClient {
 
         for (int i = 0; i < listResult.games().size(); ++i){
             int listIndex = i + 1;
+            if (listResult.games().get(i).game().getGameOver()){
+                gameList.append("\n---Game Ended---\n");
+            }
             gameList.append("GameID ");
             gameList.append(listIndex);
             gameList.append(" | Name: ");
