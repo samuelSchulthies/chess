@@ -74,6 +74,7 @@ public class WebSocketHandler {
         }
 
         GameData game = gameService.getGameDAO().getGame(gameID);
+        ChessPiece piece = game.game().getBoard().getPiece(move.getStartPosition());
 
 //        if (getUser(username, game, true) == null) {
 //            var errorMissingUser = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
@@ -88,9 +89,9 @@ public class WebSocketHandler {
             return;
         }
 
-        if (game.game().getTeamTurn() != getTeam(username, game, false)){
+        if (piece.getTeamColor() != getTeam(username, game, false)){
             var error = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
-            var errorMessage = String.format(e.getMessage());
+            var errorMessage = "You cannot move the opposing team's pieces";
             error.setServerMessageError(errorMessage);
             connections.broadcastOne(error, username, gameID);
             return;

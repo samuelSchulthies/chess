@@ -107,11 +107,21 @@ public class GameClient {
         }
 
         var pieceLocation = params[0];
-        int pieceRow = Character.getNumericValue(pieceLocation.charAt(1));
+        int pieceRow;
+        try {
+            pieceRow = Character.getNumericValue(pieceLocation.charAt(1));
+        } catch (NullPointerException e){
+            throw new RuntimeException("Piece's row was invalid. Please check the template in help and try again");
+        }
         int pieceCol = LETTER_TO_NUM.get(pieceLocation.charAt(0));
 
         var moveLocation = params[1];
-        int moveRow = Character.getNumericValue(moveLocation.charAt(1));
+        int moveRow;
+        try {
+            moveRow = Character.getNumericValue(moveLocation.charAt(1));
+        } catch (NullPointerException e){
+            throw new RuntimeException("Row for this move was invalid. Please check the template in help and try again");
+        }
         int moveCol = LETTER_TO_NUM.get(moveLocation.charAt(0));
 
         ChessPosition startPosition = new ChessPosition(pieceRow, pieceCol);
