@@ -13,7 +13,7 @@ import static ui.EscapeSequences.*;
 
 public class ChessBoardUI {
 
-    private static String rowLabels;
+    private static String rowLabels = "12345678";
     private static String columnLabels;
     private static final PrintStream out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
     private static final String SQUARE = "   ";
@@ -48,7 +48,7 @@ public class ChessBoardUI {
 
         out.print("Printing board...\n");
 
-        setRowLabels("12345678");
+//        setRowLabels("12345678");
         setColumnLabels("    a  b  c  d  e  f  g  h    ");
         printBoard();
 
@@ -61,16 +61,16 @@ public class ChessBoardUI {
     public static void buildUIBlack(ChessBoard updatedBoard){
 //        currentBoard.changeDefaultBoardLayout("BLACK");
 //        currentBoard.resetBoard();
-//        GAME_BOARD_DEFAULT.resetBoard();
-//        setBoard(GAME_BOARD_DEFAULT);
+        GAME_BOARD_DEFAULT.resetBoard();
+        setBoard(GAME_BOARD_DEFAULT);
         isWhite = false;
-        setBoard(updatedBoard);
+//        setBoard(updatedBoard);
 
         out.print(ERASE_SCREEN);
 
         out.print("Printing board...\n");
 
-        setRowLabels("87654321");
+//        setRowLabels("87654321");
         setColumnLabels("    h  g  f  e  d  c  b  a    ");
         printBoard();
 
@@ -120,20 +120,30 @@ public class ChessBoardUI {
     }
 
     private static void setSquares(int row){
-        int colorSwitcher = 1;
-        for (int col = 0; col < 8; ++col){
-//        for (int col = 8; col > 0; --col){
-            if (row % 2 == 1){
-                colorSwitcher = 0;
+        if (isWhite) {
+            for (int col = 0; col < 8; ++col) {
+                setSquaresHelper(row, col);
             }
-            if ((col % 2 == colorSwitcher)) {
-                out.print(SET_BG_COLOR_WHITE);
-            }
-            else {
-                out.print(SET_BG_COLOR_BLACK);
-            }
-            setPiece(row, col);
         }
+        else {
+            for (int col = 7; col >= 0; --col) {
+                setSquaresHelper(row, col);
+            }
+        }
+    }
+
+    private static void setSquaresHelper(int row, int col){
+        int colorSwitcher = 1;
+        if (row % 2 == 1){
+            colorSwitcher = 0;
+        }
+        if ((col % 2 == colorSwitcher)) {
+            out.print(SET_BG_COLOR_WHITE);
+        }
+        else {
+            out.print(SET_BG_COLOR_BLACK);
+        }
+        setPiece(row, col);
     }
 
     private static void setPiece(int row, int col){
