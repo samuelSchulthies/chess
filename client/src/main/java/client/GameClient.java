@@ -75,7 +75,7 @@ public class GameClient {
             ChessBoardUI.buildUIWhite(gameInfo.getBoard());
         }
         else if (Objects.equals(gameInfo.getTeam(), "BLACK")){
-//            ChessBoardUI.buildUIBlack();
+            ChessBoardUI.buildUIBlack(gameInfo.getBoard());
         }
         else {
             throw new DataAccessException("Player is not on either team");
