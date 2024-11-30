@@ -33,8 +33,8 @@ public class PostLoginClient {
 
     public String eval(String input){
         try {
-            var tokensFromUser = input.toLowerCase().split(" ");
-            var cmd = (tokensFromUser.length > 0) ? tokensFromUser[0] : "help";
+            var tokensFromUser = input.split(" ");
+            var cmd = (tokensFromUser.length > 0) ? tokensFromUser[0].toLowerCase() : "help";
             var params = Arrays.copyOfRange(tokensFromUser, 1, tokensFromUser.length);
 
             return switch (cmd){
@@ -100,6 +100,9 @@ public class PostLoginClient {
                 gameList.append(listResult.games().get(i).blackUsername());
             }
             gameList.append("\n");
+            if (listResult.games().get(i).game().getGameOver()){
+                gameList.append("\n");
+            }
 
             displayIDtoGameID.put(listIndex, listResult.games().get(i).gameID());
             gameIDtoGame.put(listResult.games().get(i).gameID(), listResult.games().get(i));
