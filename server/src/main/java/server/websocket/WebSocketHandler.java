@@ -152,7 +152,7 @@ public class WebSocketHandler {
         var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
         var message = String.format(username + " moved " +
                 INT_TO_ALPHA_CHAR.get(move.getStartPosition().getColumn()) + move.getStartPosition().getRow() + " to "
-                + INT_TO_ALPHA_CHAR.get(move.getEndPosition().getColumn() + move.getEndPosition().getRow()));
+                + INT_TO_ALPHA_CHAR.get(move.getEndPosition().getColumn()) + move.getEndPosition().getRow());
         notification.setMessage(message);
         connections.broadcastAll(notification, username, gameID);
 
@@ -161,6 +161,7 @@ public class WebSocketHandler {
             var notificationCheckMate = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
             var messageCheckMate = String.format(getUser(username, game, true) + " is in checkmate");
             notificationCheckMate.setMessage(messageCheckMate);
+            connections.broadcastOne(notificationCheckMate, username, gameID);
             connections.broadcastAll(notificationCheckMate, username, gameID);
         }
 
@@ -168,6 +169,7 @@ public class WebSocketHandler {
             var notificationCheck = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
             var messageCheck = String.format(getUser(username, game, true) + " is in check");
             notificationCheck.setMessage(messageCheck);
+            connections.broadcastOne(notificationCheck, username, gameID);
             connections.broadcastAll(notificationCheck, username, gameID);
         }
 
