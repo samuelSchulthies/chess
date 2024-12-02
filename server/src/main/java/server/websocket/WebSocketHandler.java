@@ -13,11 +13,22 @@ import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Objects;
 
 @WebSocket
 public class WebSocketHandler {
 
+    final static Map<Integer, Character> INT_TO_ALPHA_CHAR = Map.of(
+            1, 'a',
+            2, 'b',
+            3, 'c',
+            4, 'd',
+            5, 'e',
+            6, 'f',
+            7, 'g',
+            8, 'h'
+    );
     UserService userService;
     GameService gameService;
     private final ConnectionManager connections = new ConnectionManager();
@@ -42,8 +53,7 @@ public class WebSocketHandler {
 
         switch (userGameCommand.getCommandType()) {
             case CONNECT -> connect(session, username, userGameCommand.getGameID(), userGameCommand.getAuthToken());
-            case MAKE_MOVE -> makeMove(username, userGameCommand.getMove(), userGameCommand.getGameID(),
-                    userGameCommand.getAuthToken(), userGameCommand.getLetterMoves());
+            case MAKE_MOVE -> makeMove(username, userGameCommand.getMove(), userGameCommand.getGameID());
             case LEAVE -> leave(username, userGameCommand.getGameID(), userGameCommand.getAuthToken());
             case RESIGN -> resign(username, userGameCommand.getAuthToken(), userGameCommand.getGameID());
         }
@@ -84,8 +94,7 @@ public class WebSocketHandler {
         connections.broadcastOne(loadGame, username, gameID);
     }
 
-    private void makeMove(String username, ChessMove move, int gameID, String authToken,
-                          MovesFromUser letterMoves) throws DataAccessException, InvalidMoveException, IOException {
+    private void makeMove(String username, ChessMove move, int gameID) throws DataAccessException, IOException {
 
         GameData game = gameService.getGameDAO().getGame(gameID);
         ChessPiece piece = game.game().getBoard().getPiece(move.getStartPosition());
@@ -141,8 +150,9 @@ public class WebSocketHandler {
         sendUpdate(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName(), game.game());
 
         var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
-        var message = String.format(username + " moved " + letterMoves.startPosition()
-                + " to " + letterMoves.endPosition());
+        var message = String.format(username + " moved " +
+                INT_TO_ALPHA_CHAR.get(move.getStartPosition().getColumn()) + move.getStartPosition().getRow() + " to "
+                + INT_TO_ALPHA_CHAR.get(move.getEndPosition().getColumn() + move.getEndPosition().getRow()));
         notification.setMessage(message);
         connections.broadcastAll(notification, username, gameID);
 
@@ -162,6 +172,9 @@ public class WebSocketHandler {
         }
 
         var loadGame = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
+        var loadGameMessage = "game";
+        loadGame.setLoadGame(loadGameMessage);
+        connections.broadcastOne(loadGame, username, gameID);
         connections.broadcastAll(loadGame, username, gameID);
     }
 

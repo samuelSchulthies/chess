@@ -3,7 +3,6 @@ package client;
 import chess.ChessMove;
 import chess.ChessPiece;
 import chess.ChessPosition;
-import chess.MovesFromUser;
 import client.websocket.ServerMessageHandler;
 import client.websocket.WebSocketFacade;
 import exception.DataAccessException;
@@ -154,9 +153,8 @@ public class GameClient {
         ChessPosition endPosition = new ChessPosition(moveRow, moveCol);
 
         ChessMove newMove = new ChessMove(startPosition, endPosition, promotionPiece);
-        MovesFromUser originalMoves = new MovesFromUser(pieceLocation, moveLocation);
 
-        ws.makeMove(gameInfo.getAuthToken(), gameInfo.getGameID(), newMove, originalMoves);
+        ws.makeMove(gameInfo.getAuthToken(), gameInfo.getGameID(), newMove);
 
         return "move";
     }
