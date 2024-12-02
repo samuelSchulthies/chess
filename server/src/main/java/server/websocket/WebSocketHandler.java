@@ -29,7 +29,17 @@ public class WebSocketHandler {
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws DataAccessException, IOException, InvalidMoveException {
         UserGameCommand userGameCommand = new Gson().fromJson(message, UserGameCommand.class);
+
+        if (userService.getAuthTokenDAO().getAuth(userGameCommand.getAuthToken()) == null) {
+            var error = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
+            var errorMessage = "Error: Invalid authtoken";
+            error.setErrorMessage(errorMessage);
+            session.getRemote().sendString(error.toString());
+            return;
+        }
+
         String username = userService.getUsername(userGameCommand.getAuthToken());
+        connections.add(username, session, userGameCommand.getGameID());
 
         switch (userGameCommand.getCommandType()) {
             case CONNECT -> connect(session, username, userGameCommand.getGameID(), userGameCommand.getAuthToken());
@@ -41,11 +51,7 @@ public class WebSocketHandler {
     }
 
     private void connect(Session session, String username, int gameID, String authToken) throws DataAccessException, IOException {
-        if (userService.getAuthTokenDAO().getAuth(authToken) == null) {
-            throw new DataAccessException("invalid authtoken");
-        }
 
-        connections.add(username, session, gameID);
         String playerStatus;
 
         if (gameService.getGameDAO().getGame(gameID) == null){
@@ -80,9 +86,6 @@ public class WebSocketHandler {
 
     private void makeMove(String username, ChessMove move, int gameID, String authToken,
                           MovesFromUser letterMoves) throws DataAccessException, InvalidMoveException, IOException {
-        if (userService.getAuthTokenDAO().getAuth(authToken) == null) {
-            throw new DataAccessException("invalid authtoken");
-        }
 
         GameData game = gameService.getGameDAO().getGame(gameID);
         ChessPiece piece = game.game().getBoard().getPiece(move.getStartPosition());
@@ -163,9 +166,6 @@ public class WebSocketHandler {
     }
 
     private void leave(String username, int gameID, String authToken) throws IOException, DataAccessException {
-        if (userService.getAuthTokenDAO().getAuth(authToken) == null) {
-            throw new DataAccessException("invalid authtoken");
-        }
 
         GameData game = gameService.getGameDAO().getGame(gameID);
         if (Objects.equals(game.whiteUsername(), username)){
@@ -188,9 +188,6 @@ public class WebSocketHandler {
     }
 
     private void resign(String username, String authToken, int gameID) throws DataAccessException, IOException {
-        if (userService.getAuthTokenDAO().getAuth(authToken) == null) {
-            throw new DataAccessException("invalid authtoken");
-        }
 
         GameData game = gameService.getGameDAO().getGame(gameID);
 
