@@ -165,7 +165,8 @@ public class WebSocketHandler {
             connections.broadcastAll(notificationCheckMate, username, gameID);
         }
 
-        if (game.game().isInCheck(getTeam(username, game, true))){
+        if (game.game().isInCheck(getTeam(username, game, true)) &&
+                (!game.game().isInCheckmate(getTeam(username, game, true)))){
             var notificationCheck = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
             var messageCheck = String.format(getUser(username, game, true) + " is in check");
             notificationCheck.setMessage(messageCheck);
