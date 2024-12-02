@@ -39,7 +39,6 @@ public class WebSocketHandler {
         }
 
         String username = userService.getUsername(userGameCommand.getAuthToken());
-        connections.add(username, session, userGameCommand.getGameID());
 
         switch (userGameCommand.getCommandType()) {
             case CONNECT -> connect(session, username, userGameCommand.getGameID(), userGameCommand.getAuthToken());
@@ -52,6 +51,7 @@ public class WebSocketHandler {
 
     private void connect(Session session, String username, int gameID, String authToken) throws DataAccessException, IOException {
 
+        connections.add(username, session, gameID);
         String playerStatus;
 
         if (gameService.getGameDAO().getGame(gameID) == null){
