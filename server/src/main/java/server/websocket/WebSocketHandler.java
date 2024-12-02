@@ -48,6 +48,15 @@ public class WebSocketHandler {
         connections.add(username, session, gameID);
         String playerStatus;
 
+        if (gameService.getGameDAO().getGame(gameID) == null){
+            var error = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
+            var errorMessage = "Error: This game does not exist";
+            error.setErrorMessage(errorMessage);
+            connections.broadcastOne(error, username, gameID);
+            connections.remove(username, gameID);
+            return;
+        }
+
         if (Objects.equals(gameService.getGameDAO().getGame(gameID).whiteUsername(), username)){
             playerStatus = "white";
         }
