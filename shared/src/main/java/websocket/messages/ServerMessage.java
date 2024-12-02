@@ -12,8 +12,9 @@ import java.util.Objects;
  */
 public class ServerMessage {
     ServerMessageType serverMessageType;
-    String serverMessage;
+    String message;
     String game;
+    String errorMessage;
 
     public enum ServerMessageType {
         LOAD_GAME,
@@ -25,19 +26,25 @@ public class ServerMessage {
         this.serverMessageType = type;
     }
 
-    public void setServerMessageNotification(String newMessage){
-        serverMessage = new NotificationMessage(newMessage).message();
+    public void setMessage(String newMessage){
+        message = newMessage;
     }
-    public void setServerMessageError(String newMessage){
-        serverMessage = new ErrorMessage(newMessage).message();
+    public void setLoadGame(String newMessage){
+        game = newMessage;
     }
-    public void setServerMessageLoadGame(String newMessage){
-        serverMessage = new LoadGameMessage(newMessage).game();
-    }
-    public String getServerMessage(){
-        return serverMessage;
+    public void setErrorMessage(String newMessage){
+        errorMessage = newMessage;
     }
 
+    public String getMessage(){
+        return message;
+    }
+    public String getLoadGame(){
+        return game;
+    }
+    public String getErrorMessage(){
+        return errorMessage;
+    }
 
     public String toString(){
         return new Gson().toJson(this);
