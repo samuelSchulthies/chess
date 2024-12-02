@@ -2,6 +2,8 @@ package client;
 
 import chess.ChessBoard;
 import chess.ChessGame;
+import model.GameData;
+import service.GameService;
 
 public class GameInfo {
 
@@ -33,6 +35,10 @@ public class GameInfo {
 
     public String getAuthToken() {
         return authToken;
+    }
+
+    public ChessGame getGame(){
+        return game;
     }
 
     public void setBoard(ChessBoard updatedBoard){

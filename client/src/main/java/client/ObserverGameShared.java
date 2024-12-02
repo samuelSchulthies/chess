@@ -1,11 +1,15 @@
 package client;
 
+import chess.ChessBoard;
+import chess.ChessMove;
 import chess.ChessPiece;
 import chess.ChessPosition;
 import client.websocket.WebSocketFacade;
 import exception.DataAccessException;
 import ui.ChessBoardUI;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 
@@ -57,13 +61,39 @@ public class ObserverGameShared {
     }
 
     public void highlight(String... params) throws DataAccessException{
+        postLoginClient.updateBoard(gameInfo.getGameID());
         if(params.length != 1){
-            throw new DataAccessException("Incorrect move arguments");
+            throw new DataAccessException("Incorrect highlight arguments");
         }
 
         var pieceLocation = params[0];
-        ChessPosition positionToHighlight = parsePosition(pieceLocation);
+        ChessPosition position = parsePosition(pieceLocation);
+        ChessPosition adjustedStartPosition = new ChessPosition(position.getRow() - 1, position.getColumn() - 1);
 
+        Collection<ChessMove> validMoves;
+
+        try {
+            validMoves = new ArrayList<>(gameInfo.getGame().validMoves(position));
+        } catch (NullPointerException e){
+            throw new RuntimeException("There is no piece at this location");
+        }
+
+        if(validMoves.isEmpty()){
+            throw new RuntimeException("No valid moves to highlight");
+        }
+
+        ArrayList<ChessPosition> adjustedEndPositions = new ArrayList<>();
+
+        for (var move : validMoves){
+            ChessPosition adjustEndPosition = new ChessPosition(move.getEndPosition().getRow() - 1,
+                    move.getEndPosition().getColumn() - 1);
+            adjustedEndPositions.add(adjustEndPosition);
+        }
+
+        ChessBoard board = gameInfo.getBoard();
+
+        ChessBoardUI.setHighlightValidMoves(adjustedEndPositions, adjustedStartPosition);
+        redraw();
     }
 
     public ChessPosition parsePosition(String position){
@@ -73,6 +103,7 @@ public class ObserverGameShared {
         if (position.length() != 2){
             throw new RuntimeException("Invalid move or piece location");
         }
+
         if (NUM_CHAR_TO_INT.get(position.charAt(1)) == null){
             throw new RuntimeException("Invalid move or piece location");
         }
@@ -85,6 +116,7 @@ public class ObserverGameShared {
         else {
             col = ALPHA_CHAR_TO_INT.get(position.charAt(0));
         }
+
         return new ChessPosition(row, col);
     }
 }

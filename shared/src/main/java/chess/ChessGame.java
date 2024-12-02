@@ -54,33 +54,32 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        if (getBoard().getPiece(startPosition) != null) {
-            Collection<ChessMove> possibleMoves = new ArrayList<>(getBoard().getPiece(startPosition).pieceMoves(gameBoard, startPosition));
-            Collection<ChessMove> validMoves = new ArrayList<>();
-            setTeamTurn(gameBoard.getPiece(startPosition).getTeamColor());
-
-            for (ChessMove possibleMove : possibleMoves){
-                exception = false;
-                pieceStorage = gameBoard.getPiece(possibleMove.getStartPosition());
-                try {
-                    validMovesFlag = true;
-                    makeMove(possibleMove);
-                    if (!exception) {
-                        validMoves.add(possibleMove);
-                    }
-                }
-                catch (InvalidMoveException e) {
-                    System.out.print("The move " + possibleMove + " was illegal and not included\n");
-                }
-                finally {
-                    undoMove(possibleMove);
-                }
-            }
-            return validMoves;
-        }
-        else {
+        if (getBoard().getPiece(startPosition) == null) {
             return null;
         }
+
+        Collection<ChessMove> possibleMoves = new ArrayList<>(getBoard().getPiece(startPosition).pieceMoves(gameBoard, startPosition));
+        Collection<ChessMove> validMoves = new ArrayList<>();
+        setTeamTurn(gameBoard.getPiece(startPosition).getTeamColor());
+
+        for (ChessMove possibleMove : possibleMoves){
+            exception = false;
+            pieceStorage = gameBoard.getPiece(possibleMove.getStartPosition());
+            try {
+                validMovesFlag = true;
+                makeMove(possibleMove);
+                if (!exception) {
+                    validMoves.add(possibleMove);
+                }
+            }
+            catch (InvalidMoveException e) {
+                System.out.print("The move " + possibleMove + " was illegal and not included\n");
+            }
+            finally {
+                undoMove(possibleMove);
+            }
+        }
+        return validMoves;
     }
 
     /**

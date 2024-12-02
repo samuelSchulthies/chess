@@ -1,11 +1,11 @@
 package ui;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
+
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 
 import static ui.EscapeSequences.*;
@@ -13,11 +13,13 @@ import static ui.EscapeSequences.*;
 
 public class ChessBoardUI {
 
-    private static String rowLabels = "12345678";
+    private static String ROW_LABELS = "12345678";
     private static String columnLabels;
     private static final PrintStream out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
     private static final String SQUARE = "   ";
     private static boolean isWhite;
+    private static ArrayList<ChessPosition> endPositions = new ArrayList<>();
+    private static ChessPosition startPosition;
 
     final static Map<ChessPiece.PieceType, Character> PIECE_TYPE_TO_CHAR = Map.of(
             ChessPiece.PieceType.BISHOP, 'B',
@@ -48,7 +50,7 @@ public class ChessBoardUI {
 
         out.print("Printing board...\n");
 
-//        setRowLabels("12345678");
+//        setROW_LABELS("12345678");
         setColumnLabels("    a  b  c  d  e  f  g  h    ");
         printBoard();
 
@@ -70,7 +72,7 @@ public class ChessBoardUI {
 
         out.print("Printing board...\n");
 
-//        setRowLabels("87654321");
+//        setROW_LABELS("87654321");
         setColumnLabels("    h  g  f  e  d  c  b  a    ");
         printBoard();
 
@@ -80,12 +82,22 @@ public class ChessBoardUI {
         out.print(RESET_TEXT_COLOR);
     }
 
+    public static void setHighlightValidMoves(ArrayList<ChessPosition> validMoves, ChessPosition position){
+        startPosition = position;
+        endPositions = validMoves;
+    }
+
     private static void printBoard(){
         labelColumns();
         clearBoarders();
         out.println();
         labelRows();
         labelColumns();
+
+        if ((startPosition != null) && (endPositions.size() != 0)) {
+            startPosition = null;
+            endPositions.clear();
+        }
     }
     private static void labelColumns(){
         setBoardersGrey();
@@ -96,12 +108,12 @@ public class ChessBoardUI {
     }
     private static void labelRows(){
         if (isWhite) {
-            for (int row = rowLabels.length() - 1; row >= 0; --row) {
+            for (int row = ROW_LABELS.length() - 1; row >= 0; --row) {
                 labelRowsHelper(row);
             }
         }
         else {
-            for (int row = 0; row < rowLabels.length(); ++row) {
+            for (int row = 0; row < ROW_LABELS.length(); ++row) {
                 labelRowsHelper(row);
             }
         }
@@ -110,7 +122,7 @@ public class ChessBoardUI {
     private static void labelRowsHelper(int row){
         setBoardersGrey();
         out.print(" ");
-        out.print(rowLabels.charAt(row));
+        out.print(ROW_LABELS.charAt(row));
         out.print(" ");
         setSquares(row);
         setBoardersGrey();
@@ -137,12 +149,31 @@ public class ChessBoardUI {
         if (row % 2 == 1){
             colorSwitcher = 0;
         }
-        if ((col % 2 == colorSwitcher)) {
-            out.print(SET_BG_COLOR_WHITE);
+        ChessPosition highlightChecker = new ChessPosition(row, col);
+
+        if ((startPosition != null) &&
+                (highlightChecker.getRow() == startPosition.getRow()) &&
+                (highlightChecker.getColumn() == startPosition.getColumn())) {
+            out.print(SET_BG_COLOR_YELLOW);
+        } else {
+            if ((col % 2 == colorSwitcher)) {
+                if ((endPositions != null) && (endPositions.contains(highlightChecker))){
+                    out.print(SET_BG_COLOR_GREEN);
+                }
+                else {
+                    out.print(SET_BG_COLOR_WHITE);
+                }
+            }
+            else {
+                if ((endPositions != null) && (endPositions.contains(highlightChecker))){
+                    out.print(SET_BG_COLOR_DARK_GREEN);
+                }
+                else {
+                    out.print(SET_BG_COLOR_BLACK);
+                }
+            }
         }
-        else {
-            out.print(SET_BG_COLOR_BLACK);
-        }
+
         setPiece(row, col);
     }
 
@@ -179,8 +210,8 @@ public class ChessBoardUI {
         columnLabels = labels;
     }
 
-    private static void setRowLabels(String labels){
-        rowLabels = labels;
+    private static void setROW_LABELS(String labels){
+        ROW_LABELS = labels;
     }
 
     private static void setBoard(ChessBoard updatedBoard){
