@@ -52,14 +52,14 @@ public class WebSocketHandler {
         String username = userService.getUsername(userGameCommand.getAuthToken());
 
         switch (userGameCommand.getCommandType()) {
-            case CONNECT -> connect(session, username, userGameCommand.getGameID(), userGameCommand.getAuthToken());
+            case CONNECT -> connect(session, username, userGameCommand.getGameID());
             case MAKE_MOVE -> makeMove(username, userGameCommand.getMove(), userGameCommand.getGameID());
-            case LEAVE -> leave(username, userGameCommand.getGameID(), userGameCommand.getAuthToken());
-            case RESIGN -> resign(username, userGameCommand.getAuthToken(), userGameCommand.getGameID());
+            case LEAVE -> leave(username, userGameCommand.getGameID());
+            case RESIGN -> resign(username, userGameCommand.getGameID());
         }
     }
 
-    private void connect(Session session, String username, int gameID, String authToken) throws DataAccessException, IOException {
+    private void connect(Session session, String username, int gameID) throws DataAccessException, IOException {
 
         connections.add(username, session, gameID);
         String playerStatus;
@@ -99,14 +99,13 @@ public class WebSocketHandler {
         GameData game = gameService.getGameDAO().getGame(gameID);
         ChessPiece piece = game.game().getBoard().getPiece(move.getStartPosition());
 
-//        if (getUser(username, game, true) == null) {
-//            var errorMissingUser = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
-//            var missingUserMessage = String.format(getTeam(username, game, true) +
-//                    " is vacant. Cannot play alone.");
-//            errorMissingUser.setServerMessageNotification(missingUserMessage);
-//            connections.broadcast(errorMissingUser);
-//            return;
-//        }
+        if (getUser(username, game, false) == null){
+            var error = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
+            var errorMessage = "Error: Observer cannot make a move";
+            error.setErrorMessage(errorMessage);
+            connections.broadcastOne(error, username, gameID);
+            return;
+        }
 
         if (isAlone(username, game)){
             return;
@@ -181,7 +180,7 @@ public class WebSocketHandler {
         connections.broadcastAll(loadGame, username, gameID);
     }
 
-    private void leave(String username, int gameID, String authToken) throws IOException, DataAccessException {
+    private void leave(String username, int gameID) throws IOException, DataAccessException {
 
         GameData game = gameService.getGameDAO().getGame(gameID);
         if (Objects.equals(game.whiteUsername(), username)){
@@ -192,9 +191,9 @@ public class WebSocketHandler {
             sendUpdate(game.gameID(), game.whiteUsername(), null,
                     game.gameName(), game.game());
         }
-        else {
-            throw new DataAccessException("(leave) User is not in this game");
-        }
+//        else {
+//            throw new DataAccessException("(leave) User is not in this game");
+//        }
 
         var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
         var message = String.format(username + " has left the game");
@@ -203,9 +202,17 @@ public class WebSocketHandler {
         connections.remove(username, gameID);
     }
 
-    private void resign(String username, String authToken, int gameID) throws DataAccessException, IOException {
+    private void resign(String username, int gameID) throws DataAccessException, IOException {
 
         GameData game = gameService.getGameDAO().getGame(gameID);
+
+        if (getUser(username, game, false) == null){
+            var error = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
+            var errorMessage = "Error: Cannot resign as an observer";
+            error.setErrorMessage(errorMessage);
+            connections.broadcastOne(error, username, gameID);
+            return;
+        }
 
         if (isAlone(username, game)){
             return;
@@ -254,7 +261,7 @@ public class WebSocketHandler {
         gameService.getGameDAO().updateGame(gameID, updatedGame);
     }
 
-    public ChessGame.TeamColor getTeam(String username, GameData game, boolean opposingTeam) throws DataAccessException {
+    public ChessGame.TeamColor getTeam(String username, GameData game, boolean opposingTeam) throws IOException {
         if (Objects.equals(game.whiteUsername(), username)){
             if (!opposingTeam) {
                 return ChessGame.TeamColor.WHITE;
@@ -271,7 +278,11 @@ public class WebSocketHandler {
                 return ChessGame.TeamColor.WHITE;
             }
         }
-        throw new DataAccessException("(getTeam) User is not in this game");
+        var error = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
+        var errorMessage = "Error: User team not found";
+        error.setErrorMessage(errorMessage);
+        connections.broadcastOne(error, username, game.gameID());
+        return null;
     }
 
     public String getUser(String username, GameData game, boolean opposingUser) throws DataAccessException {
@@ -292,7 +303,8 @@ public class WebSocketHandler {
             }
         }
         else {
-            throw new DataAccessException("(getUser) User is not in this game");
+//            throw new DataAccessException("(getUser) User is not in this game");
+            return null;
         }
     }
 
