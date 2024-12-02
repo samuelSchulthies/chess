@@ -131,7 +131,7 @@ public class PostLoginClient {
         server.join(joinRequest, authToken);
         ws = new WebSocketFacade(serverUrl, serverMessageHandler);
         ws.openGameConnection(authToken, fetchedGameID);
-        gameInfo = new GameInfo(authToken, fetchedGameID, team, gameIDtoGame.get(fetchedGameID).game().getBoard());
+        gameInfo = new GameInfo(authToken, fetchedGameID, team, gameIDtoGame.get(fetchedGameID).game());
         setStatus(UserStatus.IN_GAME);
 
 //            ChessBoardUI.buildUI();
@@ -155,8 +155,6 @@ public class PostLoginClient {
             ws = new WebSocketFacade(serverUrl, serverMessageHandler);
             ws.openGameConnection(authToken, fetchedTeamID);
             setStatus(UserStatus.OBSERVING);
-
-//            ChessBoardUI.buildUI();
 
             return "";
         }

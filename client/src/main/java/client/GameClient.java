@@ -18,30 +18,7 @@ public class GameClient {
     private WebSocketFacade ws;
     private final PostLoginClient postLoginClient;
     private boolean resignRestrictionFlag = false;
-
-    final static Map<Character, Integer> ALPHA_CHAR_TO_INT = Map.of(
-            'a', 1,
-            'b', 2,
-            'c', 3,
-            'd', 4,
-            'e', 5,
-            'f', 6,
-            'g', 7,
-            'h', 8
-    );
-
-    final static Map<Character, Integer> NUM_CHAR_TO_INT = Map.of(
-            '1', 1,
-            '2', 2,
-            '3', 3,
-            '4', 4,
-            '5', 5,
-            '6', 6,
-            '7', 7,
-            '8', 8
-    );
-
-    final static Set<Integer> VALID_NUMBERS = Set.of(1, 2, 4, 5, 6, 7, 8);
+    ObserverGameShared observerGameShared;
 
     final static Map<String, ChessPiece.PieceType> STRING_TO_PIECE_TYPE = Map.of(
             "bishop", ChessPiece.PieceType.BISHOP,
@@ -57,6 +34,7 @@ public class GameClient {
         this.ws = ws;
         this.gameInfo = gameInfo;
         this.postLoginClient = postLoginClient;
+        observerGameShared = new ObserverGameShared(postLoginClient, gameInfo, ws);
     }
 
     public String eval(String input){
@@ -79,22 +57,12 @@ public class GameClient {
     }
 
     public String redraw() throws DataAccessException {
-        postLoginClient.updateBoard(gameInfo.getGameID());
-        if (Objects.equals(gameInfo.getTeam(), "WHITE")){
-            ChessBoardUI.buildUIWhite(gameInfo.getBoard());
-        }
-        else if (Objects.equals(gameInfo.getTeam(), "BLACK")){
-            ChessBoardUI.buildUIBlack(gameInfo.getBoard());
-        }
-        else {
-            throw new DataAccessException("Player is not on either team");
-        }
+        observerGameShared.redraw();
         return "";
     }
 
     public String leave() throws DataAccessException{
-        ws.closeGameConnection(gameInfo.getAuthToken(), gameInfo.getGameID());
-        ws = null;
+        observerGameShared.leave();
         return "leave";
     }
 
@@ -112,45 +80,10 @@ public class GameClient {
         }
 
         var pieceLocation = params[0];
-        if (pieceLocation.length() != 2){
-            throw new RuntimeException("Invalid move or piece location");
-        }
-        int pieceRow;
-        int pieceCol;
-        if (NUM_CHAR_TO_INT.get(pieceLocation.charAt(1)) == null){
-            throw new RuntimeException("Invalid move or piece location");
-        }
-        else {
-            pieceRow = NUM_CHAR_TO_INT.get(pieceLocation.charAt(1));
-        }
-        if (ALPHA_CHAR_TO_INT.get(pieceLocation.charAt(0)) == null){
-            throw new RuntimeException("Invalid move or piece location");
-        }
-        else {
-            pieceCol = ALPHA_CHAR_TO_INT.get(pieceLocation.charAt(0));
-        }
+        ChessPosition startPosition = observerGameShared.parsePosition(pieceLocation);
 
         var moveLocation = params[1];
-        if (moveLocation.length() != 2){
-            throw new RuntimeException("Move invalid");
-        }
-        int moveRow;
-        int moveCol;
-        if (NUM_CHAR_TO_INT.get(moveLocation.charAt(1)) == null){
-            throw new RuntimeException("Invalid move or piece location");
-        }
-        else {
-            moveRow = NUM_CHAR_TO_INT.get(moveLocation.charAt(1));
-        }
-        if (ALPHA_CHAR_TO_INT.get(moveLocation.charAt(0)) == null){
-            throw new RuntimeException("Invalid move or piece location");
-        }
-        else {
-            moveCol = ALPHA_CHAR_TO_INT.get(moveLocation.charAt(0));
-        }
-
-        ChessPosition startPosition = new ChessPosition(pieceRow, pieceCol);
-        ChessPosition endPosition = new ChessPosition(moveRow, moveCol);
+        ChessPosition endPosition = observerGameShared.parsePosition(moveLocation);
 
         ChessMove newMove = new ChessMove(startPosition, endPosition, promotionPiece);
 
@@ -185,6 +118,7 @@ public class GameClient {
     }
 
     public String highlight(String... params) throws DataAccessException{
+        observerGameShared.highlight(params);
         return "highlight";
     }
 

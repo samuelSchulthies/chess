@@ -1,14 +1,28 @@
 package repl;
 
+import client.GameInfo;
 import client.ObserveClient;
+import client.PostLoginClient;
+import client.websocket.ServerMessageHandler;
+import client.websocket.WebSocketFacade;
 
 import java.util.Scanner;
 
 public class ObserveRepl{
 
     ObserveClient observeClient;
-    public ObserveRepl() {
-        observeClient = new ObserveClient();
+    ServerMessageHandler serverMessageHandler;
+    WebSocketFacade ws;
+    GameInfo gameInfo;
+    PostLoginClient postLoginClient;
+
+    public ObserveRepl(ServerMessageHandler serverMessageHandler,
+                       WebSocketFacade ws, GameInfo gameInfo, PostLoginClient postLoginClient) {
+        this.serverMessageHandler = serverMessageHandler;
+        this.ws = ws;
+        this.gameInfo = gameInfo;
+        this.postLoginClient = postLoginClient;
+        observeClient = new ObserveClient(postLoginClient, gameInfo, ws);
     }
 
     public void run(){

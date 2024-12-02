@@ -19,7 +19,7 @@ public class ServerMessageHandler {
 
     }
     void notify(ServerMessage serverMessage) {
-        System.out.println(SET_TEXT_COLOR_BLUE + serverMessage.getServerMessage() + RESET_TEXT_COLOR);
+        System.out.println(SET_TEXT_COLOR_BLUE + serverMessage.getMessage() + RESET_TEXT_COLOR);
         promptSwitcher.runPrompt();
     }
 
@@ -29,7 +29,7 @@ public class ServerMessageHandler {
     }
 
     void errorMessage(ServerMessage serverMessage) {
-        System.out.println(SET_TEXT_COLOR_RED + serverMessage.getServerMessage() + RESET_TEXT_COLOR);
+        System.out.println(SET_TEXT_COLOR_RED + serverMessage.getErrorMessage() + RESET_TEXT_COLOR);
         promptSwitcher.runPrompt();
     }
 

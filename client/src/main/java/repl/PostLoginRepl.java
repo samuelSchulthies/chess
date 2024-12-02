@@ -39,7 +39,8 @@ public class PostLoginRepl {
                     postLoginClient.setStatus(UserStatus.SIGNED_IN);
                 }
                 if (postLoginClient.getStatus() == UserStatus.OBSERVING){
-                    ObserveRepl observeRepl = new ObserveRepl();
+                    ObserveRepl observeRepl = new ObserveRepl(serverMessageHandler,
+                            postLoginClient.getWs(), postLoginClient.getGameInfo(), postLoginClient);
                     observeRepl.run();
                     postLoginClient.setStatus(UserStatus.SIGNED_IN);
                 }
