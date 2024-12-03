@@ -46,21 +46,6 @@ public class GameRepl {
         }
         System.out.println();
     }
-
-//    public void preGameRepl(){
-//        Scanner scanner = new Scanner(System.in);
-//        var result = "";
-//
-//        System.out.println("Waiting for other player to join. Type leave to return to game options.\n");
-//        while ((!result.equalsIgnoreCase("leave")) ||
-//                (!gameClient.gameInfo.getWaitingForPlayer())) {
-//            result = scanner.nextLine();
-//            gameClient.updateVacantTeam();
-//        }
-//        if(!result.equalsIgnoreCase("leave")){
-//            run();
-//        }
-//    }
     public static void prompt() {
         System.out.print("\n[IN_GAME] >>> ");
     }

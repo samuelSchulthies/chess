@@ -134,13 +134,6 @@ public class GameClient {
                 """;
     }
 
-    public void updateVacantTeam(){
-        if((postLoginClient.getGame(gameInfo.getGameID()).whiteUsername() != null)
-                && (postLoginClient.getGame(gameInfo.getGameID()).blackUsername() != null)) {
-            gameInfo.setWaitingForPlayer(false);
-        }
-    }
-
     public void setResignRestrictionFlag(boolean setBool){
         resignRestrictionFlag = setBool;
     }
