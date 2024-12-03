@@ -1,14 +1,11 @@
 package client;
 
-import chess.ChessBoard;
-import chess.ChessGame;
 import client.websocket.ServerMessageHandler;
 import client.websocket.WebSocketFacade;
 import exception.DataAccessException;
 import model.GameData;
 import requestresult.*;
 import server.ServerFacade;
-import ui.ChessBoardUI;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -184,10 +181,6 @@ public class PostLoginClient {
         authToken = newAuthToken;
     }
 
-    public String getAuthToken(){
-        return authToken;
-    }
-
     public GameInfo getGameInfo(){
         return gameInfo;
     }
@@ -202,10 +195,6 @@ public class PostLoginClient {
 
     public WebSocketFacade getWs(){
         return ws;
-    }
-
-    public void updateGames() throws DataAccessException {
-        list();
     }
 
     public GameData getGame(int gameID){
