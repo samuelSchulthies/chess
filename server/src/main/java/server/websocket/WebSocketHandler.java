@@ -146,8 +146,6 @@ public class WebSocketHandler {
             return;
         }
 
-        sendUpdate(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName(), game.game());
-
         var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
         var message = String.format(username + " moved " +
                 INT_TO_ALPHA_CHAR.get(move.getStartPosition().getColumn()) + move.getStartPosition().getRow() + " to "
@@ -163,6 +161,8 @@ public class WebSocketHandler {
             connections.broadcastOne(notificationCheckMate, username, gameID);
             connections.broadcastAll(notificationCheckMate, username, gameID);
         }
+
+        sendUpdate(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName(), game.game());
 
         if (game.game().isInCheck(getTeam(username, game, true)) &&
                 (!game.game().isInCheckmate(getTeam(username, game, true)))){

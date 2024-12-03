@@ -10,7 +10,7 @@ public class GameInfo {
     private final String authToken;
     private final int gameID;
     private final String team;
-    private final ChessGame game;
+    private ChessGame game;
     private ChessBoard board;
     public boolean waitingForPlayer = true;
 
@@ -39,6 +39,10 @@ public class GameInfo {
 
     public ChessGame getGame(){
         return game;
+    }
+
+    public void setGame(ChessGame updatedGame){
+        game = updatedGame;
     }
 
     public void setBoard(ChessBoard updatedBoard){

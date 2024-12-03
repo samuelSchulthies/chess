@@ -121,6 +121,10 @@ public class PostLoginClient {
         var team = params[1].toUpperCase();
         int fetchedGameID;
 
+        if ((!team.equals("BLACK")) && (!team.equals("WHITE"))){
+            throw new RuntimeException("Team must be 'black' or 'white'");
+        }
+
         try {
             fetchedGameID = displayIDtoGameID.get(Integer.parseInt(id));
         } catch (Throwable e){
@@ -212,6 +216,11 @@ public class PostLoginClient {
     public void updateBoard(int gameID) throws DataAccessException {
         list();
         gameInfo.setBoard(gameIDtoGame.get(gameID).game().getBoard());
+    }
+
+    public void updateGame(int gameID) throws DataAccessException {
+        list();
+        gameInfo.setGame(gameIDtoGame.get(gameID).game());
     }
 }
 

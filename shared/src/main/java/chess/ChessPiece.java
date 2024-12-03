@@ -65,6 +65,7 @@ public class ChessPiece {
      */
     ArrayList<ChessMove> pieceMovesArray = new ArrayList<>();
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+    pieceMovesArray.clear();
 
         if(getPieceType() == PieceType.BISHOP){
             BishopMovesCalculator bishopMoves = new BishopMovesCalculator(board, myPosition, pieceMovesArray);

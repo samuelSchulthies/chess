@@ -46,7 +46,7 @@ public class PostLoginRepl {
                 }
 
             } catch (Throwable e){
-                System.out.print(e);
+                System.out.print(e.getMessage());
             }
         }
         System.out.println();

@@ -73,7 +73,7 @@ public class ChessGame {
                 }
             }
             catch (InvalidMoveException e) {
-                System.out.print("The move " + possibleMove + " was illegal and not included\n");
+                System.out.print("A move from this piece is currently illegal and not included\n");
             }
             finally {
                 undoMove(possibleMove);
@@ -89,6 +89,7 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+        ChessPiece chessPiece = getBoard().getPiece(move.getStartPosition());
 
         if (getBoard().getPiece(move.getStartPosition()) != null){
 
@@ -108,8 +109,20 @@ public class ChessGame {
                 throw new InvalidMoveException("The given move is not in this piece's valid moves");
             }
 
-            if((move.getPromotionPiece() != null) &&
-                    (getBoard().getPiece(move.getStartPosition()).getPieceType() == ChessPiece.PieceType.PAWN)){
+            if((move.getPromotionPiece() == null) && (chessPiece.getPieceType() == ChessPiece.PieceType.PAWN)){
+                if(((move.getEndPosition().getRow() == 1) && (chessPiece.getTeamColor() == TeamColor.BLACK)) ||
+                        ((move.getEndPosition().getRow() == 8) && (chessPiece.getTeamColor() == TeamColor.WHITE))) {
+
+                    throw new InvalidMoveException("Pawn is at its final rank and must promote");
+                }
+            }
+
+            if((move.getPromotionPiece() != null) && (chessPiece.getPieceType() == ChessPiece.PieceType.PAWN)){
+                if(((move.getEndPosition().getRow() != 1) && (chessPiece.getTeamColor() == TeamColor.BLACK)) ||
+                        ((move.getEndPosition().getRow() != 8) && (chessPiece.getTeamColor() == TeamColor.WHITE))) {
+
+                    throw new InvalidMoveException("Cannot promote pawn until it has reached its final rank");
+                }
                 ChessPiece promotionUpdate = new ChessPiece(getBoard().getPiece(move.getStartPosition())
                         .getTeamColor(), move.getPromotionPiece());
                 gameBoard.addPiece(move.getEndPosition(), promotionUpdate);
@@ -121,11 +134,11 @@ public class ChessGame {
 
             if (isInCheck(getTeamTurn())) {
                 exception = true;
-                throw new InvalidMoveException("The move " + move + " puts the king in check");
+                throw new InvalidMoveException("The given move puts the king in check");
             }
         }
         else {
-            throw new InvalidMoveException("The move " + move + " does not have a chess piece");
+            throw new InvalidMoveException("The given move does not have a chess piece");
         }
         if (!validMovesFlag) {
             if (getTeamTurn() == TeamColor.BLACK) {

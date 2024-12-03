@@ -1,9 +1,6 @@
 package client;
 
-import chess.ChessBoard;
-import chess.ChessMove;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 import client.websocket.WebSocketFacade;
 import exception.DataAccessException;
 import ui.ChessBoardUI;
@@ -61,7 +58,7 @@ public class ObserverGameShared {
     }
 
     public void highlight(String... params) throws DataAccessException{
-        postLoginClient.updateBoard(gameInfo.getGameID());
+        postLoginClient.updateGame(gameInfo.getGameID());
         if(params.length != 1){
             throw new DataAccessException("Incorrect highlight arguments");
         }
@@ -71,6 +68,7 @@ public class ObserverGameShared {
         ChessPosition adjustedStartPosition = new ChessPosition(position.getRow() - 1, position.getColumn() - 1);
 
         Collection<ChessMove> validMoves;
+        ChessBoard board = gameInfo.getBoard();
 
         try {
             validMoves = new ArrayList<>(gameInfo.getGame().validMoves(position));
@@ -89,8 +87,6 @@ public class ObserverGameShared {
                     move.getEndPosition().getColumn() - 1);
             adjustedEndPositions.add(adjustEndPosition);
         }
-
-        ChessBoard board = gameInfo.getBoard();
 
         ChessBoardUI.setHighlightValidMoves(adjustedEndPositions, adjustedStartPosition);
         redraw();
