@@ -64,42 +64,52 @@ public class PostLoginClient {
         displayIDtoGameID.clear();
         gameIDtoGame.clear();
 
+        gameList.append("\n---Games---\n");
         for (int i = 0; i < listResult.games().size(); ++i){
-            int listIndex = i + 1;
-            if (listResult.games().get(i).game().getGameOver()){
-                gameList.append("\n---Game Ended---\n");
+            if (!listResult.games().get(i).game().getGameOver()) {
+                listHelper(gameList, i, listResult);
             }
-            gameList.append("GameID ");
-            gameList.append(listIndex);
-            gameList.append(" | Name: ");
-            gameList.append(listResult.games().get(i).gameName());
-
-            gameList.append(" | White Player: ");
-            if (listResult.games().get(i).whiteUsername() == null){
-                gameList.append("NO PLAYER");
-            }
-            else {
-                gameList.append(listResult.games().get(i).whiteUsername());
-            }
-
-            gameList.append(" | Black Player: ");
-            if (listResult.games().get(i).blackUsername() == null){
-                gameList.append("NO PLAYER");
-            }
-            else {
-                gameList.append(listResult.games().get(i).blackUsername());
-            }
-            gameList.append("\n");
-            if (listResult.games().get(i).game().getGameOver()){
-                gameList.append("\n");
-            }
-
-            displayIDtoGameID.put(listIndex, listResult.games().get(i).gameID());
-            gameIDtoGame.put(listResult.games().get(i).gameID(), listResult.games().get(i));
         }
+        gameList.append("\n---Ended Games---\n");
+        for (int i = 0; i < listResult.games().size(); ++i){
+            if (listResult.games().get(i).game().getGameOver()) {
+                listHelper(gameList, i, listResult);
+            }
+        }
+
 
         return gameList.toString();
 
+    }
+
+    public StringBuilder listHelper(StringBuilder gameList, int i, ListResult listResult){
+        int listIndex = i + 1;
+        gameList.append("GameID ");
+        gameList.append(listIndex);
+        gameList.append(" | Name: ");
+        gameList.append(listResult.games().get(i).gameName());
+
+        gameList.append(" | White Player: ");
+        if (listResult.games().get(i).whiteUsername() == null){
+            gameList.append("NO PLAYER");
+        }
+        else {
+            gameList.append(listResult.games().get(i).whiteUsername());
+        }
+
+        gameList.append(" | Black Player: ");
+        if (listResult.games().get(i).blackUsername() == null){
+            gameList.append("NO PLAYER");
+        }
+        else {
+            gameList.append(listResult.games().get(i).blackUsername());
+        }
+        gameList.append("\n");
+
+        displayIDtoGameID.put(listIndex, listResult.games().get(i).gameID());
+        gameIDtoGame.put(listResult.games().get(i).gameID(), listResult.games().get(i));
+
+        return gameList;
     }
 
     public String join(String... params) throws DataAccessException {
