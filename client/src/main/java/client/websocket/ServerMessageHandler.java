@@ -2,7 +2,6 @@ package client.websocket;
 
 import client.*;
 import exception.DataAccessException;
-import server.ServerFacade;
 import websocket.messages.ServerMessage;
 
 import static ui.EscapeSequences.*;
