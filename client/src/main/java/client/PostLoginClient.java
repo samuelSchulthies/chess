@@ -48,16 +48,9 @@ public class PostLoginClient {
     }
 
     public String create(String... params) throws DataAccessException {
-//        StringBuilder gameName = new StringBuilder();
         if (params.length != 1) {
             throw new DataAccessException("Please enter a game name with no spaces");
         }
-//        for (int i = 0; i < params.length; ++i) {
-//            gameName.append(params[i]);
-//            if (i != params.length - 1) {
-//                gameName.append(" ");
-//            }
-//        }
         var gameName = params[0];
         CreateRequest createRequest = new CreateRequest(gameName);
         server.create(createRequest, authToken);
