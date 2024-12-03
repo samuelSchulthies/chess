@@ -244,7 +244,11 @@ public class WebSocketHandler {
             losingTeam = "White";
         }
         else {
-            throw new DataAccessException("(resign) User is not in this game");
+            var error = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
+            var errorMessage = "Error: User not found in game when attempting to resign";
+            error.setErrorMessage(errorMessage);
+            connections.broadcastOne(error, username, gameID);
+            return;
         }
 
         game.game().setGameOver(true);
@@ -319,7 +323,7 @@ public class WebSocketHandler {
             var errorMissingUser = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
             var missingUserMessage = String.format("Error: " + getTeam(username, game, true) +
                     " is vacant. Cannot play alone.");
-            errorMissingUser.setMessage(missingUserMessage);
+            errorMissingUser.setErrorMessage(missingUserMessage);
             connections.broadcastOne(errorMissingUser, username, game.gameID());
             return true;
         }
