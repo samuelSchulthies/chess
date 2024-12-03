@@ -153,6 +153,15 @@ public class WebSocketHandler {
         notification.setMessage(message);
         connections.broadcastAll(notification, username, gameID);
 
+        if(game.game().isInStalemate(getTeam(username, game, true))) {
+            game.game().setGameOver(true);
+            var notificationStalemate = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+            var messageStalemate = "The game is in stalemate and no more moves can be made";
+            notificationStalemate.setMessage(messageStalemate);
+            connections.broadcastOne(notificationStalemate, username, gameID);
+            connections.broadcastAll(notificationStalemate, username, gameID);
+        }
+
         if(game.game().isInCheckmate(getTeam(username, game, true))) {
             game.game().setGameOver(true);
             var notificationCheckMate = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
