@@ -200,9 +200,6 @@ public class WebSocketHandler {
             sendUpdate(game.gameID(), game.whiteUsername(), null,
                     game.gameName(), game.game());
         }
-//        else {
-//            throw new DataAccessException("(leave) User is not in this game");
-//        }
 
         var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
         var message = String.format(username + " has left the game");
