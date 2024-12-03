@@ -54,10 +54,6 @@ public class ServerMessage {
         return this.serverMessageType;
     }
 
-//    public String LoadGameMessage(String game){
-//        return game;
-//    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {

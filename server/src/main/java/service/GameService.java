@@ -29,7 +29,6 @@ public class GameService {
         }
         GameData game = new GameData(gameID, null, null, r.gameName(), new ChessGame());
         createGameID();
-//        gameID++;
         gameDAO.createGame(game);
         return new CreateResult(game.gameID());
     }
@@ -83,10 +82,6 @@ public class GameService {
 
     int gameDataSize(){
         return gameDAO.getGameDataCollectionSize();
-    }
-
-    public void resetGameID(){
-        gameID = 1;
     }
 
     public GameDAO getGameDAO(){
