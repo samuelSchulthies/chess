@@ -1,9 +1,6 @@
 package client.websocket;
 
-import client.GameClient;
-import client.GameInfo;
-import client.PostLoginClient;
-import client.PromptSwitcher;
+import client.*;
 import exception.DataAccessException;
 import server.ServerFacade;
 import websocket.messages.ServerMessage;
@@ -13,6 +10,7 @@ import static ui.EscapeSequences.*;
 public class ServerMessageHandler {
 
     GameClient gameClient;
+    ObserveClient observeClient;
 
     PromptSwitcher promptSwitcher = new PromptSwitcher();
     public ServerMessageHandler(){
@@ -24,7 +22,12 @@ public class ServerMessageHandler {
     }
 
     void loadGame(ServerMessage serverMessage) throws DataAccessException {
-        gameClient.redraw();
+        if (gameClient != null){
+            gameClient.redraw();
+        }
+        if (observeClient != null){
+            observeClient.redraw();
+        }
         promptSwitcher.runPrompt();
     }
 
@@ -35,5 +38,9 @@ public class ServerMessageHandler {
 
     public void setGameClient(GameClient initializedGameClient){
         gameClient = initializedGameClient;
+    }
+
+    public void setObserveClient(ObserveClient initializedObserveClient){
+        observeClient = initializedObserveClient;
     }
 }

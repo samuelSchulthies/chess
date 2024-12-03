@@ -138,31 +138,30 @@ public class PostLoginClient {
         gameInfo = new GameInfo(authToken, fetchedGameID, team, gameIDtoGame.get(fetchedGameID).game());
         setStatus(UserStatus.IN_GAME);
 
-//            ChessBoardUI.buildUI();
-
         return String.format("You have joined game " + gameIDtoGame.get(fetchedGameID).gameName() + " as " + team + "\n");
 
     }
 
     public String observe(String... params) throws DataAccessException {
         list();
-        if(params.length > 0){
-            var id = params[0];
-            int fetchedTeamID;
-
-            try {
-                fetchedTeamID = displayIDtoGameID.get(Integer.parseInt(id));
-            } catch (Throwable e){
-                throw new DataAccessException("Bad input");
-            }
-
-            ws = new WebSocketFacade(serverUrl, serverMessageHandler);
-            ws.openGameConnection(authToken, fetchedTeamID);
-            setStatus(UserStatus.OBSERVING);
-
-            return "";
+        if(params.length == 0) {
+            throw new DataAccessException("Please enter an ID");
         }
-        throw new DataAccessException("Please enter an ID");
+        var id = params[0];
+        int fetchedGameID;
+
+        try {
+            fetchedGameID = displayIDtoGameID.get(Integer.parseInt(id));
+        } catch (Throwable e){
+            throw new DataAccessException("Bad input");
+        }
+
+        ws = new WebSocketFacade(serverUrl, serverMessageHandler);
+        ws.openGameConnection(authToken, fetchedGameID);
+        gameInfo = new GameInfo(authToken, fetchedGameID, "", gameIDtoGame.get(fetchedGameID).game());
+        setStatus(UserStatus.OBSERVING);
+
+        return "";
     }
 
     public String logout() throws DataAccessException {

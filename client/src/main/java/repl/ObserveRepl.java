@@ -23,6 +23,7 @@ public class ObserveRepl{
         this.gameInfo = gameInfo;
         this.postLoginClient = postLoginClient;
         observeClient = new ObserveClient(postLoginClient, gameInfo, ws);
+        serverMessageHandler.setObserveClient(observeClient);
     }
 
     public void run(){
