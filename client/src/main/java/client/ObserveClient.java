@@ -45,7 +45,7 @@ public class ObserveClient {
     }
 
     public String highlight(String... params) throws DataAccessException{
-        observerGameShared.highlight();
+        observerGameShared.highlight(params);
         return "";
     }
 
