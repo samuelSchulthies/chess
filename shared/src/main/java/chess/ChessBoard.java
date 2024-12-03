@@ -25,17 +25,6 @@ public class ChessBoard {
                 |R|N|B|Q|K|B|N|R|
                 """;
 
-    String defaultBoardLayoutBlack = """
-                |R|N|B|K|Q|B|N|R|
-                |P|P|P|P|P|P|P|P|
-                | | | | | | | | |
-                | | | | | | | | |
-                | | | | | | | | |
-                | | | | | | | | |
-                |p|p|p|p|p|p|p|p|
-                |r|n|b|k|q|b|n|r|
-                """;
-
     final static Map<Character, ChessPiece.PieceType> CHAR_TO_PIECE_TYPE = Map.of(
             'b', ChessPiece.PieceType.BISHOP,
             'k', ChessPiece.PieceType.KING,
@@ -128,15 +117,6 @@ public class ChessBoard {
                     column++;
                 }
             }
-        }
-    }
-
-    public void changeDefaultBoardLayout(String color){
-        if (Objects.equals(color, "WHITE")){
-            defaultBoardLayout = defaultBoardLayoutWhite;
-        }
-        if (Objects.equals(color, "BLACK")){
-            defaultBoardLayout = defaultBoardLayoutBlack;
         }
     }
 

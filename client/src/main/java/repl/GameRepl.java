@@ -6,12 +6,8 @@ import client.PostLoginClient;
 import client.websocket.ServerMessageHandler;
 import client.websocket.WebSocketFacade;
 import server.ServerFacade;
-import websocket.messages.ServerMessage;
 
 import java.util.Scanner;
-
-import static ui.EscapeSequences.RESET_TEXT_COLOR;
-import static ui.EscapeSequences.SET_TEXT_COLOR_RED;
 
 public class GameRepl {
 
