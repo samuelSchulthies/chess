@@ -32,10 +32,6 @@ public class GameRepl {
                 result = gameClient.eval(line);
                 System.out.print(result);
 
-                if (result.equals("resign")){
-                    gameClient.setResignRestrictionFlag(true);
-                }
-
             } catch (Throwable e){
                 System.out.print(e.getMessage());
             }

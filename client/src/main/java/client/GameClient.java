@@ -93,9 +93,6 @@ public class GameClient {
     }
 
     public String resign(String... params) throws DataAccessException{
-        if(resignRestrictionFlag){
-            return "Game over, double resign not allowed";
-        }
 
         if(params.length != 0){
             throw new DataAccessException("Too many arguments");
@@ -133,9 +130,4 @@ public class GameClient {
                 help
                 """;
     }
-
-    public void setResignRestrictionFlag(boolean setBool){
-        resignRestrictionFlag = setBool;
-    }
-
 }
