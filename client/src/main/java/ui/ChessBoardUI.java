@@ -30,8 +30,6 @@ public class ChessBoardUI {
             ChessPiece.PieceType.ROOK, 'R'
     );
 
-    static private final ChessBoard GAME_BOARD_DEFAULT = new ChessBoard();
-
     static private ChessBoard currentBoard = new ChessBoard();
 
     public ChessBoardUI(){
